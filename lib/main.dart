@@ -9,12 +9,25 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
+        appBar: AppBar(
+          title: Align(
+            alignment: Alignment.centerLeft,
+            child: Text('flux_state'),
+          ),
         ),
+        body: Center(child: FluxStateApp()),
       ),
     );
+  }
+}
+
+class FluxStateApp extends StatelessWidget {
+  const FluxStateApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Text('Hello World!');
   }
 }

@@ -12,12 +12,12 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Align(
+          title: const Align(
             alignment: Alignment.centerLeft,
             child: Text('flux_state'),
           ),
         ),
-        body: Center(child: FluxStateApp()),
+        body: const Center(child: FluxStateApp()),
       ),
     );
   }

@@ -38,16 +38,18 @@ class FluxStateApp extends StatefulWidget {
 class _FluxStateAppState extends State<FluxStateApp> {
   @override
   Widget build(BuildContext context) {
-    final InventoryViewModel viewModel = InventoryViewModel(widget.model);
+    final ComponentCatalogViewModel viewModel = ComponentCatalogViewModel(
+      model: widget.model,
+    );
 
     return ComponentCatalogScreen(viewModel: viewModel);
   }
 }
 
 class ComponentCatalogScreen extends StatefulWidget {
-  const ComponentCatalogScreen({required this.viewModel, super.key});
+  const ComponentCatalogScreen({super.key, required this.viewModel});
 
-  final InventoryViewModel viewModel;
+  final ComponentCatalogViewModel viewModel;
 
   @override
   State<ComponentCatalogScreen> createState() => _ComponentCatalogScreenState();
@@ -104,7 +106,7 @@ class _ComponentCatalogDetailScreen extends StatefulWidget {
     required this.model,
   });
 
-  final InventoryViewModel viewModel;
+  final ComponentCatalogViewModel viewModel;
   final String componentType;
   final Iterable? model;
 
@@ -214,20 +216,22 @@ class InventoryModel {
   InventoryModel();
 }
 
-class InventoryViewModel extends ChangeNotifier {
-  final InventoryModel model;
+class ComponentCatalogViewModel extends ChangeNotifier {
+  ComponentCatalogViewModel({required this._model});
 
-  InventoryViewModel(this.model);
+  final InventoryModel _model;
 
-  Iterable<Resistor> get resistors => model.resistors;
-  Iterable<Diode> get diodes => model.diodes;
+  Iterable<Resistor> get resistors => _model.resistors;
+  Iterable<Diode> get diodes => _model.diodes;
 
   void _addResistor() {
-    model.resistors.add(Resistor(value: '10k', tolerance: '5%', power: '1/4W'));
+    _model.resistors.add(
+      Resistor(value: '10k', tolerance: '5%', power: '1/4W'),
+    );
   }
 
   void _addDiode() {
-    model.diodes.add(Diode(code: '1N34A'));
+    _model.diodes.add(Diode(code: '1N34A'));
   }
 
   void add(String componentType) {

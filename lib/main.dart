@@ -89,7 +89,7 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
               model: switch (_selectedIndex) {
                 0 => widget.viewModel.resistors,
                 1 => widget.viewModel.diodes,
-                _ => null,
+                _ => List.empty(),
               },
             ),
           ),
@@ -108,7 +108,7 @@ class _ComponentCatalogDetailScreen extends StatefulWidget {
 
   final ComponentCatalogViewModel viewModel;
   final String componentType;
-  final Iterable? model;
+  final Iterable model;
 
   @override
   State<_ComponentCatalogDetailScreen> createState() =>
@@ -126,28 +126,27 @@ class _ComponentCatalogDetailScreenState
           widget.componentType,
           style: Theme.of(context).textTheme.headlineSmall,
         ),
-        if (widget.model != null)
-          for (final item in widget.model!)
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text('thing: $item'),
-                ),
-                IconButton(
-                  onPressed: () => setState(() {
-                    item.add();
-                  }),
-                  icon: const Icon(Icons.add),
-                ),
-                IconButton(
-                  onPressed: () => setState(() {
-                    item.remove();
-                  }),
-                  icon: const Icon(Icons.remove),
-                ),
-              ],
-            ),
+        for (final item in widget.model)
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('thing: $item'),
+              ),
+              IconButton(
+                onPressed: () => setState(() {
+                  item.add();
+                }),
+                icon: const Icon(Icons.add),
+              ),
+              IconButton(
+                onPressed: () => setState(() {
+                  item.remove();
+                }),
+                icon: const Icon(Icons.remove),
+              ),
+            ],
+          ),
         IconButton(
           onPressed: () => setState(() {
             widget.viewModel.add(widget.componentType);

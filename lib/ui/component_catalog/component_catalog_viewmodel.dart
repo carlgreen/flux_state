@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flux_state/data/repositories/inventory_repository.dart';
 import 'package:flux_state/domain/models/diode.dart';
 import 'package:flux_state/domain/models/resistor.dart';
-import 'package:flux_state/main.dart';
 
 class ComponentCatalogViewModel extends ChangeNotifier {
   ComponentCatalogViewModel({required this._inventoryRepository});

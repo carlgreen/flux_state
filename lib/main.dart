@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flux_state/domain/models/diode.dart';
-import 'package:flux_state/domain/models/resistor.dart';
+import 'package:flux_state/data/repositories/inventory_repository.dart';
 import 'package:flux_state/ui/component_catalog/component_catalog_screen.dart';
 import 'package:flux_state/ui/component_catalog/component_catalog_viewmodel.dart';
 
@@ -47,24 +46,5 @@ class _FluxStateAppState extends State<FluxStateApp> {
     );
 
     return ComponentCatalogScreen(viewModel: viewModel);
-  }
-}
-
-class InventoryRepository {
-  final List<Resistor> _resistors = List.empty(growable: true);
-  final List<Diode> _diodes = List.empty(growable: true);
-
-  InventoryRepository();
-
-  Iterable<Resistor> get resistors => List.unmodifiable(_resistors);
-
-  void addResistor(Resistor r) {
-    _resistors.add(r);
-  }
-
-  Iterable<Diode> get diodes => List.unmodifiable(_diodes);
-
-  void addDiode(Diode d) {
-    _diodes.add(d);
   }
 }

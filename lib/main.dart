@@ -132,8 +132,7 @@ class _ComponentCatalogDetailScreenState
             ),
         IconButton(
           onPressed: () => setState(() {
-            widget.viewModel.addResistor();
-            widget.viewModel.addDiode();
+            widget.viewModel.add(widget.componentType);
           }),
           icon: const Icon(Icons.add),
         ),
@@ -183,14 +182,23 @@ class InventoryViewModel extends ChangeNotifier {
   Iterable<Resistor> get resistors => model.resistors;
   Iterable<Diode> get diodes => model.diodes;
 
-  void addResistor() {
+  void _addResistor() {
     model.resistors.add(Resistor(value: '10k', tolerance: '5%', power: '1/4W'));
-
-    notifyListeners();
   }
 
-  void addDiode() {
+  void _addDiode() {
     model.diodes.add(Diode(code: '1N34A'));
+  }
+
+  void add(String componentType) {
+    switch (componentType) {
+      case 'Resistors':
+        _addResistor();
+      case 'Diodes':
+        _addDiode();
+      default:
+        debugPrint('unexpected component type "$componentType"');
+    }
 
     notifyListeners();
   }

@@ -126,15 +126,31 @@ class _ComponentCatalogDetailScreenState
         ),
         if (widget.model != null)
           for (final item in widget.model!)
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text('thing: $item'),
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('thing: $item'),
+                ),
+                IconButton(
+                  onPressed: () => setState(() {
+                    item.add();
+                  }),
+                  icon: const Icon(Icons.add),
+                ),
+                IconButton(
+                  onPressed: () => setState(() {
+                    item.remove();
+                  }),
+                  icon: const Icon(Icons.remove),
+                ),
+              ],
             ),
         IconButton(
           onPressed: () => setState(() {
             widget.viewModel.add(widget.componentType);
           }),
-          icon: const Icon(Icons.add),
+          icon: const Icon(Icons.create_new_folder),
         ),
       ],
     );
@@ -149,6 +165,18 @@ class Resistor {
   final String power;
   int count = 0;
 
+  void add() {
+    count++;
+  }
+
+  void remove() {
+    count--;
+
+    if (count < 0) {
+      count = 0;
+    }
+  }
+
   @override
   String toString() {
     return '$value $power ($tolerance): $count';
@@ -160,6 +188,18 @@ class Diode {
 
   final String code;
   int count = 0;
+
+  void add() {
+    count++;
+  }
+
+  void remove() {
+    count--;
+
+    if (count < 0) {
+      count = 0;
+    }
+  }
 
   @override
   String toString() {

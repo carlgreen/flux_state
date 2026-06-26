@@ -86,11 +86,6 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
             child: _ComponentCatalogDetailScreen(
               viewModel: widget.viewModel,
               componentType: items[_selectedIndex],
-              model: switch (_selectedIndex) {
-                0 => widget.viewModel.resistors,
-                1 => widget.viewModel.diodes,
-                _ => List.empty(),
-              },
             ),
           ),
         ],
@@ -103,12 +98,10 @@ class _ComponentCatalogDetailScreen extends StatefulWidget {
   const _ComponentCatalogDetailScreen({
     required this.viewModel,
     required this.componentType,
-    required this.model,
   });
 
   final ComponentCatalogViewModel viewModel;
   final String componentType;
-  final Iterable model;
 
   @override
   State<_ComponentCatalogDetailScreen> createState() =>
@@ -119,6 +112,10 @@ class _ComponentCatalogDetailScreenState
     extends State<_ComponentCatalogDetailScreen> {
   @override
   Widget build(BuildContext context) {
+    final Iterable<dynamic> model = widget.viewModel.components(
+      widget.componentType,
+    );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -126,7 +123,7 @@ class _ComponentCatalogDetailScreenState
           widget.componentType,
           style: Theme.of(context).textTheme.headlineSmall,
         ),
-        for (final item in widget.model)
+        for (final item in model)
           Row(
             children: [
               Padding(
@@ -244,5 +241,13 @@ class ComponentCatalogViewModel extends ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  Iterable<dynamic> components(String componentType) {
+    return switch (componentType) {
+      'Resistors' => _model.resistors,
+      'Diodes' => _model.diodes,
+      _ => List.empty(),
+    };
   }
 }

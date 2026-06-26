@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  final model = InventoryModel();
-  runApp(MainApp(model));
+  final inventoryRepository = InventoryRepository();
+  runApp(MainApp(inventoryRepository));
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp(this.model, {super.key});
+  const MainApp(this.inventoryRepository, {super.key});
 
-  final InventoryModel model;
+  final InventoryRepository inventoryRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -20,16 +20,16 @@ class MainApp extends StatelessWidget {
             child: Text('flux_state'),
           ),
         ),
-        body: Center(child: FluxStateApp(model)),
+        body: Center(child: FluxStateApp(inventoryRepository)),
       ),
     );
   }
 }
 
 class FluxStateApp extends StatefulWidget {
-  const FluxStateApp(this.model, {super.key});
+  const FluxStateApp(this.inventoryRepository, {super.key});
 
-  final InventoryModel model;
+  final InventoryRepository inventoryRepository;
 
   @override
   State<FluxStateApp> createState() => _FluxStateAppState();
@@ -39,7 +39,7 @@ class _FluxStateAppState extends State<FluxStateApp> {
   @override
   Widget build(BuildContext context) {
     final ComponentCatalogViewModel viewModel = ComponentCatalogViewModel(
-      model: widget.model,
+      inventoryRepository: widget.inventoryRepository,
     );
 
     return ComponentCatalogScreen(viewModel: viewModel);
@@ -205,29 +205,41 @@ class Diode {
   }
 }
 
-class InventoryModel {
-  final List<Resistor> resistors = List.empty(growable: true);
-  final List<Diode> diodes = List.empty(growable: true);
+class InventoryRepository {
+  final List<Resistor> _resistors = List.empty(growable: true);
+  final List<Diode> _diodes = List.empty(growable: true);
 
-  InventoryModel();
+  InventoryRepository();
+
+  Iterable<Resistor> get resistors => List.unmodifiable(_resistors);
+
+  void addResistor(Resistor r) {
+    _resistors.add(r);
+  }
+
+  Iterable<Diode> get diodes => List.unmodifiable(_diodes);
+
+  void addDiode(Diode d) {
+    _diodes.add(d);
+  }
 }
 
 class ComponentCatalogViewModel extends ChangeNotifier {
-  ComponentCatalogViewModel({required this._model});
+  ComponentCatalogViewModel({required this._inventoryRepository});
 
-  final InventoryModel _model;
+  final InventoryRepository _inventoryRepository;
 
-  Iterable<Resistor> get resistors => _model.resistors;
-  Iterable<Diode> get diodes => _model.diodes;
+  Iterable<Resistor> get resistors => _inventoryRepository.resistors;
+  Iterable<Diode> get diodes => _inventoryRepository.diodes;
 
   void _addResistor() {
-    _model.resistors.add(
+    _inventoryRepository.addResistor(
       Resistor(value: '10k', tolerance: '5%', power: '1/4W'),
     );
   }
 
   void _addDiode() {
-    _model.diodes.add(Diode(code: '1N34A'));
+    _inventoryRepository.addDiode(Diode(code: '1N34A'));
   }
 
   void add(String componentType) {
@@ -245,8 +257,8 @@ class ComponentCatalogViewModel extends ChangeNotifier {
 
   Iterable<dynamic> components(String componentType) {
     return switch (componentType) {
-      'Resistors' => _model.resistors,
-      'Diodes' => _model.diodes,
+      'Resistors' => _inventoryRepository.resistors,
+      'Diodes' => _inventoryRepository.diodes,
       _ => List.empty(),
     };
   }

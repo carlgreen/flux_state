@@ -125,9 +125,9 @@ class _HeaderBar extends StatelessWidget {
             context,
             MaterialPageRoute<void>(
               builder: (context) => AddEditComponentScreen(
-                componentType: componentType,
                 viewModel: AddEditComponentViewModel(
                   inventoryRepository: RepositoryProvider.of(context),
+                  componentType: componentType,
                 ),
               ),
             ),

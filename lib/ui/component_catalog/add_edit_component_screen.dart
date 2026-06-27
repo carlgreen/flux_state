@@ -48,6 +48,7 @@ class AddEditComponentScreen extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
+                if (!formKey.currentState!.validate()) return;
                 viewModel.save(fields?.component, int.parse(quantityCtrl.text));
                 Navigator.pop(context, true);
               },

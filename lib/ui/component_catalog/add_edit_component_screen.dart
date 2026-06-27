@@ -36,15 +36,7 @@ class AddEditComponentScreen extends StatelessWidget {
               controller: quantityCtrl,
               decoration: const InputDecoration(hintText: 'Quantity'),
               keyboardType: TextInputType.number,
-              validator: (v) {
-                if (v == null || v.trim().isEmpty) {
-                  return 'Quantity is required';
-                }
-                if (int.tryParse(v) == null) {
-                  return 'Quantity must be a number';
-                }
-                return null;
-              },
+              validator: (v) => requiredIntValidator('Quantity', v),
             ),
             TextButton(
               onPressed: () {
@@ -96,20 +88,20 @@ class _ResistorFieldsState extends State<_ResistorFields> {
         TextFormField(
           controller: widget.valueCtrl,
           decoration: const InputDecoration(hintText: 'Value'),
-          validator: (v) =>
-              (v == null || v.trim().isEmpty) ? 'Value is required' : null,
+          keyboardType: TextInputType.number,
+          validator: (v) => requiredIntValidator('Value', v),
         ),
         TextFormField(
           controller: widget.powerCtrl,
           decoration: const InputDecoration(hintText: 'Power'),
-          validator: (v) =>
-              (v == null || v.trim().isEmpty) ? 'Power is required' : null,
+          keyboardType: TextInputType.number,
+          validator: (v) => requiredIntValidator('Power', v),
         ),
         TextFormField(
           controller: widget.toleranceCtrl,
           decoration: const InputDecoration(hintText: 'Tolerance'),
-          validator: (v) =>
-              (v == null || v.trim().isEmpty) ? 'Tolerance is required' : null,
+          keyboardType: TextInputType.number,
+          validator: (v) => requiredIntValidator('Tolerance', v),
         ),
       ],
     );
@@ -137,8 +129,24 @@ class _DiodeFieldsState extends State<_DiodeFields> {
     return TextFormField(
       controller: widget.codeCtrl,
       decoration: const InputDecoration(hintText: 'Code'),
-      validator: (v) =>
-          (v == null || v.trim().isEmpty) ? 'Code is required' : null,
+      validator: (v) => requiredValidator('Code', v),
     );
   }
+}
+
+String? requiredValidator(String field, String? v) {
+  if (v == null || v.trim().isEmpty) {
+    return '$field is required';
+  }
+  return null;
+}
+
+String? requiredIntValidator(String field, String? v) {
+  if (v == null || v.trim().isEmpty) {
+    return '$field is required';
+  }
+  if (int.tryParse(v) == null) {
+    return '$field must be a number';
+  }
+  return null;
 }

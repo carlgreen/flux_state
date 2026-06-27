@@ -36,7 +36,7 @@ class AddEditComponentScreen extends StatelessWidget {
               controller: quantityCtrl,
               decoration: const InputDecoration(hintText: 'Quantity'),
               keyboardType: TextInputType.number,
-              validator: (v) => requiredIntValidator('Quantity', v),
+              validator: requiredIntValidator('Quantity'),
             ),
             TextButton(
               onPressed: () {
@@ -89,19 +89,19 @@ class _ResistorFieldsState extends State<_ResistorFields> {
           controller: widget.valueCtrl,
           decoration: const InputDecoration(hintText: 'Value'),
           keyboardType: TextInputType.number,
-          validator: (v) => requiredIntValidator('Value', v),
+          validator: requiredIntValidator('Value'),
         ),
         TextFormField(
           controller: widget.powerCtrl,
           decoration: const InputDecoration(hintText: 'Power'),
           keyboardType: TextInputType.number,
-          validator: (v) => requiredIntValidator('Power', v),
+          validator: requiredIntValidator('Power'),
         ),
         TextFormField(
           controller: widget.toleranceCtrl,
           decoration: const InputDecoration(hintText: 'Tolerance'),
           keyboardType: TextInputType.number,
-          validator: (v) => requiredIntValidator('Tolerance', v),
+          validator: requiredIntValidator('Tolerance'),
         ),
       ],
     );
@@ -129,24 +129,28 @@ class _DiodeFieldsState extends State<_DiodeFields> {
     return TextFormField(
       controller: widget.codeCtrl,
       decoration: const InputDecoration(hintText: 'Code'),
-      validator: (v) => requiredValidator('Code', v),
+      validator: requiredValidator('Code'),
     );
   }
 }
 
-String? requiredValidator(String field, String? v) {
-  if (v == null || v.trim().isEmpty) {
-    return '$field is required';
-  }
-  return null;
+FormFieldValidator<String>? requiredValidator(String field) {
+  return (v) {
+    if (v == null || v.trim().isEmpty) {
+      return '$field is required';
+    }
+    return null;
+  };
 }
 
-String? requiredIntValidator(String field, String? v) {
-  if (v == null || v.trim().isEmpty) {
-    return '$field is required';
-  }
-  if (int.tryParse(v) == null) {
-    return '$field must be a number';
-  }
-  return null;
+FormFieldValidator<String>? requiredIntValidator(String field) {
+  return (v) {
+    if (v == null || v.trim().isEmpty) {
+      return '$field is required';
+    }
+    if (int.tryParse(v) == null) {
+      return '$field must be a number';
+    }
+    return null;
+  };
 }

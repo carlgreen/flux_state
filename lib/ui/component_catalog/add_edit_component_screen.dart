@@ -53,22 +53,12 @@ class AddEditComponentScreen extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                if (!formKey.currentState!.validate()) return;
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      content: Text(
-                        '$_componentType ${fields?.text}: ${quantityCtrl.text}',
-                      ),
-                    );
-                  },
-                );
                 viewModel.save(
                   _componentType,
                   fields?.component,
                   int.parse(quantityCtrl.text),
                 );
+                Navigator.pop(context);
               },
               child: const Text('Save'),
             ),

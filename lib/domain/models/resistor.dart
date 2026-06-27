@@ -1,10 +1,15 @@
 class Resistor {
-  Resistor({required this.value, required this.tolerance, required this.power});
+  Resistor({
+    required this.value,
+    required this.tolerance,
+    required this.power,
+    this.count = 0,
+  });
 
   final String value;
   final String tolerance;
   final String power;
-  int count = 0;
+  int count;
 
   void add() {
     count++;

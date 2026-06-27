@@ -1,8 +1,8 @@
 class Diode {
-  Diode({required this.code});
+  Diode({required this.code, this.count = 0});
 
   final String code;
-  int count = 0;
+  int count;
 
   void add() {
     count++;

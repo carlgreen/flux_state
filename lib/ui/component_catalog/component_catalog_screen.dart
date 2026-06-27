@@ -77,7 +77,10 @@ class _ComponentCatalogDetailScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _HeaderBar(componentType: widget.componentType),
+        _HeaderBar(
+          componentType: widget.componentType,
+          onReturn: () => setState(() {}),
+        ),
         for (final item in model)
           Row(
             children: [
@@ -106,9 +109,10 @@ class _ComponentCatalogDetailScreenState
 }
 
 class _HeaderBar extends StatelessWidget {
-  const _HeaderBar({required this.componentType});
+  const _HeaderBar({required this.componentType, this.onReturn});
 
   final String componentType;
+  final Function? onReturn;
 
   @override
   Widget build(BuildContext context) {
@@ -121,17 +125,22 @@ class _HeaderBar extends StatelessWidget {
           ),
         ),
         TextButton(
-          onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute<void>(
-              builder: (context) => AddEditComponentScreen(
-                viewModel: AddEditComponentViewModel(
-                  inventoryRepository: RepositoryProvider.of(context),
-                  componentType: componentType,
+          onPressed: () =>
+              Navigator.push(
+                context,
+                MaterialPageRoute<bool>(
+                  builder: (context) => AddEditComponentScreen(
+                    viewModel: AddEditComponentViewModel(
+                      inventoryRepository: RepositoryProvider.of(context),
+                      componentType: componentType,
+                    ),
+                  ),
                 ),
+              ).then(
+                (updated) => {
+                  if ((updated ?? false) && onReturn != null) onReturn!(),
+                },
               ),
-            ),
-          ),
           child: const Text('New Part'),
         ),
       ],

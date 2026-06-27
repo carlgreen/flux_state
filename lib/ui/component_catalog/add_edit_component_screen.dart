@@ -49,7 +49,7 @@ class AddEditComponentScreen extends StatelessWidget {
             TextButton(
               onPressed: () {
                 viewModel.save(fields?.component, int.parse(quantityCtrl.text));
-                Navigator.pop(context);
+                Navigator.pop(context, true);
               },
               child: const Text('Save'),
             ),

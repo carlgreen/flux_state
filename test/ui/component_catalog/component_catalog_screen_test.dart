@@ -52,14 +52,13 @@ void main() {
       await loadWidget(tester);
       await tester.pumpAndSettle();
 
-      expect(find.text('thing: 1k 1/4W (5%): 0'), findsOneWidget);
-      expect(find.text('thing: 10k 1/4W (5%): 0'), findsOneWidget);
+      expect(find.text('0'), findsNWidgets(2));
 
       await tester.tap(find.byIcon(Icons.add).last);
       await tester.pumpAndSettle();
 
-      expect(find.text('thing: 1k 1/4W (5%): 0'), findsOneWidget);
-      expect(find.text('thing: 10k 1/4W (5%): 1'), findsOneWidget);
+      expect(find.text('0'), findsOneWidget);
+      expect(find.text('1'), findsOneWidget);
     });
   });
 }

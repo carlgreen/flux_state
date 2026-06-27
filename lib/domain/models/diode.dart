@@ -16,6 +16,10 @@ class Diode {
     }
   }
 
+  String display() {
+    return code;
+  }
+
   @override
   String toString() {
     return '$code: $count';

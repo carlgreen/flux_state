@@ -83,7 +83,7 @@ class _ComponentCatalogDetailScreenState
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text('thing: $item'),
+                child: Text('thing: ${item.display()}'),
               ),
               IconButton(
                 onPressed: () => setState(() {
@@ -91,6 +91,7 @@ class _ComponentCatalogDetailScreenState
                 }),
                 icon: const Icon(Icons.add),
               ),
+              Text('${item.count}'),
               IconButton(
                 onPressed: () => setState(() {
                   item.remove();

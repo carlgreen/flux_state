@@ -18,6 +18,10 @@ class Resistor {
     }
   }
 
+  String display() {
+    return '$value $power ($tolerance)';
+  }
+
   @override
   String toString() {
     return '$value $power ($tolerance): $count';

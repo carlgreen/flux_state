@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flux_state/data/repositories/inventory_repository.dart';
+import 'package:flux_state/domain/models/resistor.dart';
 import 'package:flux_state/ui/component_catalog/component_catalog_screen.dart';
 import 'package:flux_state/ui/component_catalog/component_catalog_viewmodel.dart';
 
@@ -40,26 +41,24 @@ void main() {
       expect(find.text('Diodes'), findsNWidgets(2));
     });
 
-    testWidgets('should add new resistor and increment resistor count', (
-      tester,
-    ) async {
+    testWidgets('should increment resistor count', (tester) async {
+      inventoryRepository.addResistor(
+        Resistor(value: '1k', tolerance: '5%', power: '1/4W'),
+      );
+      inventoryRepository.addResistor(
+        Resistor(value: '10k', tolerance: '5%', power: '1/4W'),
+      );
+
       await loadWidget(tester);
       await tester.pumpAndSettle();
 
-      expect(find.text('Resistors'), findsNWidgets(2));
-      expect(find.textContaining('thing:'), findsNothing);
-
-      // add two resistor types
-      await tester.tap(find.byIcon(Icons.create_new_folder));
-      await tester.tap(find.byIcon(Icons.create_new_folder));
-      await tester.pumpAndSettle();
-
-      expect(find.text('thing: 10k 1/4W (5%): 0'), findsNWidgets(2));
+      expect(find.text('thing: 1k 1/4W (5%): 0'), findsOneWidget);
+      expect(find.text('thing: 10k 1/4W (5%): 0'), findsOneWidget);
 
       await tester.tap(find.byIcon(Icons.add).last);
       await tester.pumpAndSettle();
 
-      expect(find.text('thing: 10k 1/4W (5%): 0'), findsOneWidget);
+      expect(find.text('thing: 1k 1/4W (5%): 0'), findsOneWidget);
       expect(find.text('thing: 10k 1/4W (5%): 1'), findsOneWidget);
     });
   });

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flux_state/ui/component_catalog/add_edit_component_screen.dart';
+import 'package:flux_state/ui/component_catalog/add_edit_component_viewmodel.dart';
 import 'package:flux_state/ui/component_catalog/component_catalog_viewmodel.dart';
 
 class ComponentCatalogScreen extends StatefulWidget {
@@ -74,10 +76,7 @@ class _ComponentCatalogDetailScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          widget.componentType,
-          style: Theme.of(context).textTheme.headlineSmall,
-        ),
+        _HeaderBar(componentType: widget.componentType),
         for (final item in model)
           Row(
             children: [
@@ -99,11 +98,37 @@ class _ComponentCatalogDetailScreenState
               ),
             ],
           ),
-        IconButton(
-          onPressed: () => setState(() {
-            widget.viewModel.add(widget.componentType);
-          }),
-          icon: const Icon(Icons.create_new_folder),
+      ],
+    );
+  }
+}
+
+class _HeaderBar extends StatelessWidget {
+  const _HeaderBar({required this.componentType});
+
+  final String componentType;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            componentType,
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
+        ),
+        TextButton(
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute<void>(
+              builder: (context) => AddEditComponentScreen(
+                componentType: componentType,
+                viewModel: AddEditComponentViewModel(),
+              ),
+            ),
+          ),
+          child: const Text('New Part'),
         ),
       ],
     );

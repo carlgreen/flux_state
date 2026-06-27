@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flux_state/data/repositories/inventory_repository.dart';
 import 'package:flux_state/ui/component_catalog/component_catalog_screen.dart';
 import 'package:flux_state/ui/component_catalog/component_catalog_viewmodel.dart';
+import 'package:flux_state/view_model_provider.dart';
 
 void main() {
   final inventoryRepository = InventoryRepository();
-  runApp(MainApp(inventoryRepository));
+  runApp(
+    RepositoryProvider(
+      inventoryRepository: inventoryRepository,
+      child: MainApp(inventoryRepository),
+    ),
+  );
 }
 
 class MainApp extends StatelessWidget {

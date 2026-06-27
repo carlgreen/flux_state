@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flux_state/ui/component_catalog/add_edit_component_screen.dart';
 import 'package:flux_state/ui/component_catalog/add_edit_component_viewmodel.dart';
 import 'package:flux_state/ui/component_catalog/component_catalog_viewmodel.dart';
+import 'package:flux_state/view_model_provider.dart';
 
 class ComponentCatalogScreen extends StatefulWidget {
   const ComponentCatalogScreen({super.key, required this.viewModel});
@@ -124,7 +125,9 @@ class _HeaderBar extends StatelessWidget {
             MaterialPageRoute<void>(
               builder: (context) => AddEditComponentScreen(
                 componentType: componentType,
-                viewModel: AddEditComponentViewModel(),
+                viewModel: AddEditComponentViewModel(
+                  inventoryRepository: RepositoryProvider.of(context),
+                ),
               ),
             ),
           ),

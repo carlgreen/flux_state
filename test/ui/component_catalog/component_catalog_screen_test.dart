@@ -43,10 +43,10 @@ void main() {
 
     testWidgets('should increment resistor count', (tester) async {
       inventoryRepository.addResistor(
-        Resistor(value: '1k', tolerance: '5%', power: '1/4W'),
+        Resistor(value: 1000, tolerance: 5, power: 250),
       );
       inventoryRepository.addResistor(
-        Resistor(value: '10k', tolerance: '5%', power: '1/4W'),
+        Resistor(value: 10000, tolerance: 5, power: 250),
       );
 
       await loadWidget(tester);

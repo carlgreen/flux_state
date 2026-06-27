@@ -22,6 +22,6 @@ class Diode {
 
   @override
   String toString() {
-    return '$code: $count';
+    return '${display()}: $count';
   }
 }

@@ -16,14 +16,14 @@ void main() {
       expect(viewModel.components('Diodes').isEmpty, true);
 
       inventoryRepository.addResistor(
-        Resistor(value: '10 K', tolerance: '2%', power: '1/4 W'),
+        Resistor(value: 10000, tolerance: 2, power: 250),
       );
 
       expect(viewModel.components('Resistors').length, 1);
       expect(viewModel.components('Diodes').isEmpty, true);
 
       inventoryRepository.addResistor(
-        Resistor(value: '1 K', tolerance: '2%', power: '1/4 W'),
+        Resistor(value: 1000, tolerance: 2, power: 250),
       );
 
       expect(viewModel.components('Resistors').length, 2);

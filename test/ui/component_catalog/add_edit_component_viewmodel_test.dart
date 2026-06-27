@@ -15,10 +15,7 @@ void main() {
 
       expect(inventoryRepository.resistors.isEmpty, true);
 
-      viewModel.save(
-        Resistor(value: '1 K', tolerance: '10 %', power: '1/2 W'),
-        10,
-      );
+      viewModel.save(Resistor(value: 1000, tolerance: 10, power: 500), 10);
 
       expect(inventoryRepository.resistors.length, 1);
       expect(inventoryRepository.resistors.first.count, 10);

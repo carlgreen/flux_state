@@ -78,9 +78,9 @@ class _ResistorFields extends _ComponentFields {
 
   @override
   get component => Resistor(
-    value: valueCtrl.text,
-    tolerance: toleranceCtrl.text,
-    power: powerCtrl.text,
+    value: int.parse(valueCtrl.text),
+    tolerance: int.parse(toleranceCtrl.text),
+    power: int.parse(powerCtrl.text),
   );
 
   @override

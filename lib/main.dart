@@ -9,15 +9,13 @@ void main() {
   runApp(
     RepositoryProvider(
       inventoryRepository: inventoryRepository,
-      child: MainApp(inventoryRepository),
+      child: const MainApp(),
     ),
   );
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp(this.inventoryRepository, {super.key});
-
-  final InventoryRepository inventoryRepository;
+  const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,26 +27,19 @@ class MainApp extends StatelessWidget {
             child: Text('flux_state'),
           ),
         ),
-        body: Center(child: FluxStateApp(inventoryRepository)),
+        body: const Center(child: FluxStateApp()),
       ),
     );
   }
 }
 
-class FluxStateApp extends StatefulWidget {
-  const FluxStateApp(this.inventoryRepository, {super.key});
+class FluxStateApp extends StatelessWidget {
+  const FluxStateApp({super.key});
 
-  final InventoryRepository inventoryRepository;
-
-  @override
-  State<FluxStateApp> createState() => _FluxStateAppState();
-}
-
-class _FluxStateAppState extends State<FluxStateApp> {
   @override
   Widget build(BuildContext context) {
     final ComponentCatalogViewModel viewModel = ComponentCatalogViewModel(
-      inventoryRepository: widget.inventoryRepository,
+      inventoryRepository: RepositoryProvider.of(context),
     );
 
     return ComponentCatalogScreen(viewModel: viewModel);

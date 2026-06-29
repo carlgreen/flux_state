@@ -25,7 +25,7 @@ class AddEditComponentScreen extends StatelessWidget {
           icon: const Icon(Icons.close_rounded, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('New Component'),
+        title: const Text('NEW_COMPONENT'),
       ),
       body: Form(
         key: formKey,

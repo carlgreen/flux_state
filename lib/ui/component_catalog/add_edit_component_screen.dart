@@ -26,6 +26,16 @@ class AddEditComponentScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text('NEW_COMPONENT'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              if (!formKey.currentState!.validate()) return;
+              viewModel.save(fields?.component, int.parse(quantityCtrl.text));
+              Navigator.pop(context, true);
+            },
+            child: const Text('SAVE'),
+          ),
+        ],
       ),
       body: Form(
         key: formKey,
@@ -37,14 +47,6 @@ class AddEditComponentScreen extends StatelessWidget {
               decoration: const InputDecoration(hintText: 'Quantity'),
               keyboardType: TextInputType.number,
               validator: requiredIntValidator('Quantity'),
-            ),
-            TextButton(
-              onPressed: () {
-                if (!formKey.currentState!.validate()) return;
-                viewModel.save(fields?.component, int.parse(quantityCtrl.text));
-                Navigator.pop(context, true);
-              },
-              child: const Text('Save'),
             ),
           ],
         ),

@@ -17,3 +17,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  fonts:
+    - family: Components
+      fonts:
+        - asset: assets/fonts/Components.ttf

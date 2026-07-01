@@ -3,6 +3,7 @@ import 'package:flux_state/repository_provider.dart';
 import 'package:flux_state/ui/component_catalog/add_edit_component_screen.dart';
 import 'package:flux_state/ui/component_catalog/add_edit_component_viewmodel.dart';
 import 'package:flux_state/ui/component_catalog/component_catalog_viewmodel.dart';
+import 'package:flux_state/ui/components_icons.dart';
 
 class ComponentCatalogScreen extends StatefulWidget {
   const ComponentCatalogScreen({super.key, required this.viewModel});
@@ -14,7 +15,10 @@ class ComponentCatalogScreen extends StatefulWidget {
 }
 
 class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
-  final items = ['Resistors', 'Diodes'];
+  final items = [
+    (name: 'Resistors', icon: ComponentIcons.resistor),
+    (name: 'Diodes', icon: ComponentIcons.diode),
+  ];
 
   int _selectedIndex = 0;
 
@@ -34,8 +38,8 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
             destinations: [
               for (final item in items)
                 NavigationRailDestination(
-                  icon: const Icon(Icons.electrical_services_outlined),
-                  label: Text(item),
+                  icon: Icon(item.icon),
+                  label: Text(item.name),
                 ),
             ],
           ),
@@ -43,7 +47,7 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
           Expanded(
             child: _ComponentCatalogDetailScreen(
               viewModel: widget.viewModel,
-              componentType: items[_selectedIndex],
+              componentType: items[_selectedIndex].name,
             ),
           ),
         ],

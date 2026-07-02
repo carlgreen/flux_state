@@ -4,15 +4,15 @@ import 'package:flux_state/domain/models/resistor.dart';
 import 'package:flux_state/ui/component_catalog/add_edit_component_viewmodel.dart';
 
 class AddEditComponentScreen extends StatelessWidget {
-  const AddEditComponentScreen({super.key, required this.viewModel});
+  AddEditComponentScreen({super.key, required this.viewModel});
 
   final AddEditComponentViewModel viewModel;
 
+  final formKey = GlobalKey<FormState>();
+  final quantityCtrl = TextEditingController(text: 0.toString());
+
   @override
   Widget build(BuildContext context) {
-    final formKey = GlobalKey<FormState>();
-    final quantityCtrl = TextEditingController(text: 0.toString());
-
     final fields = switch (viewModel.componentType) {
       'Resistors' => _ResistorFields(),
       'Diodes' => _DiodeFields(),

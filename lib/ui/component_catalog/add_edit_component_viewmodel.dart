@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flux_state/data/repositories/inventory_repository.dart';
+import 'package:flux_state/domain/models/component_category.dart';
 import 'package:flux_state/domain/models/diode.dart';
 import 'package:flux_state/domain/models/resistor.dart';
 
@@ -7,10 +8,14 @@ class AddEditComponentViewModel extends ChangeNotifier {
   AddEditComponentViewModel({
     required this._inventoryRepository,
     required this._componentType,
+    this.initialCategory,
   });
 
   final InventoryRepository _inventoryRepository;
   final String _componentType;
+  final ComponentCategory? initialCategory;
+  late ComponentCategory category =
+      initialCategory ?? ComponentCategory.resistor;
 
   String get componentType => _componentType;
 

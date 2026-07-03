@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flux_state/domain/models/component_category.dart';
 import 'package:flux_state/domain/models/diode.dart';
 import 'package:flux_state/domain/models/resistor.dart';
 import 'package:flux_state/ui/component_catalog/add_edit_component_viewmodel.dart';
+import 'package:flux_state/ui/component_catalog/quantity_stepper.dart';
 
 class AddEditComponentScreen extends StatefulWidget {
   const AddEditComponentScreen({super.key, required this.viewModel});
@@ -13,11 +15,11 @@ class AddEditComponentScreen extends StatefulWidget {
 }
 
 class _AddEditComponentScreenState extends State<AddEditComponentScreen> {
+  int qty = 0;
+
   final formKey = GlobalKey<FormState>();
 
-  final quantityCtrl = TextEditingController(text: 0.toString());
-
-  late _ComponentFields? fields;
+  late _ComponentFields fields;
 
   @override
   void initState() {
@@ -26,16 +28,15 @@ class _AddEditComponentScreenState extends State<AddEditComponentScreen> {
   }
 
   void _updateFields() {
-    fields = switch (widget.viewModel.componentType) {
-      'Resistors' => _ResistorFields(),
-      'Diodes' => _DiodeFields(),
-      _ => null,
+    fields = switch (widget.viewModel.category) {
+      ComponentCategory.resistor => _ResistorFields(),
+      ComponentCategory.diode => _DiodeFields(),
     };
   }
 
   void _save() {
     if (!formKey.currentState!.validate()) return;
-    widget.viewModel.save(fields?.component, int.parse(quantityCtrl.text));
+    widget.viewModel.save(fields.component, qty);
     Navigator.pop(context, true);
   }
 
@@ -52,19 +53,102 @@ class _AddEditComponentScreenState extends State<AddEditComponentScreen> {
       ),
       body: Form(
         key: formKey,
-        child: Column(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 48),
           children: [
-            ?fields,
-            TextFormField(
-              controller: quantityCtrl,
-              decoration: const InputDecoration(hintText: 'Quantity'),
-              keyboardType: TextInputType.number,
-              validator: requiredIntValidator('Quantity'),
+            _CategorySelector(
+              selected: widget.viewModel.category,
+              onChanged: (cat) => setState(() {
+                widget.viewModel.category = cat;
+                _updateFields();
+              }),
             ),
+            Row(
+              children: [
+                const Text('Quantity'),
+                const Spacer(),
+                QuantityStepper(
+                  value: qty,
+                  onChanged: (v) => setState(() => qty = v),
+                ),
+              ],
+            ),
+            fields,
+            _SaveButton(onTap: _save),
           ],
         ),
       ),
     );
+  }
+}
+
+class _CategorySelector extends StatelessWidget {
+  const _CategorySelector({required this.selected, required this.onChanged});
+
+  final ComponentCategory selected;
+  final ValueChanged<ComponentCategory> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: ComponentCategory.values.map((cat) {
+        final sel = cat == selected;
+        return GestureDetector(
+          onTap: () => onChanged(cat),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 120),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: sel
+                  ? cat.color.withValues(alpha: 0.18)
+                  : colors.surfaceContainerHigh,
+              borderRadius: BorderRadius.circular(8),
+              border: sel
+                  ? Border.all(
+                      color: cat.color.withValues(alpha: 0.45),
+                      width: 1,
+                    )
+                  : null,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  cat.icon,
+                  size: 13,
+                  color: sel ? cat.color : colors.onSurfaceVariant,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  cat.singularName.toUpperCase(),
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: sel ? cat.color : colors.onSurfaceVariant,
+                    fontSize: 10,
+                    letterSpacing: 0.06,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class _SaveButton extends StatelessWidget {
+  const _SaveButton({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(onPressed: onTap, child: const Text('SAVE COMPONENT'));
   }
 }
 

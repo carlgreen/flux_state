@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flux_state/data/repositories/inventory_repository.dart';
+import 'package:flux_state/domain/models/diode.dart';
+import 'package:flux_state/domain/models/resistor.dart';
 import 'package:flux_state/ui/component_catalog/add_edit_component_screen.dart';
 import 'package:flux_state/ui/component_catalog/add_edit_component_viewmodel.dart';
+import 'package:flux_state/ui/component_catalog/quantity_stepper.dart';
 
 void main() {
   group('AddEditComponentScreen tests', () {
@@ -76,8 +79,8 @@ void main() {
       await loadWidget(tester);
       await tester.pumpAndSettle();
 
-      final quantityField = find.ancestor(
-        of: find.text('Quantity'),
+      final quantityField = find.descendant(
+        of: find.byType(QuantityStepper),
         matching: find.byType(TextField),
       );
 
@@ -111,6 +114,94 @@ void main() {
 
       expect(find.text('Quantity is required'), findsNothing);
       expect(find.text('Quantity must be a number'), findsNothing);
+    });
+
+    testWidgets('resistor should save correct data', (tester) async {
+      await loadWidget(tester);
+      await tester.pumpAndSettle();
+
+      final valueField = find.ancestor(
+        of: find.text('Value'),
+        matching: find.byType(TextField),
+      );
+      final powerField = find.ancestor(
+        of: find.text('Power'),
+        matching: find.byType(TextField),
+      );
+      final toleranceField = find.ancestor(
+        of: find.text('Tolerance'),
+        matching: find.byType(TextField),
+      );
+      final quantityField = find.descendant(
+        of: find.byType(QuantityStepper),
+        matching: find.byType(TextField),
+      );
+      final incQuantityBtn = find.descendant(
+        of: find.byType(QuantityStepper),
+        matching: find.byIcon(Icons.add_rounded),
+      );
+      final decQuantityBtn = find.descendant(
+        of: find.byType(QuantityStepper),
+        matching: find.byIcon(Icons.remove_rounded),
+      );
+
+      final saveBtn = find.text('SAVE');
+
+      await tester.enterText(valueField, '10');
+      await tester.enterText(powerField, '250');
+      await tester.enterText(toleranceField, '2');
+
+      await tester.enterText(quantityField, '5');
+      await tester.tap(incQuantityBtn);
+      await tester.tap(incQuantityBtn);
+      await tester.tap(decQuantityBtn);
+
+      await tester.tap(saveBtn);
+      await tester.pump();
+
+      expect(inventoryRepository.resistors, [
+        Resistor(value: 10, tolerance: 2, power: 250, count: 6),
+      ]);
+    });
+
+    testWidgets('diode should save correct data', (tester) async {
+      await loadWidget(tester);
+      await tester.pumpAndSettle();
+
+      final diodeButton = find.widgetWithText(AnimatedContainer, "DIODE");
+      await tester.tap(diodeButton);
+      await tester.pump();
+
+      final codeField = find.ancestor(
+        of: find.text('Code'),
+        matching: find.byType(TextField),
+      );
+      final quantityField = find.descendant(
+        of: find.byType(QuantityStepper),
+        matching: find.byType(TextField),
+      );
+      final incQuantityBtn = find.descendant(
+        of: find.byType(QuantityStepper),
+        matching: find.byIcon(Icons.add_rounded),
+      );
+      final decQuantityBtn = find.descendant(
+        of: find.byType(QuantityStepper),
+        matching: find.byIcon(Icons.remove_rounded),
+      );
+
+      final saveBtn = find.text('SAVE');
+
+      await tester.enterText(codeField, '1N34A');
+
+      await tester.enterText(quantityField, '3');
+      await tester.tap(decQuantityBtn);
+      await tester.tap(decQuantityBtn);
+      await tester.tap(incQuantityBtn);
+
+      await tester.tap(saveBtn);
+      await tester.pump();
+
+      expect(inventoryRepository.diodes, [Diode(code: '1N34A', count: 2)]);
     });
   });
 }

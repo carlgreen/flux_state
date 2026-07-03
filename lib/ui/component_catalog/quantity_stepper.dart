@@ -56,9 +56,10 @@ class _QuantityStepperState extends State<QuantityStepper> {
         const SizedBox(width: 8),
         SizedBox(
           width: 72,
-          child: TextField(
+          child: TextFormField(
             controller: _ctrl,
             keyboardType: TextInputType.number,
+            validator: _requiredIntValidator(),
             textAlign: TextAlign.center,
             style: theme.textTheme.titleMedium,
             decoration: const InputDecoration(
@@ -99,4 +100,16 @@ class _StepBtn extends StatelessWidget {
       ),
     );
   }
+}
+
+FormFieldValidator<String>? _requiredIntValidator() {
+  return (v) {
+    if (v == null || v.trim().isEmpty) {
+      return 'Quantity is required';
+    }
+    if (int.tryParse(v) == null) {
+      return 'Quantity must be a number';
+    }
+    return null;
+  };
 }

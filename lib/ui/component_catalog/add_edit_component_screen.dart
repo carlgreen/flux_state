@@ -3,22 +3,34 @@ import 'package:flux_state/domain/models/diode.dart';
 import 'package:flux_state/domain/models/resistor.dart';
 import 'package:flux_state/ui/component_catalog/add_edit_component_viewmodel.dart';
 
-class AddEditComponentScreen extends StatelessWidget {
-  AddEditComponentScreen({super.key, required this.viewModel});
+class AddEditComponentScreen extends StatefulWidget {
+  const AddEditComponentScreen({super.key, required this.viewModel});
 
   final AddEditComponentViewModel viewModel;
 
+  @override
+  State<AddEditComponentScreen> createState() => _AddEditComponentScreenState();
+}
+
+class _AddEditComponentScreenState extends State<AddEditComponentScreen> {
   final formKey = GlobalKey<FormState>();
+
   final quantityCtrl = TextEditingController(text: 0.toString());
 
+  late _ComponentFields? fields;
+
   @override
-  Widget build(BuildContext context) {
-    final fields = switch (viewModel.componentType) {
+  void initState() {
+    super.initState();
+    fields = switch (widget.viewModel.componentType) {
       'Resistors' => _ResistorFields(),
       'Diodes' => _DiodeFields(),
       _ => null,
     };
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -30,7 +42,10 @@ class AddEditComponentScreen extends StatelessWidget {
           TextButton(
             onPressed: () {
               if (!formKey.currentState!.validate()) return;
-              viewModel.save(fields?.component, int.parse(quantityCtrl.text));
+              widget.viewModel.save(
+                fields?.component,
+                int.parse(quantityCtrl.text),
+              );
               Navigator.pop(context, true);
             },
             child: const Text('SAVE'),

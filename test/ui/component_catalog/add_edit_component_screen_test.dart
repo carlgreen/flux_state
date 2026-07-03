@@ -30,21 +30,23 @@ void main() {
         matching: find.byType(TextField),
       );
 
-      await tester.tap(find.text('Save'));
+      final saveBtn = find.text('SAVE');
+
+      await tester.tap(saveBtn);
       await tester.pump();
 
       expect(find.text('$fieldName is required'), findsOneWidget);
 
       await tester.enterText(field, 'a');
 
-      await tester.tap(find.text('Save'));
+      await tester.tap(saveBtn);
       await tester.pump();
 
       expect(find.text('$fieldName must be a number'), findsOneWidget);
 
       await tester.enterText(field, '1');
 
-      await tester.tap(find.text('Save'));
+      await tester.tap(saveBtn);
       await tester.pump();
 
       expect(find.text('$fieldName must be a number'), findsNothing);
@@ -79,7 +81,9 @@ void main() {
         matching: find.byType(TextField),
       );
 
-      await tester.tap(find.text('Save'));
+      final saveBtn = find.text('SAVE');
+
+      await tester.tap(saveBtn);
       await tester.pump();
 
       // its ok first up because it defaults to 0
@@ -88,21 +92,21 @@ void main() {
 
       await tester.enterText(quantityField, '');
 
-      await tester.tap(find.text('Save'));
+      await tester.tap(saveBtn);
       await tester.pump();
 
       expect(find.text('Quantity is required'), findsOneWidget);
 
       await tester.enterText(quantityField, 'a');
 
-      await tester.tap(find.text('Save'));
+      await tester.tap(saveBtn);
       await tester.pump();
 
       expect(find.text('Quantity must be a number'), findsOneWidget);
 
       await tester.enterText(quantityField, '1');
 
-      await tester.tap(find.text('Save'));
+      await tester.tap(saveBtn);
       await tester.pump();
 
       expect(find.text('Quantity is required'), findsNothing);

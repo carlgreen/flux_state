@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flux_state/data/repositories/inventory_repository.dart';
+import 'package:flux_state/domain/models/component_category.dart';
 import 'package:flux_state/domain/models/diode.dart';
 import 'package:flux_state/domain/models/resistor.dart';
 import 'package:flux_state/ui/component_catalog/add_edit_component_screen.dart';
@@ -15,7 +16,7 @@ void main() {
     setUp(() {
       inventoryRepository = InventoryRepository();
       viewModel = AddEditComponentViewModel(
-        componentType: 'Resistors',
+        initialCategory: ComponentCategory.resistor,
         inventoryRepository: inventoryRepository,
       );
     });

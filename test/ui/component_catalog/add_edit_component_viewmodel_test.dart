@@ -9,7 +9,6 @@ void main() {
     test('Create resistor', () {
       final inventoryRepository = InventoryRepository();
       final viewModel = AddEditComponentViewModel(
-        componentType: 'Resistors',
         inventoryRepository: inventoryRepository,
       );
 
@@ -25,7 +24,6 @@ void main() {
     test('Create diode', () {
       final inventoryRepository = InventoryRepository();
       final viewModel = AddEditComponentViewModel(
-        componentType: 'Diodes',
         inventoryRepository: inventoryRepository,
       );
 
@@ -41,7 +39,6 @@ void main() {
     test('Create invalid does nothing', () {
       final inventoryRepository = InventoryRepository();
       final viewModel = AddEditComponentViewModel(
-        componentType: 'xyz',
         inventoryRepository: InventoryRepository(),
       );
 

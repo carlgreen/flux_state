@@ -7,17 +7,13 @@ import 'package:flux_state/domain/models/resistor.dart';
 class AddEditComponentViewModel extends ChangeNotifier {
   AddEditComponentViewModel({
     required this._inventoryRepository,
-    required this._componentType,
     this.initialCategory,
   });
 
   final InventoryRepository _inventoryRepository;
-  final String _componentType;
   final ComponentCategory? initialCategory;
   late ComponentCategory category =
       initialCategory ?? ComponentCategory.resistor;
-
-  String get componentType => _componentType;
 
   void save(dynamic component, int quantity) {
     component.count = quantity;

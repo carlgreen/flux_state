@@ -22,11 +22,21 @@ class _AddEditComponentScreenState extends State<AddEditComponentScreen> {
   @override
   void initState() {
     super.initState();
+    _updateFields();
+  }
+
+  void _updateFields() {
     fields = switch (widget.viewModel.componentType) {
       'Resistors' => _ResistorFields(),
       'Diodes' => _DiodeFields(),
       _ => null,
     };
+  }
+
+  void _save() {
+    if (!formKey.currentState!.validate()) return;
+    widget.viewModel.save(fields?.component, int.parse(quantityCtrl.text));
+    Navigator.pop(context, true);
   }
 
   @override
@@ -38,19 +48,7 @@ class _AddEditComponentScreenState extends State<AddEditComponentScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text('NEW_COMPONENT'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              if (!formKey.currentState!.validate()) return;
-              widget.viewModel.save(
-                fields?.component,
-                int.parse(quantityCtrl.text),
-              );
-              Navigator.pop(context, true);
-            },
-            child: const Text('SAVE'),
-          ),
-        ],
+        actions: [TextButton(onPressed: _save, child: const Text('SAVE'))],
       ),
       body: Form(
         key: formKey,

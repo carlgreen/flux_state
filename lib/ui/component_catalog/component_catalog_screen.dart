@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flux_state/domain/models/component_category.dart';
 import 'package:flux_state/repository_provider.dart';
 import 'package:flux_state/ui/component_catalog/add_edit_component_screen.dart';
 import 'package:flux_state/ui/component_catalog/add_edit_component_viewmodel.dart';
 import 'package:flux_state/ui/component_catalog/component_catalog_viewmodel.dart';
-import 'package:flux_state/ui/components_icons.dart';
 
 class ComponentCatalogScreen extends StatefulWidget {
   const ComponentCatalogScreen({super.key, required this.viewModel});
@@ -15,10 +15,7 @@ class ComponentCatalogScreen extends StatefulWidget {
 }
 
 class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
-  final items = [
-    (name: 'Resistors', icon: ComponentIcons.resistor),
-    (name: 'Diodes', icon: ComponentIcons.diode),
-  ];
+  final items = ComponentCategory.values;
 
   int _selectedIndex = 0;
 
@@ -39,7 +36,7 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
               for (final item in items)
                 NavigationRailDestination(
                   icon: Icon(item.icon),
-                  label: Text(item.name),
+                  label: Text(item.displayName),
                 ),
             ],
           ),
@@ -47,7 +44,7 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
           Expanded(
             child: _ComponentCatalogDetailScreen(
               viewModel: widget.viewModel,
-              componentType: items[_selectedIndex].name,
+              componentType: items[_selectedIndex],
             ),
           ),
         ],
@@ -63,7 +60,7 @@ class _ComponentCatalogDetailScreen extends StatefulWidget {
   });
 
   final ComponentCatalogViewModel viewModel;
-  final String componentType;
+  final ComponentCategory componentType;
 
   @override
   State<_ComponentCatalogDetailScreen> createState() =>
@@ -115,7 +112,7 @@ class _ComponentCatalogDetailScreenState
 class _HeaderBar extends StatelessWidget {
   const _HeaderBar({required this.componentType, this.onReturn});
 
-  final String componentType;
+  final ComponentCategory componentType;
   final Function? onReturn;
 
   @override
@@ -124,7 +121,7 @@ class _HeaderBar extends StatelessWidget {
       children: [
         Expanded(
           child: Text(
-            componentType,
+            componentType.displayName,
             style: Theme.of(context).textTheme.headlineSmall,
           ),
         ),

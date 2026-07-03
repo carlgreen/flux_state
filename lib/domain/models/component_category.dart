@@ -7,6 +7,11 @@ extension ComponentCategoryPresentation on ComponentCategory {
   static const Color accentResistor = Color(0xFFFFB547);
   static const Color accentDiode = Color(0xFF34D399);
 
+  String get displayName => switch (this) {
+    ComponentCategory.resistor => 'Resistors',
+    ComponentCategory.diode => 'Diodes',
+  };
+
   String get singularName => switch (this) {
     ComponentCategory.resistor => 'Resistor',
     ComponentCategory.diode => 'Diode',

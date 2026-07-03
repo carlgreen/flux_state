@@ -148,7 +148,32 @@ class _SaveButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(onPressed: onTap, child: const Text('SAVE COMPONENT'));
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [colors.primary, colors.primaryContainer],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          color: null,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          'SAVE COMPONENT',
+          style: theme.textTheme.labelLarge?.copyWith(
+            color: colors.onPrimaryContainer,
+          ),
+        ),
+      ),
+    );
   }
 }
 

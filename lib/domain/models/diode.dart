@@ -24,4 +24,11 @@ class Diode {
   String toString() {
     return '${display()}: $count';
   }
+
+  @override
+  bool operator ==(Object other) =>
+      other is Diode && code == other.code && count == other.count;
+
+  @override
+  int get hashCode => Object.hash(code, count);
 }

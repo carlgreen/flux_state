@@ -35,6 +35,17 @@ class Resistor {
   String toString() {
     return '${display()}: $count';
   }
+
+  @override
+  bool operator ==(Object other) =>
+      other is Resistor &&
+      value == other.value &&
+      tolerance == other.tolerance &&
+      power == other.power &&
+      count == other.count;
+
+  @override
+  int get hashCode => Object.hash(value, tolerance, power, count);
 }
 
 String formatResistorValue(int value) {

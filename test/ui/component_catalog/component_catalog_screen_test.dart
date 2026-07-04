@@ -28,7 +28,8 @@ void main() {
 
       expect(find.byType(ComponentCatalogScreen), findsOneWidget);
 
-      expect(find.text('Resistors'), findsNWidgets(2));
+      expect(find.text('Resistors'), findsOneWidget);
+      expect(find.text('RESISTORS'), findsOneWidget);
     });
 
     testWidgets('should navigate to diodes', (tester) async {
@@ -38,7 +39,8 @@ void main() {
       await tester.tap(find.text('Diodes'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Diodes'), findsNWidgets(2));
+      expect(find.text('Diodes'), findsOneWidget);
+      expect(find.text('DIODES'), findsOneWidget);
     });
 
     testWidgets('should increment resistor count', (tester) async {

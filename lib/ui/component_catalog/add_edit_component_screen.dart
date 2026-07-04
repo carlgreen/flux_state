@@ -18,10 +18,20 @@ class _AddEditComponentScreenState extends State<AddEditComponentScreen> {
 
   final formKey = GlobalKey<FormState>();
 
-  void _save() {
+  Future<void> _save() async {
     if (!formKey.currentState!.validate()) return;
-    widget.viewModel.save(_attrs, qty);
-    Navigator.pop(context, true);
+
+    try {
+      widget.viewModel.save(_attrs, qty);
+      Navigator.pop(context, true);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Save failed: $e'),
+          backgroundColor: Theme.of(context).colorScheme.errorContainer,
+        ),
+      );
+    }
   }
 
   @override

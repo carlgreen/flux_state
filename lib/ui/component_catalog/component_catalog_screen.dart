@@ -117,12 +117,16 @@ class _HeaderBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final typography = theme.textTheme;
+    final colors = theme.colorScheme;
+
     return Row(
       children: [
         Expanded(
           child: Text(
-            componentType.displayName,
-            style: Theme.of(context).textTheme.headlineSmall,
+            componentType.displayName.toUpperCase(),
+            style: typography.labelLarge?.copyWith(color: colors.primary),
           ),
         ),
         TextButton(
@@ -141,7 +145,10 @@ class _HeaderBar extends StatelessWidget {
                   if ((updated ?? false) && onReturn != null) onReturn!(),
                 },
               ),
-          child: const Text('New Part'),
+          child: Text(
+            'NEW PART',
+            style: typography.labelLarge?.copyWith(color: colors.primary),
+          ),
         ),
       ],
     );

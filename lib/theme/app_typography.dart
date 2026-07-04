@@ -75,4 +75,12 @@ class AppTypography {
     fontWeight: FontWeight.w400,
     color: AppColors.onSurfaceVariant,
   );
+
+  /// Large stock count display.
+  static TextStyle get stockNumber => GoogleFonts.spaceGrotesk(
+    fontSize: 28,
+    fontWeight: FontWeight.w700,
+    letterSpacing: -0.5,
+    color: AppColors.onSurface,
+  );
 }

@@ -227,6 +227,8 @@ class _CategoryGridCell extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
+          const SizedBox(height: 2),
+          Text(category.groupLabel, style: typography.labelSmall),
         ],
       ),
     );

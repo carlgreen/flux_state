@@ -24,4 +24,11 @@ extension ComponentCategoryPresentation on ComponentCategory {
     ComponentCategory.resistor => AppColors.accentResistor,
     ComponentCategory.diode => AppColors.accentDiode,
   };
+
+  bool get isHardware => switch (this) {
+    // nothing yet!
+    _ => false,
+  };
+
+  String get groupLabel => isHardware ? 'HARDWARE' : 'ELECTRONIC';
 }

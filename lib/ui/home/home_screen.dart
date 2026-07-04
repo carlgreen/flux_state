@@ -70,6 +70,28 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12),
+                Expanded(
+                  child: StatsCard(
+                    label: 'Low_Stock',
+                    value: viewModel.stats.lowStockCount.toString(),
+                    icon: Icons.warning_amber_rounded,
+                    valueColor: viewModel.stats.lowStockCount > 0
+                        ? colors.tertiary
+                        : null,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: StatsCard(
+                    label: 'Out_of_Stock',
+                    value: viewModel.stats.outOfStockCount.toString(),
+                    icon: Icons.error_outline_rounded,
+                    valueColor: viewModel.stats.outOfStockCount > 0
+                        ? colors.error
+                        : null,
+                  ),
+                ),
+                const SizedBox(width: 12),
               ],
             ),
           ),

@@ -26,7 +26,7 @@ class HomeScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('LAB_DASHBOARD', style: typography.headlineLarge),
+                Text('LAB_DASHBOARD', style: typography.displayLarge),
                 const SizedBox(height: 20),
                 _NewPartButton(
                   onPressed: () => {
@@ -51,7 +51,7 @@ class HomeScreen extends StatelessWidget {
 
         SliverToBoxAdapter(
           child: Padding(
-            padding: const EdgeInsetsDirectional.symmetric(horizontal: 32),
+            padding: const EdgeInsets.symmetric(horizontal: 32),
             child: Row(
               children: [
                 Expanded(
@@ -91,7 +91,6 @@ class HomeScreen extends StatelessWidget {
                         : null,
                   ),
                 ),
-                const SizedBox(width: 12),
               ],
             ),
           ),
@@ -128,7 +127,7 @@ class HomeScreen extends StatelessWidget {
         ),
 
         SliverPadding(
-          padding: const EdgeInsetsGeometry.fromLTRB(32, 10, 32, 0),
+          padding: const EdgeInsets.fromLTRB(32, 10, 32, 0),
           sliver: SliverGrid(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 4,

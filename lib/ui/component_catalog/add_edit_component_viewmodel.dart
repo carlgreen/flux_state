@@ -15,19 +15,19 @@ class AddEditComponentViewModel extends ChangeNotifier {
   late ComponentCategory category =
       initialCategory ?? ComponentCategory.resistor;
 
-  void save(dynamic component, int quantity) {
-    component.count = quantity;
-
-    switch (component) {
-      case Resistor r:
-        _inventoryRepository.addResistor(r);
-      case Diode d:
-        _inventoryRepository.addDiode(d);
-      default:
-        debugPrint(
-          "unexpected component: $component (${component.runtimeType})",
+  void save(Map<String, dynamic> attrs, int quantity) {
+    switch (category) {
+      case ComponentCategory.resistor:
+        final r = Resistor(
+          value: int.parse(attrs['value']),
+          tolerance: int.parse(attrs['tolerance_pct']),
+          power: int.parse(attrs['power_w']),
+          count: quantity,
         );
-        return;
+        _inventoryRepository.addResistor(r);
+      case ComponentCategory.diode:
+        final d = Diode(code: attrs['code'], count: quantity);
+        _inventoryRepository.addDiode(d);
     }
 
     notifyListeners();

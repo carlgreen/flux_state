@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flux_state/domain/models/component_category.dart';
-import 'package:flux_state/domain/models/diode.dart';
-import 'package:flux_state/domain/models/resistor.dart';
 import 'package:flux_state/ui/component_catalog/add_edit_component_viewmodel.dart';
 import 'package:flux_state/ui/component_catalog/quantity_stepper.dart';
 
@@ -16,27 +14,13 @@ class AddEditComponentScreen extends StatefulWidget {
 
 class _AddEditComponentScreenState extends State<AddEditComponentScreen> {
   int qty = 0;
+  Map<String, dynamic> _attrs = {};
 
   final formKey = GlobalKey<FormState>();
 
-  late _ComponentFields fields;
-
-  @override
-  void initState() {
-    super.initState();
-    _updateFields();
-  }
-
-  void _updateFields() {
-    fields = switch (widget.viewModel.category) {
-      ComponentCategory.resistor => _ResistorFields(),
-      ComponentCategory.diode => _DiodeFields(),
-    };
-  }
-
   void _save() {
     if (!formKey.currentState!.validate()) return;
-    widget.viewModel.save(fields.component, qty);
+    widget.viewModel.save(_attrs, qty);
     Navigator.pop(context, true);
   }
 
@@ -60,7 +44,7 @@ class _AddEditComponentScreenState extends State<AddEditComponentScreen> {
               selected: widget.viewModel.category,
               onChanged: (cat) => setState(() {
                 widget.viewModel.category = cat;
-                _updateFields();
+                _attrs = {};
               }),
             ),
             Row(
@@ -73,7 +57,13 @@ class _AddEditComponentScreenState extends State<AddEditComponentScreen> {
                 ),
               ],
             ),
-            fields,
+            _ComponentAttrForm(
+              // force reinit when category changes
+              key: ValueKey(widget.viewModel.category),
+              category: widget.viewModel.category,
+              initialValues: _attrs,
+              onChanged: (v) => setState(() => _attrs = v),
+            ),
             _SaveButton(onTap: _save),
           ],
         ),
@@ -177,85 +167,119 @@ class _SaveButton extends StatelessWidget {
   }
 }
 
-abstract class _ComponentFields extends StatefulWidget {
-  String get text;
-  dynamic get component;
+class _ComponentAttrForm extends StatefulWidget {
+  const _ComponentAttrForm({
+    super.key,
+    required this.category,
+    required this.initialValues,
+    required this.onChanged,
+  });
+
+  final ComponentCategory category;
+  final Map<String, dynamic> initialValues;
+  final ValueChanged<Map<String, dynamic>> onChanged;
+
+  @override
+  State<_ComponentAttrForm> createState() => _ComponentAttrFormState();
 }
 
-class _ResistorFields extends _ComponentFields {
-  _ResistorFields();
-
-  final valueCtrl = TextEditingController();
-  final powerCtrl = TextEditingController();
-  final toleranceCtrl = TextEditingController();
+class _ComponentAttrFormState extends State<_ComponentAttrForm> {
+  late Map<String, dynamic> _values;
+  final Map<String, TextEditingController> _ctrl = {};
 
   @override
-  String get text =>
-      '${valueCtrl.text} ${powerCtrl.text} (${toleranceCtrl.text})';
-
-  @override
-  get component => Resistor(
-    value: int.parse(valueCtrl.text),
-    tolerance: int.parse(toleranceCtrl.text),
-    power: int.parse(powerCtrl.text),
-  );
-
-  @override
-  State<_ResistorFields> createState() => _ResistorFieldsState();
-}
-
-class _ResistorFieldsState extends State<_ResistorFields> {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TextFormField(
-          controller: widget.valueCtrl,
-          decoration: const InputDecoration(hintText: 'Value'),
-          keyboardType: TextInputType.number,
-          validator: requiredIntValidator('Value'),
-        ),
-        TextFormField(
-          controller: widget.powerCtrl,
-          decoration: const InputDecoration(hintText: 'Power'),
-          keyboardType: TextInputType.number,
-          validator: requiredIntValidator('Power'),
-        ),
-        TextFormField(
-          controller: widget.toleranceCtrl,
-          decoration: const InputDecoration(hintText: 'Tolerance'),
-          keyboardType: TextInputType.number,
-          validator: requiredIntValidator('Tolerance'),
-        ),
-      ],
-    );
+  void initState() {
+    super.initState();
+    _values = Map.from(widget.initialValues);
+    _initControllers();
   }
-}
 
-class _DiodeFields extends _ComponentFields {
-  _DiodeFields();
+  void _initControllers() {
+    for (final f in _forCategory(widget.category)) {
+      _ctrl[f.key] = TextEditingController(
+        text: _values[f.key]?.toString() ?? '',
+      );
+    }
+  }
 
-  final codeCtrl = TextEditingController();
+  void _update(String key, dynamic value) {
+    setState(() => _values[key] = value);
+    widget.onChanged(Map<String, dynamic>.from(_values));
+  }
 
   @override
-  String get text => codeCtrl.text;
+  void dispose() {
+    _disposeControllers();
+    super.dispose();
+  }
 
-  @override
-  get component => Diode(code: codeCtrl.text);
+  void _disposeControllers() {
+    for (final c in _ctrl.values) {
+      c.dispose();
+    }
+    _ctrl.clear();
+  }
 
-  @override
-  State<_DiodeFields> createState() => _DiodeFieldsState();
-}
-
-class _DiodeFieldsState extends State<_DiodeFields> {
   @override
   Widget build(BuildContext context) {
+    final fields = _forCategory(widget.category);
+    if (fields.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(children: fields.map((f) => _textField(f)).toList());
+  }
+
+  Widget _textField(_AttributeField field) {
     return TextFormField(
-      controller: widget.codeCtrl,
-      decoration: const InputDecoration(hintText: 'Code'),
-      validator: requiredValidator('Code'),
+      controller: _ctrl[field.key],
+      decoration: InputDecoration(hintText: field.label),
+      keyboardType: TextInputType.number,
+      onChanged: (v) => _update(field.key, v),
+      validator: (field.type == _AttributeFieldType.number
+          ? requiredIntValidator
+          : requiredValidator)(field.label),
     );
   }
+}
+
+enum _AttributeFieldType { text, number }
+
+class _AttributeField {
+  final String key;
+  final String label;
+  final _AttributeFieldType type;
+
+  _AttributeField({required this.key, required this.label, required this.type});
+}
+
+List<_AttributeField> _forCategory(ComponentCategory category) {
+  return switch (category) {
+    ComponentCategory.resistor => [
+      _AttributeField(
+        key: 'value',
+        label: 'Value',
+        type: _AttributeFieldType.number,
+      ),
+      _AttributeField(
+        key: 'tolerance_pct',
+        label: 'Tolerance',
+        type: _AttributeFieldType.number,
+      ),
+      _AttributeField(
+        key: 'power_w',
+        label: 'Power',
+        type: _AttributeFieldType.number,
+      ),
+    ],
+    ComponentCategory.diode => [
+      _AttributeField(
+        key: 'code',
+        label: 'Code',
+        type: _AttributeFieldType.text,
+      ),
+    ],
+  };
 }
 
 FormFieldValidator<String>? requiredValidator(String field) {

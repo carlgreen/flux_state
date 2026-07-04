@@ -26,6 +26,10 @@ class _AddEditComponentScreenState extends State<AddEditComponentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final typography = theme.textTheme;
+    final colors = theme.colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -40,6 +44,8 @@ class _AddEditComponentScreenState extends State<AddEditComponentScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 48),
           children: [
+            const _Label('CATEGORY'),
+            const SizedBox(height: 10),
             _CategorySelector(
               selected: widget.viewModel.category,
               onChanged: (cat) => setState(() {
@@ -47,16 +53,11 @@ class _AddEditComponentScreenState extends State<AddEditComponentScreen> {
                 _attrs = {};
               }),
             ),
-            Row(
-              children: [
-                const Text('Quantity'),
-                const Spacer(),
-                QuantityStepper(
-                  value: qty,
-                  onChanged: (v) => setState(() => qty = v),
-                ),
-              ],
-            ),
+            const SizedBox(height: 28),
+
+            const _Label('SPECIFICATIONS'),
+            const SizedBox(height: 12),
+            // fields,
             _ComponentAttrForm(
               // force reinit when category changes
               key: ValueKey(widget.viewModel.category),
@@ -64,6 +65,34 @@ class _AddEditComponentScreenState extends State<AddEditComponentScreen> {
               initialValues: _attrs,
               onChanged: (v) => setState(() => _attrs = v),
             ),
+
+            const _Label('DETAILS'),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(
+                color: colors.surfaceContainerLow,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    'Quantity',
+                    style: typography.bodySmall?.copyWith(
+                      color: colors.onSurfaceVariant,
+                    ),
+                  ),
+                  const Spacer(),
+                  QuantityStepper(
+                    value: qty,
+                    onChanged: (v) => setState(() => qty = v),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 28),
+
+            const SizedBox(height: 20),
             _SaveButton(onTap: _save),
           ],
         ),
@@ -167,6 +196,25 @@ class _SaveButton extends StatelessWidget {
   }
 }
 
+class _Label extends StatelessWidget {
+  const _Label(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Text(
+      text,
+      style: theme.textTheme.labelSmall?.copyWith(
+        letterSpacing: 0.12,
+        color: theme.colorScheme.onSurfaceVariant,
+      ),
+    );
+  }
+}
+
 class _ComponentAttrForm extends StatefulWidget {
   const _ComponentAttrForm({
     super.key,
@@ -227,7 +275,17 @@ class _ComponentAttrFormState extends State<_ComponentAttrForm> {
       return const SizedBox.shrink();
     }
 
-    return Column(children: fields.map((f) => _textField(f)).toList());
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: fields
+          .map(
+            (f) => Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: _textField(f),
+            ),
+          )
+          .toList(),
+    );
   }
 
   Widget _textField(_AttributeField field) {

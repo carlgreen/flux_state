@@ -4,6 +4,8 @@ import 'package:flux_state/repository_provider.dart';
 import 'package:flux_state/theme/app_colors.dart';
 import 'package:flux_state/ui/component_catalog/add_edit_component_screen.dart';
 import 'package:flux_state/ui/component_catalog/add_edit_component_viewmodel.dart';
+import 'package:flux_state/ui/component_catalog/component_catalog_screen.dart';
+import 'package:flux_state/ui/component_catalog/component_catalog_viewmodel.dart';
 import 'package:flux_state/ui/home/home_viewmodel.dart';
 import 'package:flux_state/ui/home/stats_card.dart';
 
@@ -111,8 +113,17 @@ class HomeScreen extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () => {
-                    // TODO navigate to components screen
-                    debugPrint('navigate to components screen'),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<bool>(
+                        builder: (context) => ComponentCatalogScreen(
+                          viewModel: ComponentCatalogViewModel(
+                            inventoryRepository: RepositoryProvider.of(context),
+                            //   initialCategory: null,
+                          ),
+                        ),
+                      ),
+                    ),
                   },
                   child: Text(
                     'VIEW ALL',
@@ -140,6 +151,20 @@ class HomeScreen extends StatelessWidget {
               return _CategoryGridCell(
                 category: cat,
                 count: viewModel.stats.countByCategory[cat] ?? 0,
+                onTap: () => {
+                  // TODO pass category
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<bool>(
+                      builder: (context) => ComponentCatalogScreen(
+                        viewModel: ComponentCatalogViewModel(
+                          inventoryRepository: RepositoryProvider.of(context),
+                          //   initialCategory: null,
+                        ),
+                      ),
+                    ),
+                  ),
+                },
               );
             }, childCount: ComponentCategory.values.length),
           ),
@@ -187,10 +212,15 @@ class _NewPartButton extends StatelessWidget {
 }
 
 class _CategoryGridCell extends StatelessWidget {
-  const _CategoryGridCell({required this.category, required this.count});
+  const _CategoryGridCell({
+    required this.category,
+    required this.count,
+    this.onTap,
+  });
 
   final ComponentCategory category;
   final int count;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -198,37 +228,40 @@ class _CategoryGridCell extends StatelessWidget {
     final typography = theme.textTheme;
     final colors = theme.colorScheme;
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: colors.surfaceContainerHigh,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(category.icon, color: category.color, size: 22),
-              Text(
-                count.toString(),
-                style: typography.labelLarge?.copyWith(
-                  color: colors.onSurfaceVariant,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: colors.surfaceContainerHigh,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(category.icon, color: category.color, size: 22),
+                Text(
+                  count.toString(),
+                  style: typography.labelLarge?.copyWith(
+                    color: colors.onSurfaceVariant,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const Spacer(),
-          Text(
-            category.displayName.toUpperCase(),
-            style: typography.labelMedium,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 2),
-          Text(category.groupLabel, style: typography.labelSmall),
-        ],
+              ],
+            ),
+            const Spacer(),
+            Text(
+              category.displayName.toUpperCase(),
+              style: typography.labelMedium,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 2),
+            Text(category.groupLabel, style: typography.labelSmall),
+          ],
+        ),
       ),
     );
   }

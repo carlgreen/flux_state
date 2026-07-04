@@ -46,8 +46,19 @@ class _AddEditComponentScreenState extends State<AddEditComponentScreen> {
           icon: const Icon(Icons.close_rounded, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('NEW_COMPONENT'),
-        actions: [TextButton(onPressed: _save, child: const Text('SAVE'))],
+        title: Text(
+          'NEW_COMPONENT',
+          style: typography.labelLarge?.copyWith(color: colors.primary),
+        ),
+        actions: [
+          TextButton(
+            onPressed: _save,
+            child: Text(
+              'SAVE',
+              style: typography.labelLarge?.copyWith(color: colors.primary),
+            ),
+          ),
+        ],
       ),
       body: Form(
         key: formKey,

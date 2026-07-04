@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flux_state/data/repositories/inventory_repository.dart';
 import 'package:flux_state/repository_provider.dart';
+import 'package:flux_state/theme/app_theme.dart';
 import 'package:flux_state/ui/component_catalog/component_catalog_screen.dart';
 import 'package:flux_state/ui/component_catalog/component_catalog_viewmodel.dart';
 
@@ -20,6 +21,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: AppTheme.darkTheme,
       home: Scaffold(
         appBar: AppBar(
           title: const Align(

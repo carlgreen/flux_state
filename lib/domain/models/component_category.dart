@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flux_state/theme/app_colors.dart';
 import 'package:flux_state/ui/components_icons.dart';
 
 enum ComponentCategory { resistor, diode }
 
 extension ComponentCategoryPresentation on ComponentCategory {
-  static const Color accentResistor = Color(0xFFFFB547);
-  static const Color accentDiode = Color(0xFF34D399);
-
   String get displayName => switch (this) {
     ComponentCategory.resistor => 'Resistors',
     ComponentCategory.diode => 'Diodes',
@@ -23,7 +21,7 @@ extension ComponentCategoryPresentation on ComponentCategory {
   };
 
   Color get color => switch (this) {
-    ComponentCategory.resistor => accentResistor,
-    ComponentCategory.diode => accentDiode,
+    ComponentCategory.resistor => AppColors.accentResistor,
+    ComponentCategory.diode => AppColors.accentDiode,
   };
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flux_state/domain/models/component_category.dart';
+import 'package:flux_state/theme/app_colors.dart';
 import 'package:flux_state/ui/component_catalog/add_edit_component_viewmodel.dart';
 import 'package:flux_state/ui/component_catalog/quantity_stepper.dart';
 
@@ -215,13 +216,7 @@ class _SaveButton extends StatelessWidget {
         duration: const Duration(milliseconds: 150),
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          gradient: saving
-              ? null
-              : LinearGradient(
-                  colors: [colors.primary, colors.primaryContainer],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+          gradient: saving ? null : AppColors.primaryGradient,
           color: saving ? colors.surfaceContainerHigh : null,
           borderRadius: BorderRadius.circular(12),
         ),

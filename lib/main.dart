@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flux_state/data/repositories/inventory_repository.dart';
 import 'package:flux_state/repository_provider.dart';
 import 'package:flux_state/theme/app_theme.dart';
-import 'package:flux_state/ui/component_catalog/component_catalog_screen.dart';
-import 'package:flux_state/ui/component_catalog/component_catalog_viewmodel.dart';
+import 'package:flux_state/ui/home/home_screen.dart';
+import 'package:flux_state/ui/home/home_viewmodel.dart';
 
 void main() {
   final inventoryRepository = InventoryRepository();
@@ -40,10 +40,10 @@ class FluxStateApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ComponentCatalogViewModel viewModel = ComponentCatalogViewModel(
+    final HomeViewModel viewModel = HomeViewModel(
       inventoryRepository: RepositoryProvider.of(context),
     );
 
-    return ComponentCatalogScreen(viewModel: viewModel);
+    return HomeScreen(viewModel: viewModel);
   }
 }

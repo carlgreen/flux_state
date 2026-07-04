@@ -15,7 +15,7 @@ class AddEditComponentViewModel extends ChangeNotifier {
   late ComponentCategory category =
       initialCategory ?? ComponentCategory.resistor;
 
-  void save(Map<String, dynamic> attrs, int quantity) {
+  Future<void> save(Map<String, dynamic> attrs, int quantity) async {
     switch (category) {
       case ComponentCategory.resistor:
         final r = Resistor(

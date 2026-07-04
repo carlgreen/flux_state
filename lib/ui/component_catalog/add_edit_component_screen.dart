@@ -13,24 +13,30 @@ class AddEditComponentScreen extends StatefulWidget {
 }
 
 class _AddEditComponentScreenState extends State<AddEditComponentScreen> {
+  final formKey = GlobalKey<FormState>();
+
   int qty = 0;
   Map<String, dynamic> _attrs = {};
 
-  final formKey = GlobalKey<FormState>();
+  bool _isSaving = false;
 
   Future<void> _save() async {
     if (!formKey.currentState!.validate()) return;
+    setState(() => _isSaving = true);
 
     try {
-      widget.viewModel.save(_attrs, qty);
-      Navigator.pop(context, true);
+      await widget.viewModel.save(_attrs, qty);
+      if (mounted) Navigator.pop(context, true);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Save failed: $e'),
-          backgroundColor: Theme.of(context).colorScheme.errorContainer,
-        ),
-      );
+      if (mounted) {
+        setState(() => _isSaving = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Save failed: $e'),
+            backgroundColor: Theme.of(context).colorScheme.errorContainer,
+          ),
+        );
+      }
     }
   }
 
@@ -51,13 +57,25 @@ class _AddEditComponentScreenState extends State<AddEditComponentScreen> {
           style: typography.labelLarge?.copyWith(color: colors.primary),
         ),
         actions: [
-          TextButton(
-            onPressed: _save,
-            child: Text(
-              'SAVE',
-              style: typography.labelLarge?.copyWith(color: colors.primary),
+          if (_isSaving)
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Center(
+                child: SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              ),
+            )
+          else
+            TextButton(
+              onPressed: _save,
+              child: Text(
+                'SAVE',
+                style: typography.labelLarge?.copyWith(color: colors.primary),
+              ),
             ),
-          ),
         ],
       ),
       body: Form(
@@ -114,7 +132,7 @@ class _AddEditComponentScreenState extends State<AddEditComponentScreen> {
             const SizedBox(height: 28),
 
             const SizedBox(height: 20),
-            _SaveButton(onTap: _save),
+            _SaveButton(saving: _isSaving, onTap: _save),
           ],
         ),
       ),
@@ -182,8 +200,8 @@ class _CategorySelector extends StatelessWidget {
 }
 
 class _SaveButton extends StatelessWidget {
-  const _SaveButton({required this.onTap});
-
+  const _SaveButton({required this.saving, required this.onTap});
+  final bool saving;
   final VoidCallback onTap;
 
   @override
@@ -192,26 +210,37 @@ class _SaveButton extends StatelessWidget {
     final colors = theme.colorScheme;
 
     return GestureDetector(
-      onTap: onTap,
+      onTap: saving ? null : onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [colors.primary, colors.primaryContainer],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          color: null,
+          gradient: saving
+              ? null
+              : LinearGradient(
+                  colors: [colors.primary, colors.primaryContainer],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+          color: saving ? colors.surfaceContainerHigh : null,
           borderRadius: BorderRadius.circular(12),
         ),
         alignment: Alignment.center,
-        child: Text(
-          'SAVE COMPONENT',
-          style: theme.textTheme.labelLarge?.copyWith(
-            color: colors.onPrimaryContainer,
-          ),
-        ),
+        child: saving
+            ? SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: colors.onPrimaryContainer,
+                ),
+              )
+            : Text(
+                'SAVE COMPONENT',
+                style: theme.textTheme.labelLarge?.copyWith(
+                  color: colors.onPrimaryContainer,
+                ),
+              ),
       ),
     );
   }

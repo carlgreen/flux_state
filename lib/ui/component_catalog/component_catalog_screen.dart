@@ -79,9 +79,7 @@ class _ComponentCatalogDetailScreenState
     extends State<_ComponentCatalogDetailScreen> {
   @override
   Widget build(BuildContext context) {
-    final Iterable<dynamic> model = widget.viewModel.components(
-      widget.componentType,
-    );
+    final model = widget.viewModel.components(widget.componentType);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,7 +101,7 @@ class _ComponentCatalogDetailScreenState
                 }),
                 icon: const Icon(Icons.add),
               ),
-              Text('${item.count}'),
+              Text('${item.quantity}'),
               IconButton(
                 onPressed: () => setState(() {
                   item.remove();

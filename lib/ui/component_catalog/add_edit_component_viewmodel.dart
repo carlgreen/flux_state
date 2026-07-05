@@ -26,7 +26,7 @@ class AddEditComponentViewModel extends ChangeNotifier {
         );
         _inventoryRepository.addResistor(r);
       case ComponentCategory.diode:
-        final d = Diode(code: attrs['code'], count: quantity);
+        final d = Diode(code: attrs['code'], quantity: quantity);
         _inventoryRepository.addDiode(d);
     }
 

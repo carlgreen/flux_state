@@ -20,7 +20,7 @@ void main() {
       }, 10);
 
       expect(inventoryRepository.resistors.length, 1);
-      expect(inventoryRepository.resistors.first.count, 10);
+      expect(inventoryRepository.resistors.first.quantity, 10);
       expect(inventoryRepository.diodes.isEmpty, true);
     });
 
@@ -37,7 +37,7 @@ void main() {
       viewModel.save(<String, dynamic>{'code': '1n34A'}, 5);
 
       expect(inventoryRepository.diodes.length, 1);
-      expect(inventoryRepository.diodes.first.count, 5);
+      expect(inventoryRepository.diodes.first.quantity, 5);
       expect(inventoryRepository.resistors.isEmpty, true);
     });
   });

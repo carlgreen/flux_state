@@ -1,5 +1,5 @@
-import 'package:flux_state/app_constants.dart';
 import 'package:flux_state/data/repositories/inventory_repository.dart';
+import 'package:flux_state/domain/models/component.dart';
 import 'package:flux_state/domain/models/component_category.dart';
 
 class HomeViewModel {
@@ -9,31 +9,10 @@ class HomeViewModel {
 
   DashboardStats get stats {
     final List<Component> components = List.empty(growable: true);
-    final resistors = _inventoryRepository.resistors.map(
-      (r) => Component(category: ComponentCategory.resistor, quantity: r.count),
-    );
-    components.addAll(resistors);
-    final diodes = _inventoryRepository.diodes.map(
-      (d) => Component(category: ComponentCategory.diode, quantity: d.count),
-    );
-    components.addAll(diodes);
+    components.addAll(_inventoryRepository.resistors);
+    components.addAll(_inventoryRepository.diodes);
 
     return DashboardStats.fromComponents(components);
-  }
-}
-
-enum StockStatus { inStock, lowStock, outOfStock }
-
-class Component {
-  final ComponentCategory category;
-  final int quantity;
-
-  const Component({required this.category, required this.quantity});
-
-  StockStatus get stockStatus {
-    if (quantity <= 0) return StockStatus.outOfStock;
-    if (quantity <= AppConstants.lowStockThreshold) return StockStatus.lowStock;
-    return StockStatus.inStock;
   }
 }
 

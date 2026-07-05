@@ -202,7 +202,7 @@ void main() {
       await tester.tap(saveBtn);
       await tester.pump();
 
-      expect(inventoryRepository.diodes, [Diode(code: '1N34A', count: 2)]);
+      expect(inventoryRepository.diodes, [Diode(code: '1N34A', quantity: 2)]);
     });
   });
 }

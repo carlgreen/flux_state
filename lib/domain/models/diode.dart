@@ -1,34 +1,26 @@
-class Diode {
-  Diode({required this.code, this.count = 0});
+import 'component.dart';
+import 'component_category.dart';
+
+class Diode extends Component {
+  Diode({required this.code, super.quantity = 0})
+    : super(category: ComponentCategory.diode);
 
   final String code;
-  int count;
 
-  void add() {
-    count++;
-  }
-
-  void remove() {
-    count--;
-
-    if (count < 0) {
-      count = 0;
-    }
-  }
-
+  @override
   String display() {
     return code;
   }
 
   @override
   String toString() {
-    return '${display()}: $count';
+    return '${display()}: $quantity';
   }
 
   @override
   bool operator ==(Object other) =>
-      other is Diode && code == other.code && count == other.count;
+      other is Diode && code == other.code && quantity == other.quantity;
 
   @override
-  int get hashCode => Object.hash(code, count);
+  int get hashCode => Object.hash(code, quantity);
 }

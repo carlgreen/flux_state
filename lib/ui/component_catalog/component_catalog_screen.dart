@@ -21,33 +21,41 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Row(
-        children: [
-          NavigationRail(
-            selectedIndex: _selectedIndex,
-            onDestinationSelected: (int index) {
-              setState(() {
-                _selectedIndex = index;
-              });
-            },
-            labelType: NavigationRailLabelType.all,
-            destinations: [
-              for (final item in items)
-                NavigationRailDestination(
-                  icon: Icon(item.icon),
-                  label: Text(item.displayName),
-                ),
-            ],
-          ),
-          const VerticalDivider(thickness: 1, width: 1),
-          Expanded(
-            child: _ComponentCatalogDetailScreen(
-              viewModel: widget.viewModel,
-              componentType: items[_selectedIndex],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Align(
+          alignment: Alignment.centerLeft,
+          child: Text('flux_state'),
+        ),
+      ),
+      body: SafeArea(
+        child: Row(
+          children: [
+            NavigationRail(
+              selectedIndex: _selectedIndex,
+              onDestinationSelected: (int index) {
+                setState(() {
+                  _selectedIndex = index;
+                });
+              },
+              labelType: NavigationRailLabelType.all,
+              destinations: [
+                for (final item in items)
+                  NavigationRailDestination(
+                    icon: Icon(item.icon),
+                    label: Text(item.displayName),
+                  ),
+              ],
             ),
-          ),
-        ],
+            const VerticalDivider(thickness: 1, width: 1),
+            Expanded(
+              child: _ComponentCatalogDetailScreen(
+                viewModel: widget.viewModel,
+                componentType: items[_selectedIndex],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -71,9 +79,7 @@ class _ComponentCatalogDetailScreenState
     extends State<_ComponentCatalogDetailScreen> {
   @override
   Widget build(BuildContext context) {
-    final Iterable<dynamic> model = widget.viewModel.components(
-      widget.componentType,
-    );
+    final model = widget.viewModel.components(widget.componentType);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,7 +101,7 @@ class _ComponentCatalogDetailScreenState
                 }),
                 icon: const Icon(Icons.add),
               ),
-              Text('${item.count}'),
+              Text('${item.quantity}'),
               IconButton(
                 onPressed: () => setState(() {
                   item.remove();

@@ -1,39 +1,30 @@
-class Resistor {
+import 'component.dart';
+import 'component_category.dart';
+
+class Resistor extends Component {
   Resistor({
     required this.value,
     required this.tolerance,
     required this.power,
-    this.count = 0,
-  });
+    count = 0,
+  }) : super(category: ComponentCategory.resistor, quantity: count);
 
   final int value;
   final int tolerance;
   final int power;
-  int count;
-
-  void add() {
-    count++;
-  }
-
-  void remove() {
-    count--;
-
-    if (count < 0) {
-      count = 0;
-    }
-  }
 
   String get valueString => formatResistorValue(value);
   String get powerString => formatResistorPowerRating(power);
   String get toleranceString => formatResistorTolerance(tolerance);
 
+  @override
   String display() {
     return '$valueString $powerString ($toleranceString)';
   }
 
   @override
   String toString() {
-    return '${display()}: $count';
+    return '${display()}: $quantity';
   }
 
   @override
@@ -42,10 +33,10 @@ class Resistor {
       value == other.value &&
       tolerance == other.tolerance &&
       power == other.power &&
-      count == other.count;
+      quantity == other.quantity;
 
   @override
-  int get hashCode => Object.hash(value, tolerance, power, count);
+  int get hashCode => Object.hash(value, tolerance, power, quantity);
 }
 
 String formatResistorValue(int value) {

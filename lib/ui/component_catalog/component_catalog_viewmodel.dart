@@ -19,4 +19,11 @@ class ComponentCatalogViewModel extends ChangeNotifier {
       ComponentCategory.diode => _inventoryRepository.diodes,
     };
   }
+
+  Iterable<Component> all() {
+    final all = <Component>[];
+    all.addAll(_inventoryRepository.resistors);
+    all.addAll(_inventoryRepository.diodes);
+    return all;
+  }
 }

@@ -38,6 +38,12 @@ class AppColors {
     end: Alignment.bottomRight,
   );
 
+  static const LinearGradient cardHeroGradient = LinearGradient(
+    colors: [surfaceContainerLow, surfaceContainerHigh],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
+
   static const Color accentResistor = Color(0xFFFFB547);
   static const Color accentDiode = Color(0xFF34D399);
 }

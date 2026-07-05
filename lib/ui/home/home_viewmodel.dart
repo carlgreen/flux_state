@@ -14,7 +14,7 @@ class HomeViewModel {
     );
     components.addAll(resistors);
     final diodes = _inventoryRepository.diodes.map(
-      (r) => Component(category: ComponentCategory.diode, quantity: r.count),
+      (d) => Component(category: ComponentCategory.diode, quantity: d.count),
     );
     components.addAll(diodes);
 

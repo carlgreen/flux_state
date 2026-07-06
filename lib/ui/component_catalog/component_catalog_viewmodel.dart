@@ -6,9 +6,13 @@ import 'package:flux_state/domain/models/diode.dart';
 import 'package:flux_state/domain/models/resistor.dart';
 
 class ComponentCatalogViewModel extends ChangeNotifier {
-  ComponentCatalogViewModel({required this._inventoryRepository});
+  ComponentCatalogViewModel({
+    required this._inventoryRepository,
+    this.initialCategory,
+  });
 
   final InventoryRepository _inventoryRepository;
+  final ComponentCategory? initialCategory;
 
   Iterable<Resistor> get resistors => _inventoryRepository.resistors;
   Iterable<Diode> get diodes => _inventoryRepository.diodes;

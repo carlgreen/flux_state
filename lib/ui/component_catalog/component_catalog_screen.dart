@@ -18,7 +18,7 @@ class ComponentCatalogScreen extends StatefulWidget {
 }
 
 class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
-  ComponentCategory? _selectedCat;
+  late ComponentCategory? _selectedCat = widget.viewModel.initialCategory;
   final _searchCtrl = TextEditingController();
   String _searchQ = '';
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flux_state/data/repositories/inventory_repository.dart';
+import 'package:flux_state/domain/models/component_category.dart';
 import 'package:flux_state/domain/models/diode.dart';
 import 'package:flux_state/domain/models/resistor.dart';
 import 'package:flux_state/ui/component_catalog/component_catalog_screen.dart';
@@ -106,6 +107,35 @@ void main() {
 
       expect(find.text('RESISTOR'), findsOneWidget);
       expect(find.text('DIODE'), findsOneWidget);
+    });
+  });
+
+  group('ComponentCatalogScreen with initial category', () {
+    late ComponentCatalogViewModel viewModel;
+    late InventoryRepository inventoryRepository;
+
+    setUp(() {
+      inventoryRepository = InventoryRepository()
+        ..addResistor(Resistor(value: 1000, tolerance: 2, power: 250))
+        ..addDiode(Diode(code: '1N34A'));
+      viewModel = ComponentCatalogViewModel(
+        inventoryRepository: inventoryRepository,
+        initialCategory: ComponentCategory.diode,
+      );
+    });
+
+    Future<void> loadWidget(WidgetTester tester) async {
+      await testApp(tester, ComponentCatalogScreen(viewModel: viewModel));
+    }
+
+    testWidgets('should start on the initial category', (tester) async {
+      await loadWidget(tester);
+      await tester.pumpAndSettle();
+
+      expect(find.text('DIODE'), findsOneWidget);
+      expect(find.text('1N34A'), findsOneWidget);
+
+      expect(find.text('RESISTOR'), findsNothing);
     });
   });
 }

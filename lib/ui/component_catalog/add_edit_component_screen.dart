@@ -97,7 +97,6 @@ class _AddEditComponentScreenState extends State<AddEditComponentScreen> {
 
             const _Label('SPECIFICATIONS'),
             const SizedBox(height: 12),
-            // fields,
             _ComponentAttrForm(
               // force reinit when category changes
               key: ValueKey(widget.viewModel.category),

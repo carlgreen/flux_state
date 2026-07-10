@@ -161,7 +161,7 @@ void main() {
       await tester.pump();
 
       expect(inventoryRepository.resistors, [
-        Resistor(value: 10, tolerance: 2, power: 250, count: 6),
+        Resistor(value: 10, tolerance: 2, power: 250, quantity: 6),
       ]);
     });
 

@@ -22,7 +22,7 @@ class AddEditComponentViewModel extends ChangeNotifier {
           value: int.parse(attrs['value']),
           tolerance: int.parse(attrs['tolerance_pct']),
           power: int.parse(attrs['power_w']),
-          count: quantity,
+          quantity: quantity,
         );
         _inventoryRepository.addResistor(r);
       case ComponentCategory.diode:

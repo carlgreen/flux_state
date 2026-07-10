@@ -6,8 +6,8 @@ class Resistor extends Component {
     required this.value,
     required this.tolerance,
     required this.power,
-    count = 0,
-  }) : super(category: ComponentCategory.resistor, quantity: count);
+    super.quantity = 0,
+  }) : super(category: ComponentCategory.resistor);
 
   final int value;
   final int tolerance;

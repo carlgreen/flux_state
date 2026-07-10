@@ -35,9 +35,6 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final all = widget.viewModel.all().toList();
-    final filtered = _filter(all);
-
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
 
@@ -65,7 +62,17 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
                   controller: _searchCtrl,
                   onChanged: (v) => setState(() => _searchQ = v),
                 ),
-                Expanded(child: _ComponentList(components: filtered)),
+                Expanded(
+                  child: ListenableBuilder(
+                    listenable: widget.viewModel,
+                    builder: (context, child) {
+                      final all = widget.viewModel.components;
+                      final filtered = _filter(all);
+
+                      return _ComponentList(components: filtered);
+                    },
+                  ),
+                ),
               ],
             ),
           ),

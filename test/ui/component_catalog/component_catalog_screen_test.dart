@@ -4,6 +4,7 @@ import 'package:flux_state/data/repositories/inventory_repository.dart';
 import 'package:flux_state/domain/models/component_category.dart';
 import 'package:flux_state/domain/models/diode.dart';
 import 'package:flux_state/domain/models/resistor.dart';
+import 'package:flux_state/repository_provider.dart';
 import 'package:flux_state/ui/component_catalog/component_catalog_screen.dart';
 import 'package:flux_state/ui/component_catalog/component_catalog_viewmodel.dart';
 
@@ -14,15 +15,19 @@ void main() {
 
     setUp(() {
       inventoryRepository = InventoryRepository()
-        ..addResistor(Resistor(value: 1000, tolerance: 2, power: 250))
-        ..addDiode(Diode(code: '1N34A'));
+        ..addResistor(Resistor(id: 'a', value: 1000, tolerance: 2, power: 250))
+        ..addDiode(Diode(id: 'b', code: '1N34A'));
       viewModel = ComponentCatalogViewModel(
         inventoryRepository: inventoryRepository,
       );
     });
 
     Future<void> loadWidget(WidgetTester tester) async {
-      await testApp(tester, ComponentCatalogScreen(viewModel: viewModel));
+      await testApp(
+        tester,
+        ComponentCatalogScreen(viewModel: viewModel),
+        inventoryRepository,
+      );
     }
 
     testWidgets('should display all components by default', (tester) async {
@@ -108,6 +113,17 @@ void main() {
       expect(find.text('RESISTOR'), findsOneWidget);
       expect(find.text('DIODE'), findsOneWidget);
     });
+
+    testWidgets('Navigate to edit component screen', (tester) async {
+      await loadWidget(tester);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('1N34A'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('EDIT_COMPONENT'), findsOneWidget);
+      expect(find.text('1N34A'), findsOneWidget);
+    });
   });
 
   group('ComponentCatalogScreen with initial category', () {
@@ -116,8 +132,8 @@ void main() {
 
     setUp(() {
       inventoryRepository = InventoryRepository()
-        ..addResistor(Resistor(value: 1000, tolerance: 2, power: 250))
-        ..addDiode(Diode(code: '1N34A'));
+        ..addResistor(Resistor(id: 'a', value: 1000, tolerance: 2, power: 250))
+        ..addDiode(Diode(id: 'b', code: '1N34A'));
       viewModel = ComponentCatalogViewModel(
         inventoryRepository: inventoryRepository,
         initialCategory: ComponentCategory.diode,
@@ -125,7 +141,11 @@ void main() {
     });
 
     Future<void> loadWidget(WidgetTester tester) async {
-      await testApp(tester, ComponentCatalogScreen(viewModel: viewModel));
+      await testApp(
+        tester,
+        ComponentCatalogScreen(viewModel: viewModel),
+        inventoryRepository,
+      );
     }
 
     testWidgets('should start on the initial category', (tester) async {
@@ -140,8 +160,17 @@ void main() {
   });
 }
 
-Future<void> testApp(WidgetTester tester, Widget body) async {
+Future<void> testApp(
+  WidgetTester tester,
+  Widget body,
+  InventoryRepository mockRepository,
+) async {
   tester.view.devicePixelRatio = 1.0;
   await tester.binding.setSurfaceSize(const Size(1200, 800));
-  await tester.pumpWidget(MaterialApp(home: Scaffold(body: body)));
+  await tester.pumpWidget(
+    RepositoryProvider(
+      inventoryRepository: mockRepository,
+      child: MaterialApp(home: Scaffold(body: body)),
+    ),
+  );
 }

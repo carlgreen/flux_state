@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flux_state/domain/models/component.dart';
 import 'package:flux_state/domain/models/component_category.dart';
+import 'package:flux_state/domain/models/diode.dart';
+import 'package:flux_state/domain/models/resistor.dart';
 import 'package:flux_state/theme/app_colors.dart';
 import 'package:flux_state/ui/component_catalog/add_edit_component_viewmodel.dart';
 import 'package:flux_state/ui/component_catalog/quantity_stepper.dart';
@@ -18,15 +21,34 @@ class _AddEditComponentScreenState extends State<AddEditComponentScreen> {
 
   int qty = 0;
   Map<String, dynamic> _attrs = {};
-
   bool _isSaving = false;
+  bool _initialized = false;
+
+  bool get _isEditing => widget.viewModel.componentId != null;
+
+  void _populate(Component c) {
+    widget.viewModel.category = c.category;
+    qty = c.quantity;
+    _attrs = Map<String, dynamic>.from(c.attributes);
+    _initialized = true;
+  }
 
   Future<void> _save() async {
     if (!formKey.currentState!.validate()) return;
     setState(() => _isSaving = true);
 
     try {
-      await widget.viewModel.save(_attrs, qty);
+      if (_isEditing) {
+        final existing = widget.viewModel.component;
+        if (existing == null) {
+          debugPrint('no component to edit');
+          return;
+        }
+        await widget.viewModel.update(existing.id, _attrs, qty);
+      } else {
+        await widget.viewModel.save(_attrs, qty);
+      }
+
       if (mounted) Navigator.pop(context, true);
     } catch (e) {
       if (mounted) {
@@ -54,7 +76,7 @@ class _AddEditComponentScreenState extends State<AddEditComponentScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'NEW_COMPONENT',
+          _isEditing ? 'EDIT_COMPONENT' : 'NEW_COMPONENT',
           style: typography.labelLarge?.copyWith(color: colors.primary),
         ),
         actions: [
@@ -81,59 +103,74 @@ class _AddEditComponentScreenState extends State<AddEditComponentScreen> {
       ),
       body: Form(
         key: formKey,
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 48),
-          children: [
-            const _Label('CATEGORY'),
-            const SizedBox(height: 10),
-            _CategorySelector(
-              selected: widget.viewModel.category,
-              onChanged: (cat) => setState(() {
-                widget.viewModel.category = cat;
-                _attrs = {};
-              }),
-            ),
-            const SizedBox(height: 28),
+        child: ListenableBuilder(
+          listenable: widget.viewModel,
+          builder: (context, child) {
+            if (_isEditing && !_initialized) {
+              final comp = widget.viewModel.component;
+              if (comp != null && !_initialized) {
+                _populate(comp);
+              }
+            }
 
-            const _Label('SPECIFICATIONS'),
-            const SizedBox(height: 12),
-            _ComponentAttrForm(
-              // force reinit when category changes
-              key: ValueKey(widget.viewModel.category),
-              category: widget.viewModel.category,
-              initialValues: _attrs,
-              onChanged: (v) => setState(() => _attrs = v),
-            ),
+            return ListView(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 48),
+              children: [
+                const _Label('CATEGORY'),
+                const SizedBox(height: 10),
+                _CategorySelector(
+                  selected: widget.viewModel.category,
+                  onChanged: (cat) => setState(() {
+                    widget.viewModel.category = cat;
+                    _attrs = {};
+                  }),
+                ),
+                const SizedBox(height: 28),
 
-            const _Label('DETAILS'),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              decoration: BoxDecoration(
-                color: colors.surfaceContainerLow,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Row(
-                children: [
-                  Text(
-                    'Quantity',
-                    style: typography.bodySmall?.copyWith(
-                      color: colors.onSurfaceVariant,
-                    ),
+                const _Label('SPECIFICATIONS'),
+                const SizedBox(height: 12),
+                _ComponentAttrForm(
+                  // force reinit when category changes
+                  key: ValueKey(widget.viewModel.category),
+                  category: widget.viewModel.category,
+                  initialValues: _attrs,
+                  onChanged: (v) => setState(() => _attrs = v),
+                ),
+
+                const _Label('DETAILS'),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
                   ),
-                  const Spacer(),
-                  QuantityStepper(
-                    value: qty,
-                    onChanged: (v) => setState(() => qty = v),
+                  decoration: BoxDecoration(
+                    color: colors.surfaceContainerLow,
+                    borderRadius: BorderRadius.circular(4),
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 28),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Quantity',
+                        style: typography.bodySmall?.copyWith(
+                          color: colors.onSurfaceVariant,
+                        ),
+                      ),
+                      const Spacer(),
+                      QuantityStepper(
+                        value: qty,
+                        onChanged: (v) => setState(() => qty = v),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 28),
 
-            const SizedBox(height: 20),
-            _SaveButton(saving: _isSaving, onTap: _save),
-          ],
+                const SizedBox(height: 20),
+                _SaveButton(saving: _isSaving, onTap: _save),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -359,24 +396,24 @@ List<_AttributeField> _forCategory(ComponentCategory category) {
   return switch (category) {
     ComponentCategory.resistor => [
       _AttributeField(
-        key: 'value',
+        key: Resistor.valueKey,
         label: 'Value',
         type: _AttributeFieldType.number,
       ),
       _AttributeField(
-        key: 'tolerance_pct',
+        key: Resistor.toleranceKey,
         label: 'Tolerance',
         type: _AttributeFieldType.number,
       ),
       _AttributeField(
-        key: 'power_w',
+        key: Resistor.powerKey,
         label: 'Power',
         type: _AttributeFieldType.number,
       ),
     ],
     ComponentCategory.diode => [
       _AttributeField(
-        key: 'code',
+        key: Diode.codeKey,
         label: 'Code',
         type: _AttributeFieldType.text,
       ),

@@ -69,7 +69,12 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
                       final all = widget.viewModel.components;
                       final filtered = _filter(all);
 
-                      return _ComponentList(components: filtered);
+                      return _ComponentList(
+                        components: filtered,
+                        onRefreshRequested: () => setState(() async {
+                          await widget.viewModel.load();
+                        }),
+                      );
                     },
                   ),
                 ),
@@ -211,9 +216,33 @@ class _CategoryItem extends StatelessWidget {
 }
 
 class _ComponentList extends StatelessWidget {
-  const _ComponentList({required this.components});
+  const _ComponentList({
+    required this.components,
+    required this.onRefreshRequested,
+  });
 
   final List<Component> components;
+  final VoidCallback onRefreshRequested;
+
+  Future<void> navigateToAddEditWithRefresh(
+    BuildContext context,
+    String? componentId,
+  ) async {
+    final bool? isDataUpdated = await Navigator.push(
+      context,
+      MaterialPageRoute<bool>(
+        builder: (context) => AddEditComponentScreen(
+          viewModel: AddEditComponentViewModel(
+            inventoryRepository: RepositoryProvider.of(context),
+            componentId: componentId,
+          ),
+        ),
+      ),
+    );
+    if (isDataUpdated == true) {
+      onRefreshRequested();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -225,18 +254,8 @@ class _ComponentList extends StatelessWidget {
         action: TextButton.icon(
           icon: const Icon(Icons.add),
           label: const Text('Add Component'),
-          onPressed: () => {
-            Navigator.push(
-              context,
-              MaterialPageRoute<bool>(
-                builder: (context) => AddEditComponentScreen(
-                  viewModel: AddEditComponentViewModel(
-                    inventoryRepository: RepositoryProvider.of(context),
-                    initialCategory: null,
-                  ),
-                ),
-              ),
-            ),
+          onPressed: () async {
+            navigateToAddEditWithRefresh(context, null);
           },
         ),
       );
@@ -247,15 +266,25 @@ class _ComponentList extends StatelessWidget {
       crossAxisCount: 4,
       crossAxisSpacing: 12,
       mainAxisSpacing: 12,
-      children: components.map((c) => _ComponentCard(component: c)).toList(),
+      children: components
+          .map(
+            (c) => _ComponentCard(
+              component: c,
+              onTap: () async {
+                navigateToAddEditWithRefresh(context, c.id);
+              },
+            ),
+          )
+          .toList(),
     );
   }
 }
 
 class _ComponentCard extends StatelessWidget {
-  const _ComponentCard({required this.component});
+  const _ComponentCard({required this.component, this.onTap});
 
   final Component component;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -263,53 +292,56 @@ class _ComponentCard extends StatelessWidget {
     final typography = theme.textTheme;
     final colors = theme.colorScheme;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: colors.surfaceContainerHigh,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _HeroArea(component: component),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        component.display(),
-                        style: typography.titleMedium,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text('STOCK', style: typography.labelSmall),
-                        Text(
-                          // Formatters.quantity(component.quantity),
-                          component.quantity.toString(),
-                          style: AppTypography.stockNumber.copyWith(
-                            color: _stockColor,
-                            height: 1.1,
-                          ),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: colors.surfaceContainerHigh,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _HeroArea(component: component),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          component.display(),
+                          style: typography.titleMedium,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
+                      ),
+                      const SizedBox(width: 12),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text('STOCK', style: typography.labelSmall),
+                          Text(
+                            // Formatters.quantity(component.quantity),
+                            component.quantity.toString(),
+                            style: AppTypography.stockNumber.copyWith(
+                              color: _stockColor,
+                              height: 1.1,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

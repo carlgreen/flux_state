@@ -10,7 +10,7 @@ class ComponentCatalogViewModel extends ChangeNotifier {
     required this._inventoryRepository,
     this.initialCategory,
   }) {
-    _load();
+    load();
   }
 
   final InventoryRepository _inventoryRepository;
@@ -21,7 +21,7 @@ class ComponentCatalogViewModel extends ChangeNotifier {
   UnmodifiableListView<Component> get components =>
       UnmodifiableListView(_components);
 
-  Future<void> _load() async {
+  Future<void> load() async {
     try {
       // final componentsResult = await _inventoryRepository.components;
       // switch (componentsResult) {

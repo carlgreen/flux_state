@@ -2,12 +2,20 @@ import 'component.dart';
 import 'component_category.dart';
 
 class Resistor extends Component {
+  static const valueKey = 'value';
+  static const toleranceKey = 'tolerance_pct';
+  static const powerKey = 'power_w';
+
   Resistor({
+    required super.id,
     required this.value,
     required this.tolerance,
     required this.power,
     super.quantity = 0,
-  }) : super(category: ComponentCategory.resistor);
+  }) : super(
+         category: ComponentCategory.resistor,
+         attrs: {valueKey: value, toleranceKey: tolerance, powerKey: power},
+       );
 
   final int value;
   final int tolerance;

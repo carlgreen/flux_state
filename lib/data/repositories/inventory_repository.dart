@@ -18,4 +18,18 @@ class InventoryRepository {
   void addDiode(Diode d) {
     _diodes.add(d);
   }
+
+  void saveResistor(Resistor update) {
+    final idx = _resistors.indexWhere((c) => (c.id == update.id));
+    if (idx >= 0) {
+      _resistors[idx] = update;
+    }
+  }
+
+  void saveDiode(Diode update) {
+    final idx = _diodes.indexWhere((c) => (c.id == update.id));
+    if (idx >= 0) {
+      _diodes[idx] = update;
+    }
+  }
 }

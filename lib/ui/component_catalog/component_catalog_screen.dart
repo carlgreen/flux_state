@@ -39,9 +39,10 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
 
-    void reload() => setState(() async {
+    void reload() async {
       await widget.viewModel.load();
-    });
+      setState(() {});
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -259,7 +260,7 @@ class _ComponentList extends StatelessWidget {
         action: TextButton.icon(
           icon: const Icon(Icons.add),
           label: const Text('Add Component'),
-          onPressed: () async {
+          onPressed: () {
             navigateToAddEditWithRefresh(context, onRefreshRequested);
           },
         ),
@@ -275,7 +276,7 @@ class _ComponentList extends StatelessWidget {
           .map(
             (c) => _ComponentCard(
               component: c,
-              onTap: () async {
+              onTap: () {
                 navigateToAddEditWithRefresh(
                   context,
                   onRefreshRequested,
@@ -548,7 +549,7 @@ class _NewPartBtn extends StatelessWidget {
     final colors = theme.colorScheme;
 
     return GestureDetector(
-      onTap: () async {
+      onTap: () {
         navigateToAddEditWithRefresh(context, onRefreshRequested);
       },
       child: Container(

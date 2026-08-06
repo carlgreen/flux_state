@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flux_state/core/utils/formatters.dart';
 import 'package:flux_state/domain/models/component_category.dart';
 import 'package:flux_state/repository_provider.dart';
 import 'package:flux_state/theme/app_colors.dart';
@@ -9,16 +10,23 @@ import 'package:flux_state/ui/component_catalog/component_catalog_viewmodel.dart
 import 'package:flux_state/ui/home/home_viewmodel.dart';
 import 'package:flux_state/ui/home/stats_card.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.viewModel});
 
   final HomeViewModel viewModel;
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final typography = theme.textTheme;
     final colors = theme.colorScheme;
+
+    var stats = widget.viewModel.stats;
 
     return CustomScrollView(
       slivers: [
@@ -31,8 +39,8 @@ class HomeScreen extends StatelessWidget {
                 Text('LAB_DASHBOARD', style: typography.displayLarge),
                 const SizedBox(height: 20),
                 _NewPartButton(
-                  onPressed: () => {
-                    Navigator.push(
+                  onPressed: () async {
+                    final bool? isDataUpdated = await Navigator.push(
                       context,
                       MaterialPageRoute<bool>(
                         builder: (context) => AddEditComponentScreen(
@@ -42,7 +50,12 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                    ),
+                    );
+                    if (isDataUpdated == true) {
+                      setState(() {
+                        stats = widget.viewModel.stats;
+                      });
+                    }
                   },
                 ),
                 const SizedBox(height: 28),
@@ -59,7 +72,7 @@ class HomeScreen extends StatelessWidget {
                 Expanded(
                   child: StatsCard(
                     label: 'Component_Types',
-                    value: viewModel.stats.totalTypes.toString(),
+                    value: Formatters.quantity(stats.totalTypes),
                     icon: Icons.category_outlined,
                   ),
                 ),
@@ -67,7 +80,7 @@ class HomeScreen extends StatelessWidget {
                 Expanded(
                   child: StatsCard(
                     label: 'Total_Units',
-                    value: viewModel.stats.totalUnits.toString(),
+                    value: Formatters.quantity(stats.totalUnits),
                     icon: Icons.inventory_2_outlined,
                   ),
                 ),
@@ -75,9 +88,9 @@ class HomeScreen extends StatelessWidget {
                 Expanded(
                   child: StatsCard(
                     label: 'Low_Stock',
-                    value: viewModel.stats.lowStockCount.toString(),
+                    value: stats.lowStockCount.toString(),
                     icon: Icons.warning_amber_rounded,
-                    valueColor: viewModel.stats.lowStockCount > 0
+                    valueColor: stats.lowStockCount > 0
                         ? colors.tertiary
                         : null,
                   ),
@@ -86,11 +99,9 @@ class HomeScreen extends StatelessWidget {
                 Expanded(
                   child: StatsCard(
                     label: 'Out_of_Stock',
-                    value: viewModel.stats.outOfStockCount.toString(),
+                    value: stats.outOfStockCount.toString(),
                     icon: Icons.error_outline_rounded,
-                    valueColor: viewModel.stats.outOfStockCount > 0
-                        ? colors.error
-                        : null,
+                    valueColor: stats.outOfStockCount > 0 ? colors.error : null,
                   ),
                 ),
               ],
@@ -150,7 +161,7 @@ class HomeScreen extends StatelessWidget {
               final cat = ComponentCategory.values[i];
               return _CategoryGridCell(
                 category: cat,
-                count: viewModel.stats.countByCategory[cat] ?? 0,
+                count: stats.countByCategory[cat] ?? 0,
                 onTap: () => {
                   Navigator.push(
                     context,
@@ -243,7 +254,7 @@ class _CategoryGridCell extends StatelessWidget {
               children: [
                 Icon(category.icon, color: category.color, size: 22),
                 Text(
-                  count.toString(),
+                  Formatters.quantity(count),
                   style: typography.labelLarge?.copyWith(
                     color: colors.onSurfaceVariant,
                   ),

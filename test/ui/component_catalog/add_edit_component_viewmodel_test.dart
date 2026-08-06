@@ -90,7 +90,3 @@ void main() {
     });
   });
 }
-
-class FalseComponent {
-  set count(int count) {}
-}

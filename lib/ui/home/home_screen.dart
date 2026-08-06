@@ -152,14 +152,13 @@ class HomeScreen extends StatelessWidget {
                 category: cat,
                 count: viewModel.stats.countByCategory[cat] ?? 0,
                 onTap: () => {
-                  // TODO pass category
                   Navigator.push(
                     context,
                     MaterialPageRoute<bool>(
                       builder: (context) => ComponentCatalogScreen(
                         viewModel: ComponentCatalogViewModel(
                           inventoryRepository: RepositoryProvider.of(context),
-                          //   initialCategory: null,
+                          initialCategory: cat,
                         ),
                       ),
                     ),

@@ -9,7 +9,7 @@ import 'package:flux_state/ui/component_catalog/add_edit_component_viewmodel.dar
 import 'package:flux_state/ui/component_catalog/quantity_stepper.dart';
 
 void main() {
-  group('AddEditComponentScreen tests', () {
+  group('AddEditComponentScreen add tests', () {
     late AddEditComponentViewModel viewModel;
     late InventoryRepository inventoryRepository;
 
@@ -161,7 +161,7 @@ void main() {
       await tester.pump();
 
       expect(inventoryRepository.resistors, [
-        Resistor(value: 10, tolerance: 2, power: 250, count: 6),
+        Resistor(id: 'a', value: 10, tolerance: 2, power: 250, quantity: 6),
       ]);
     });
 
@@ -202,7 +202,181 @@ void main() {
       await tester.tap(saveBtn);
       await tester.pump();
 
-      expect(inventoryRepository.diodes, [Diode(code: '1N34A', quantity: 2)]);
+      expect(inventoryRepository.diodes, [
+        Diode(id: 'b', code: '1N34A', quantity: 2),
+      ]);
+    });
+  });
+
+  group('AddEditComponentScreen edit resistor tests', () {
+    late AddEditComponentViewModel viewModel;
+    late InventoryRepository inventoryRepository;
+
+    setUp(() {
+      inventoryRepository = InventoryRepository()
+        ..addResistor(
+          Resistor(
+            id: 'a',
+            value: 1000,
+            tolerance: 2,
+            power: 250,
+            quantity: 10,
+          ),
+        )
+        ..addDiode(Diode(id: 'b', code: '1N34A'));
+      final resistorId = inventoryRepository.resistors.first.id;
+      viewModel = AddEditComponentViewModel(
+        initialCategory: ComponentCategory.resistor,
+        inventoryRepository: inventoryRepository,
+        componentId: resistorId,
+      );
+    });
+
+    Future<void> loadWidget(WidgetTester tester) async {
+      await testApp(tester, AddEditComponentScreen(viewModel: viewModel));
+    }
+
+    Finder getTextFieldOf(String hint) {
+      final fieldFinder = find.ancestor(
+        of: find.text(hint),
+        matching: find.byType(TextField),
+      );
+      expect(fieldFinder, findsOneWidget);
+
+      return fieldFinder;
+    }
+
+    String getTextFromField(tester, finder) {
+      final valueText = tester.widget<EditableText>(
+        find.descendant(of: finder, matching: find.byType(EditableText)),
+      );
+      return valueText.controller.text;
+    }
+
+    testWidgets('should display resistor values', (tester) async {
+      await loadWidget(tester);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AddEditComponentScreen), findsOneWidget);
+
+      final valueFieldFinder = getTextFieldOf('Value');
+      final toleranceFieldFinder = getTextFieldOf('Tolerance');
+      final powerFieldFinder = getTextFieldOf('Power');
+
+      final quantityFieldFinder = find.byType(QuantityStepper);
+      expect(quantityFieldFinder, findsOneWidget);
+
+      expect(find.text('EDIT_COMPONENT'), findsOneWidget);
+
+      expect(getTextFromField(tester, valueFieldFinder), '1000');
+      expect(getTextFromField(tester, toleranceFieldFinder), '2');
+      expect(getTextFromField(tester, powerFieldFinder), '250');
+      expect(getTextFromField(tester, quantityFieldFinder), '10');
+    });
+
+    testWidgets('should update resistor values', (tester) async {
+      await loadWidget(tester);
+      await tester.pumpAndSettle();
+
+      final valueFieldFinder = getTextFieldOf('Value');
+      final toleranceFieldFinder = getTextFieldOf('Tolerance');
+      final powerFieldFinder = getTextFieldOf('Power');
+      final decQuantityBtn = find.descendant(
+        of: find.byType(QuantityStepper),
+        matching: find.byIcon(Icons.remove_rounded),
+      );
+
+      await tester.enterText(valueFieldFinder, '10000');
+      await tester.enterText(toleranceFieldFinder, '1');
+      await tester.enterText(powerFieldFinder, '500');
+      await tester.tap(decQuantityBtn);
+
+      await tester.pump();
+
+      final quantityFieldFinder = find.byType(QuantityStepper);
+      expect(quantityFieldFinder, findsOneWidget);
+
+      expect(getTextFromField(tester, valueFieldFinder), '10000');
+      expect(getTextFromField(tester, toleranceFieldFinder), '1');
+      expect(getTextFromField(tester, powerFieldFinder), '500');
+      expect(getTextFromField(tester, quantityFieldFinder), '9');
+    });
+  });
+
+  group('AddEditComponentScreen edit diode tests', () {
+    late AddEditComponentViewModel viewModel;
+    late InventoryRepository inventoryRepository;
+
+    setUp(() {
+      inventoryRepository = InventoryRepository()
+        ..addResistor(Resistor(id: 'a', value: 1000, tolerance: 2, power: 250))
+        ..addDiode(Diode(id: 'b', code: '1N34A', quantity: 3));
+      final diodeId = inventoryRepository.diodes.first.id;
+      viewModel = AddEditComponentViewModel(
+        initialCategory: ComponentCategory.resistor,
+        inventoryRepository: inventoryRepository,
+        componentId: diodeId,
+      );
+    });
+
+    Future<void> loadWidget(WidgetTester tester) async {
+      await testApp(tester, AddEditComponentScreen(viewModel: viewModel));
+    }
+
+    Finder getTextFieldOf(String hint) {
+      final fieldFinder = find.ancestor(
+        of: find.text(hint),
+        matching: find.byType(TextField),
+      );
+      expect(fieldFinder, findsOneWidget);
+
+      return fieldFinder;
+    }
+
+    String getTextFromField(tester, finder) {
+      final valueText = tester.widget<EditableText>(
+        find.descendant(of: finder, matching: find.byType(EditableText)),
+      );
+      return valueText.controller.text;
+    }
+
+    testWidgets('should display diode values', (tester) async {
+      await loadWidget(tester);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AddEditComponentScreen), findsOneWidget);
+
+      final codeFieldFinder = getTextFieldOf('Code');
+
+      final quantityFieldFinder = find.byType(QuantityStepper);
+      expect(quantityFieldFinder, findsOneWidget);
+
+      expect(find.text('EDIT_COMPONENT'), findsOneWidget);
+
+      expect(getTextFromField(tester, codeFieldFinder), '1N34A');
+      expect(getTextFromField(tester, quantityFieldFinder), '3');
+    });
+
+    testWidgets('should update diode values', (tester) async {
+      await loadWidget(tester);
+      await tester.pumpAndSettle();
+
+      final codeFieldFinder = getTextFieldOf('Code');
+      final incQuantityBtn = find.descendant(
+        of: find.byType(QuantityStepper),
+        matching: find.byIcon(Icons.add_rounded),
+      );
+
+      await tester.enterText(codeFieldFinder, 'new code');
+      await tester.tap(incQuantityBtn);
+
+      await tester.pump();
+
+      final quantityFieldFinder = find.byType(QuantityStepper);
+      expect(quantityFieldFinder, findsOneWidget);
+
+      expect(getTextFromField(tester, codeFieldFinder), 'new code');
+      expect(getTextFromField(tester, quantityFieldFinder), '4');
     });
   });
 }

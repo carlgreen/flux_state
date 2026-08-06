@@ -4,10 +4,17 @@ import 'package:flux_state/domain/models/component_category.dart';
 enum StockStatus { inStock, lowStock, outOfStock }
 
 abstract class Component {
+  final String id;
   final ComponentCategory category;
   int quantity;
+  Map<String, dynamic> attrs;
 
-  Component({required this.category, required this.quantity});
+  Component({
+    required this.id,
+    required this.category,
+    required this.quantity,
+    required this.attrs,
+  });
 
   String display();
 
@@ -30,4 +37,6 @@ abstract class Component {
     if (quantity <= AppConstants.lowStockThreshold) return StockStatus.lowStock;
     return StockStatus.inStock;
   }
+
+  Map<dynamic, dynamic> get attributes => attrs;
 }

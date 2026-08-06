@@ -1,22 +1,48 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:flux_state/data/repositories/inventory_repository.dart';
 import 'package:flux_state/domain/models/component.dart';
 import 'package:flux_state/domain/models/component_category.dart';
-import 'package:flux_state/domain/models/diode.dart';
-import 'package:flux_state/domain/models/resistor.dart';
 
 class ComponentCatalogViewModel extends ChangeNotifier {
-  ComponentCatalogViewModel({required this._inventoryRepository});
+  ComponentCatalogViewModel({
+    required this._inventoryRepository,
+    this.initialCategory,
+  }) {
+    load();
+  }
 
   final InventoryRepository _inventoryRepository;
+  final ComponentCategory? initialCategory;
 
-  Iterable<Resistor> get resistors => _inventoryRepository.resistors;
-  Iterable<Diode> get diodes => _inventoryRepository.diodes;
+  final List<Component> _components = [];
 
-  Iterable<Component> components(ComponentCategory componentType) {
-    return switch (componentType) {
-      ComponentCategory.resistor => _inventoryRepository.resistors,
-      ComponentCategory.diode => _inventoryRepository.diodes,
-    };
+  UnmodifiableListView<Component> get components =>
+      UnmodifiableListView(_components);
+
+  Future<void> load() async {
+    try {
+      // final componentsResult = await _inventoryRepository.components;
+      // switch (componentsResult) {
+      //   case Ok<List<Components>>():
+      //     _components = componentsResult.value;
+      //     _log.fine('Loaded components');
+      //   case Error<List<Components>>():
+      //     _log.warning('Failed to load components', componentsResult.error);
+      // }
+      final resistors = _inventoryRepository.resistors;
+      final diodes = _inventoryRepository.diodes;
+      _components.clear();
+      _components.addAll(resistors);
+      _components.addAll(diodes);
+
+      // ...
+
+      // return userResult;
+      return;
+    } finally {
+      notifyListeners();
+    }
   }
 }

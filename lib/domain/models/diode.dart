@@ -2,8 +2,10 @@ import 'component.dart';
 import 'component_category.dart';
 
 class Diode extends Component {
-  Diode({required this.code, super.quantity = 0})
-    : super(category: ComponentCategory.diode);
+  static const codeKey = 'code';
+
+  Diode({required super.id, required this.code, super.quantity = 0})
+    : super(category: ComponentCategory.diode, attrs: {codeKey: code});
 
   final String code;
 

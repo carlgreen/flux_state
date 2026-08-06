@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flux_state/core/utils/formatters.dart';
 import 'package:flux_state/domain/models/component.dart';
 import 'package:flux_state/domain/models/component_category.dart';
 import 'package:flux_state/repository_provider.dart';
@@ -326,8 +327,7 @@ class _ComponentCard extends StatelessWidget {
                         children: [
                           Text('STOCK', style: typography.labelSmall),
                           Text(
-                            // Formatters.quantity(component.quantity),
-                            component.quantity.toString(),
+                            Formatters.quantity(component.quantity),
                             style: AppTypography.stockNumber.copyWith(
                               color: _stockColor,
                               height: 1.1,

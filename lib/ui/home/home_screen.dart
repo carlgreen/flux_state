@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flux_state/core/utils/formatters.dart';
 import 'package:flux_state/domain/models/component_category.dart';
 import 'package:flux_state/repository_provider.dart';
 import 'package:flux_state/theme/app_colors.dart';
@@ -59,7 +60,7 @@ class HomeScreen extends StatelessWidget {
                 Expanded(
                   child: StatsCard(
                     label: 'Component_Types',
-                    value: viewModel.stats.totalTypes.toString(),
+                    value: Formatters.quantity(viewModel.stats.totalTypes),
                     icon: Icons.category_outlined,
                   ),
                 ),
@@ -67,7 +68,7 @@ class HomeScreen extends StatelessWidget {
                 Expanded(
                   child: StatsCard(
                     label: 'Total_Units',
-                    value: viewModel.stats.totalUnits.toString(),
+                    value: Formatters.quantity(viewModel.stats.totalUnits),
                     icon: Icons.inventory_2_outlined,
                   ),
                 ),
@@ -243,7 +244,7 @@ class _CategoryGridCell extends StatelessWidget {
               children: [
                 Icon(category.icon, color: category.color, size: 22),
                 Text(
-                  count.toString(),
+                  Formatters.quantity(count),
                   style: typography.labelLarge?.copyWith(
                     color: colors.onSurfaceVariant,
                   ),

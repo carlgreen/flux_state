@@ -39,6 +39,10 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
 
+    void reload() => setState(() async {
+      await widget.viewModel.load();
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: const Align(
@@ -62,6 +66,7 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
                 _SearchBar(
                   controller: _searchCtrl,
                   onChanged: (v) => setState(() => _searchQ = v),
+                  onRefreshRequested: reload,
                 ),
                 Expanded(
                   child: ListenableBuilder(
@@ -72,9 +77,7 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
 
                       return _ComponentList(
                         components: filtered,
-                        onRefreshRequested: () => setState(() async {
-                          await widget.viewModel.load();
-                        }),
+                        onRefreshRequested: reload,
                       );
                     },
                   ),
@@ -216,6 +219,27 @@ class _CategoryItem extends StatelessWidget {
   }
 }
 
+Future<void> navigateToAddEditWithRefresh(
+  BuildContext context,
+  VoidCallback onRefreshRequested, {
+  String? componentId,
+}) async {
+  final bool? isDataUpdated = await Navigator.push(
+    context,
+    MaterialPageRoute<bool>(
+      builder: (context) => AddEditComponentScreen(
+        viewModel: AddEditComponentViewModel(
+          inventoryRepository: RepositoryProvider.of(context),
+          componentId: componentId,
+        ),
+      ),
+    ),
+  );
+  if (isDataUpdated == true) {
+    onRefreshRequested();
+  }
+}
+
 class _ComponentList extends StatelessWidget {
   const _ComponentList({
     required this.components,
@@ -224,26 +248,6 @@ class _ComponentList extends StatelessWidget {
 
   final List<Component> components;
   final VoidCallback onRefreshRequested;
-
-  Future<void> navigateToAddEditWithRefresh(
-    BuildContext context,
-    String? componentId,
-  ) async {
-    final bool? isDataUpdated = await Navigator.push(
-      context,
-      MaterialPageRoute<bool>(
-        builder: (context) => AddEditComponentScreen(
-          viewModel: AddEditComponentViewModel(
-            inventoryRepository: RepositoryProvider.of(context),
-            componentId: componentId,
-          ),
-        ),
-      ),
-    );
-    if (isDataUpdated == true) {
-      onRefreshRequested();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -256,7 +260,7 @@ class _ComponentList extends StatelessWidget {
           icon: const Icon(Icons.add),
           label: const Text('Add Component'),
           onPressed: () async {
-            navigateToAddEditWithRefresh(context, null);
+            navigateToAddEditWithRefresh(context, onRefreshRequested);
           },
         ),
       );
@@ -272,7 +276,11 @@ class _ComponentList extends StatelessWidget {
             (c) => _ComponentCard(
               component: c,
               onTap: () async {
-                navigateToAddEditWithRefresh(context, c.id);
+                navigateToAddEditWithRefresh(
+                  context,
+                  onRefreshRequested,
+                  componentId: c.id,
+                );
               },
             ),
           )
@@ -475,10 +483,15 @@ class _EmptyState extends StatelessWidget {
 }
 
 class _SearchBar extends StatelessWidget {
-  const _SearchBar({required this.controller, required this.onChanged});
+  const _SearchBar({
+    required this.controller,
+    required this.onChanged,
+    required this.onRefreshRequested,
+  });
 
   final TextEditingController controller;
   final ValueChanged<String> onChanged;
+  final VoidCallback onRefreshRequested;
 
   @override
   Widget build(BuildContext context) {
@@ -516,7 +529,7 @@ class _SearchBar extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 12),
-          const _NewPartBtn(),
+          _NewPartBtn(onRefreshRequested: onRefreshRequested),
         ],
       ),
     );
@@ -524,7 +537,9 @@ class _SearchBar extends StatelessWidget {
 }
 
 class _NewPartBtn extends StatelessWidget {
-  const _NewPartBtn();
+  const _NewPartBtn({required this.onRefreshRequested});
+
+  final VoidCallback onRefreshRequested;
 
   @override
   Widget build(BuildContext context) {
@@ -533,16 +548,9 @@ class _NewPartBtn extends StatelessWidget {
     final colors = theme.colorScheme;
 
     return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute<bool>(
-          builder: (context) => AddEditComponentScreen(
-            viewModel: AddEditComponentViewModel(
-              inventoryRepository: RepositoryProvider.of(context),
-            ),
-          ),
-        ),
-      ),
+      onTap: () async {
+        navigateToAddEditWithRefresh(context, onRefreshRequested);
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
         decoration: BoxDecoration(

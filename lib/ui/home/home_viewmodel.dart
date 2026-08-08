@@ -9,8 +9,7 @@ class HomeViewModel {
 
   DashboardStats get stats {
     final List<Component> components = List.empty(growable: true);
-    components.addAll(_inventoryRepository.resistors);
-    components.addAll(_inventoryRepository.diodes);
+    components.addAll(_inventoryRepository.components);
 
     return DashboardStats.fromComponents(components);
   }

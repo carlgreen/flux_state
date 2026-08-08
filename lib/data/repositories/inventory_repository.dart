@@ -1,35 +1,58 @@
+import 'package:flux_state/domain/models/component.dart';
+import 'package:flux_state/domain/models/component_category.dart';
 import 'package:flux_state/domain/models/diode.dart';
 import 'package:flux_state/domain/models/resistor.dart';
 
 class InventoryRepository {
-  final List<Resistor> _resistors = List.empty(growable: true);
-  final List<Diode> _diodes = List.empty(growable: true);
+  final List<Component> _components = List.empty(growable: true);
 
   InventoryRepository();
 
-  Iterable<Resistor> get resistors => List.unmodifiable(_resistors);
+  Iterable<Component> get components => List.unmodifiable(_components);
 
-  void addResistor(Resistor r) {
-    _resistors.add(r);
+  void addComponent(Component c) {
+    _components.add(c);
   }
 
-  Iterable<Diode> get diodes => List.unmodifiable(_diodes);
-
-  void addDiode(Diode d) {
-    _diodes.add(d);
-  }
-
-  void saveResistor(Resistor update) {
-    final idx = _resistors.indexWhere((c) => (c.id == update.id));
+  void saveComponent(Component update) {
+    final idx = _components.indexWhere((c) => (c.id == update.id));
     if (idx >= 0) {
-      _resistors[idx] = update;
+      _components[idx] = update;
     }
   }
 
-  void saveDiode(Diode update) {
-    final idx = _diodes.indexWhere((c) => (c.id == update.id));
-    if (idx >= 0) {
-      _diodes[idx] = update;
+  void add(
+    ComponentCategory category,
+    String id,
+    Map<String, dynamic> attrs,
+    int quantity,
+  ) {
+    final Component c;
+    switch (category) {
+      case ComponentCategory.resistor:
+        c = Resistor.fromAttrs(id, attrs);
+      case ComponentCategory.diode:
+        c = Diode.fromAttrs(id, attrs);
     }
+    c.quantity = quantity;
+    addComponent(c);
+  }
+
+  void save(
+    ComponentCategory category,
+    String id,
+    Map<String, dynamic> attrs,
+    int qty,
+  ) {
+    final component = load(id);
+    if (component != null) {
+      final update = component.updateFromAttrs(attrs);
+      update.quantity = qty;
+      saveComponent(update);
+    }
+  }
+
+  Component? load(String id) {
+    return components.where((c) => c.id == id).singleOrNull;
   }
 }

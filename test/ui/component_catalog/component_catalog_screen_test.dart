@@ -15,8 +15,10 @@ void main() {
 
     setUp(() {
       inventoryRepository = InventoryRepository()
-        ..addResistor(Resistor(id: 'a', value: 1000, tolerance: 2, power: 250))
-        ..addDiode(Diode(id: 'b', code: '1N34A'));
+        ..addComponent(
+          Resistor(id: 'a', value: 1000, tolerance: '2', power: '1/4'),
+        )
+        ..addComponent(Diode(id: 'b', partNumber: '1N34A'));
       viewModel = ComponentCatalogViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -37,7 +39,7 @@ void main() {
       expect(find.byType(ComponentCatalogScreen), findsOneWidget);
 
       expect(find.text('RESISTOR'), findsOneWidget);
-      expect(find.text('1 kΩ 1/4 W (± 2%)'), findsOneWidget);
+      expect(find.text('1 kΩ 1/4 W ± 2%'), findsOneWidget);
 
       expect(find.text('DIODE'), findsOneWidget);
       expect(find.text('1N34A'), findsOneWidget);
@@ -53,7 +55,7 @@ void main() {
       expect(find.byType(ComponentCatalogScreen), findsOneWidget);
 
       expect(find.text('RESISTOR'), findsOneWidget);
-      expect(find.text('1 kΩ 1/4 W (± 2%)'), findsOneWidget);
+      expect(find.text('1 kΩ 1/4 W ± 2%'), findsOneWidget);
 
       expect(find.text('DIODE'), findsNothing);
     });
@@ -92,7 +94,7 @@ void main() {
       await tester.pump();
 
       expect(find.text('RESISTOR'), findsOneWidget);
-      expect(find.text('1 kΩ 1/4 W (± 2%)'), findsOneWidget);
+      expect(find.text('1 kΩ 1/4 W ± 2%'), findsOneWidget);
 
       expect(find.text('DIODE'), findsNothing);
 
@@ -132,8 +134,10 @@ void main() {
 
     setUp(() {
       inventoryRepository = InventoryRepository()
-        ..addResistor(Resistor(id: 'a', value: 1000, tolerance: 2, power: 250))
-        ..addDiode(Diode(id: 'b', code: '1N34A'));
+        ..addComponent(
+          Resistor(id: 'a', value: 1000, tolerance: '2', power: '0.25'),
+        )
+        ..addComponent(Diode(id: 'b', partNumber: '1N34A'));
       viewModel = ComponentCatalogViewModel(
         inventoryRepository: inventoryRepository,
         initialCategory: ComponentCategory.diode,

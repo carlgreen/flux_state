@@ -39,4 +39,6 @@ abstract class Component {
   }
 
   Map<dynamic, dynamic> get attributes => attrs;
+
+  Component updateFromAttrs(Map<String, dynamic> attrs);
 }

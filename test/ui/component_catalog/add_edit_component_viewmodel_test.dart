@@ -7,33 +7,55 @@ import 'package:flux_state/ui/component_catalog/add_edit_component_viewmodel.dar
 
 void main() {
   group('AddEditComponentViewModel tests', () {
-    test('Create resistor', () {
+    test('Create resistor with mimimal fields', () {
       final inventoryRepository = InventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
 
-      expect(inventoryRepository.resistors.isEmpty, true);
+      expect(inventoryRepository.components.isEmpty, true);
+
+      viewModel.save(<String, dynamic>{'value': '1000'}, 10);
+
+      final resistor = inventoryRepository.components.single as Resistor;
+      expect(resistor.value, 1000);
+      expect(resistor.tolerance, null);
+      expect(resistor.power, null);
+      expect(resistor.package, null);
+      expect(resistor.quantity, 10);
+    });
+
+    test('Create resistor with all fields', () {
+      final inventoryRepository = InventoryRepository();
+      final viewModel = AddEditComponentViewModel(
+        inventoryRepository: inventoryRepository,
+      );
+
+      expect(inventoryRepository.components.isEmpty, true);
 
       viewModel.save(<String, dynamic>{
         'value': '1000',
         'tolerance_pct': '10',
-        'power_w': '500',
+        'power_w': '0.5',
+        'package': 'Through-hole',
       }, 10);
 
-      expect(inventoryRepository.resistors.length, 1);
-      expect(inventoryRepository.resistors.first.quantity, 10);
-      expect(inventoryRepository.diodes.isEmpty, true);
+      final resistor = inventoryRepository.components.single as Resistor;
+      expect(resistor.value, 1000);
+      expect(resistor.tolerance, '10');
+      expect(resistor.power, '0.5');
+      expect(resistor.package, 'Through-hole');
+      expect(resistor.quantity, 10);
     });
 
     test('Update resistor', () {
       final inventoryRepository = InventoryRepository()
-        ..addResistor(
+        ..addComponent(
           Resistor(
             id: 'a',
             value: 1000,
-            tolerance: 2,
-            power: 250,
+            tolerance: '2',
+            power: '0.25',
             quantity: 10,
           ),
         );
@@ -44,17 +66,24 @@ void main() {
       viewModel.update('a', <String, dynamic>{
         'value': '100',
         'tolerance_pct': '10',
-        'power_w': '500',
+        'power_w': '0.5',
+        'package': 'SMD',
       }, 5);
 
-      expect(inventoryRepository.resistors.length, 1);
       expect(
-        inventoryRepository.resistors.first,
-        Resistor(id: 'a', value: 100, tolerance: 10, power: 500, quantity: 5),
+        inventoryRepository.components.single,
+        Resistor(
+          id: 'a',
+          value: 100,
+          tolerance: '10',
+          power: '0.5',
+          package: 'SMD',
+          quantity: 5,
+        ),
       );
     });
 
-    test('Create diode', () {
+    test('Create diode with minimal fields', () {
       final inventoryRepository = InventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
@@ -62,30 +91,57 @@ void main() {
 
       viewModel.category = ComponentCategory.diode;
 
-      expect(inventoryRepository.diodes.isEmpty, true);
+      expect(inventoryRepository.components.isEmpty, true);
 
-      viewModel.save(<String, dynamic>{'code': '1n34A'}, 5);
+      viewModel.save(<String, dynamic>{'part_number': '1n34A'}, 5);
 
-      expect(inventoryRepository.diodes.length, 1);
-      expect(inventoryRepository.diodes.first.quantity, 5);
-      expect(inventoryRepository.resistors.isEmpty, true);
+      final diode = inventoryRepository.components.single as Diode;
+      expect(diode.partNumber, '1n34A');
+      expect(diode.material, null);
+      expect(diode.package, null);
+      expect(diode.quantity, 5);
     });
 
-    test('Update didoe', () {
-      final inventoryRepository = InventoryRepository()
-        ..addDiode(Diode(id: 'c', code: 'abc', quantity: 5));
+    test('Create diode with all fields', () {
+      final inventoryRepository = InventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
 
       viewModel.category = ComponentCategory.diode;
 
-      viewModel.update('c', <String, dynamic>{'code': 'def'}, 50);
+      expect(inventoryRepository.components.isEmpty, true);
 
-      expect(inventoryRepository.diodes.length, 1);
+      viewModel.save(<String, dynamic>{
+        'part_number': '1n34A',
+        'material': 'Germanium',
+        'package': 'DO-41',
+      }, 5);
+
+      final diode = inventoryRepository.components.single as Diode;
+      expect(diode.partNumber, '1n34A');
+      expect(diode.material, 'Germanium');
+      expect(diode.package, 'DO-41');
+      expect(diode.quantity, 5);
+    });
+
+    test('Update didoe', () {
+      final inventoryRepository = InventoryRepository()
+        ..addComponent(Diode(id: 'c', partNumber: 'abc', quantity: 5));
+      final viewModel = AddEditComponentViewModel(
+        inventoryRepository: inventoryRepository,
+      );
+
+      viewModel.category = ComponentCategory.diode;
+
+      viewModel.update('c', <String, dynamic>{
+        'part_number': 'def',
+        'material': 'Silicon',
+      }, 50);
+
       expect(
-        inventoryRepository.diodes.first,
-        Diode(id: 'c', code: 'def', quantity: 50),
+        inventoryRepository.components.single,
+        Diode(id: 'c', partNumber: 'def', material: 'Silicon', quantity: 50),
       );
     });
   });

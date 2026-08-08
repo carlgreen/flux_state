@@ -9,6 +9,15 @@ import 'package:flux_state/ui/component_catalog/add_edit_component_viewmodel.dar
 import 'package:flux_state/ui/component_catalog/quantity_stepper.dart';
 
 void main() {
+  selectDropdown(tester, finder, value) async {
+    await tester.tap(finder);
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    final itemFinder = find.text(value).last;
+    await tester.tap(itemFinder, warnIfMissed: false);
+    await tester.pump();
+  }
+
   group('AddEditComponentScreen add tests', () {
     late AddEditComponentViewModel viewModel;
     late InventoryRepository inventoryRepository;
@@ -25,7 +34,7 @@ void main() {
       await testApp(tester, AddEditComponentScreen(viewModel: viewModel));
     }
 
-    testForField(tester, String fieldName) async {
+    testForNumericField(tester, String fieldName) async {
       await loadWidget(tester);
       await tester.pumpAndSettle();
 
@@ -59,19 +68,7 @@ void main() {
     testWidgets('should fail if resistor value is not a number', (
       tester,
     ) async {
-      await testForField(tester, 'Value');
-    });
-
-    testWidgets('should fail if resistor power is not a number', (
-      tester,
-    ) async {
-      await testForField(tester, 'Power');
-    });
-
-    testWidgets('should fail if resistor tolerance is not a number', (
-      tester,
-    ) async {
-      await testForField(tester, 'Tolerance');
+      await testForNumericField(tester, 'Value');
     });
 
     testWidgets('should fail if resistor quantity is not a number', (
@@ -126,12 +123,16 @@ void main() {
         matching: find.byType(TextField),
       );
       final powerField = find.ancestor(
-        of: find.text('Power'),
-        matching: find.byType(TextField),
+        of: find.text('Power (W)'),
+        matching: find.byType(DropdownButtonFormField<String>),
       );
       final toleranceField = find.ancestor(
-        of: find.text('Tolerance'),
-        matching: find.byType(TextField),
+        of: find.text('Tolerance (%)'),
+        matching: find.byType(DropdownButtonFormField<String>),
+      );
+      final packageField = find.ancestor(
+        of: find.text('Package'),
+        matching: find.byType(DropdownButtonFormField<String>),
       );
       final quantityField = find.descendant(
         of: find.byType(QuantityStepper),
@@ -149,8 +150,9 @@ void main() {
       final saveBtn = find.text('SAVE');
 
       await tester.enterText(valueField, '10');
-      await tester.enterText(powerField, '250');
-      await tester.enterText(toleranceField, '2');
+      await selectDropdown(tester, powerField, '0.25');
+      await selectDropdown(tester, toleranceField, '2');
+      await selectDropdown(tester, packageField, '0402');
 
       await tester.enterText(quantityField, '5');
       await tester.tap(incQuantityBtn);
@@ -160,8 +162,15 @@ void main() {
       await tester.tap(saveBtn);
       await tester.pump();
 
-      expect(inventoryRepository.resistors, [
-        Resistor(id: 'a', value: 10, tolerance: 2, power: 250, quantity: 6),
+      expect(inventoryRepository.components, [
+        Resistor(
+          id: 'a',
+          value: 10,
+          tolerance: '2',
+          power: '0.25',
+          package: '0402',
+          quantity: 6,
+        ),
       ]);
     });
 
@@ -173,9 +182,17 @@ void main() {
       await tester.tap(diodeButton);
       await tester.pump();
 
-      final codeField = find.ancestor(
-        of: find.text('Code'),
+      final partNumberField = find.ancestor(
+        of: find.text('Part Number'),
         matching: find.byType(TextField),
+      );
+      final materialField = find.ancestor(
+        of: find.text('Material'),
+        matching: find.byType(DropdownButtonFormField<String>),
+      );
+      final packageField = find.ancestor(
+        of: find.text('Package'),
+        matching: find.byType(DropdownButtonFormField<String>),
       );
       final quantityField = find.descendant(
         of: find.byType(QuantityStepper),
@@ -192,7 +209,9 @@ void main() {
 
       final saveBtn = find.text('SAVE');
 
-      await tester.enterText(codeField, '1N34A');
+      await tester.enterText(partNumberField, '1N34A');
+      await selectDropdown(tester, materialField, 'Germanium');
+      await selectDropdown(tester, packageField, 'DO-41');
 
       await tester.enterText(quantityField, '3');
       await tester.tap(decQuantityBtn);
@@ -202,8 +221,14 @@ void main() {
       await tester.tap(saveBtn);
       await tester.pump();
 
-      expect(inventoryRepository.diodes, [
-        Diode(id: 'b', code: '1N34A', quantity: 2),
+      expect(inventoryRepository.components, [
+        Diode(
+          id: 'b',
+          partNumber: '1N34A',
+          material: 'Germanium',
+          package: 'DO-41',
+          quantity: 2,
+        ),
       ]);
     });
   });
@@ -214,17 +239,21 @@ void main() {
 
     setUp(() {
       inventoryRepository = InventoryRepository()
-        ..addResistor(
+        ..addComponent(
           Resistor(
             id: 'a',
             value: 1000,
-            tolerance: 2,
-            power: 250,
+            tolerance: '2',
+            power: '0.25',
+            package: '0402',
             quantity: 10,
           ),
         )
-        ..addDiode(Diode(id: 'b', code: '1N34A'));
-      final resistorId = inventoryRepository.resistors.first.id;
+        ..addComponent(Diode(id: 'b', partNumber: '1N34A'));
+      final resistorId = inventoryRepository.components
+          .whereType<Resistor>()
+          .first
+          .id;
       viewModel = AddEditComponentViewModel(
         initialCategory: ComponentCategory.resistor,
         inventoryRepository: inventoryRepository,
@@ -236,22 +265,19 @@ void main() {
       await testApp(tester, AddEditComponentScreen(viewModel: viewModel));
     }
 
-    Finder getTextFieldOf(String hint) {
-      final fieldFinder = find.ancestor(
-        of: find.text(hint),
-        matching: find.byType(TextField),
-      );
-      expect(fieldFinder, findsOneWidget);
-
-      return fieldFinder;
-    }
-
-    String getTextFromField(tester, finder) {
-      final valueText = tester.widget<EditableText>(
-        find.descendant(of: finder, matching: find.byType(EditableText)),
-      );
-      return valueText.controller.text;
-    }
+    final valueFieldFinder = getTextFieldOf('Value');
+    final toleranceFieldFinder = find.ancestor(
+      of: find.text('Tolerance (%)'),
+      matching: find.byType(DropdownButtonFormField<String>),
+    );
+    final powerFieldFinder = find.ancestor(
+      of: find.text('Power (W)'),
+      matching: find.byType(DropdownButtonFormField<String>),
+    );
+    final packageFieldFinder = find.ancestor(
+      of: find.text('Package'),
+      matching: find.byType(DropdownButtonFormField<String>),
+    );
 
     testWidgets('should display resistor values', (tester) async {
       await loadWidget(tester);
@@ -259,18 +285,15 @@ void main() {
 
       expect(find.byType(AddEditComponentScreen), findsOneWidget);
 
-      final valueFieldFinder = getTextFieldOf('Value');
-      final toleranceFieldFinder = getTextFieldOf('Tolerance');
-      final powerFieldFinder = getTextFieldOf('Power');
-
       final quantityFieldFinder = find.byType(QuantityStepper);
       expect(quantityFieldFinder, findsOneWidget);
 
       expect(find.text('EDIT_COMPONENT'), findsOneWidget);
 
       expect(getTextFromField(tester, valueFieldFinder), '1000');
-      expect(getTextFromField(tester, toleranceFieldFinder), '2');
-      expect(getTextFromField(tester, powerFieldFinder), '250');
+      expect(getTextFromDropdown(tester, toleranceFieldFinder), '2');
+      expect(getTextFromDropdown(tester, powerFieldFinder), '0.25');
+      expect(getTextFromDropdown(tester, packageFieldFinder), '0402');
       expect(getTextFromField(tester, quantityFieldFinder), '10');
     });
 
@@ -278,17 +301,15 @@ void main() {
       await loadWidget(tester);
       await tester.pumpAndSettle();
 
-      final valueFieldFinder = getTextFieldOf('Value');
-      final toleranceFieldFinder = getTextFieldOf('Tolerance');
-      final powerFieldFinder = getTextFieldOf('Power');
       final decQuantityBtn = find.descendant(
         of: find.byType(QuantityStepper),
         matching: find.byIcon(Icons.remove_rounded),
       );
 
       await tester.enterText(valueFieldFinder, '10000');
-      await tester.enterText(toleranceFieldFinder, '1');
-      await tester.enterText(powerFieldFinder, '500');
+      await selectDropdown(tester, toleranceFieldFinder, '1');
+      await selectDropdown(tester, powerFieldFinder, '0.5');
+      await selectDropdown(tester, packageFieldFinder, 'Through-hole');
       await tester.tap(decQuantityBtn);
 
       await tester.pump();
@@ -297,9 +318,25 @@ void main() {
       expect(quantityFieldFinder, findsOneWidget);
 
       expect(getTextFromField(tester, valueFieldFinder), '10000');
-      expect(getTextFromField(tester, toleranceFieldFinder), '1');
-      expect(getTextFromField(tester, powerFieldFinder), '500');
+      expect(getTextFromDropdown(tester, toleranceFieldFinder), '1');
+      expect(getTextFromDropdown(tester, powerFieldFinder), '0.5');
+      expect(getTextFromDropdown(tester, packageFieldFinder), 'Through-hole');
       expect(getTextFromField(tester, quantityFieldFinder), '9');
+    });
+
+    testWidgets('should remove resistor values', (tester) async {
+      await loadWidget(tester);
+      await tester.pumpAndSettle();
+
+      await selectDropdown(tester, toleranceFieldFinder, '');
+      await selectDropdown(tester, powerFieldFinder, '');
+      await selectDropdown(tester, packageFieldFinder, '');
+
+      await tester.pump();
+
+      expect(getTextFromDropdown(tester, toleranceFieldFinder), '');
+      expect(getTextFromDropdown(tester, powerFieldFinder), '');
+      expect(getTextFromDropdown(tester, packageFieldFinder), '');
     });
   });
 
@@ -307,11 +344,38 @@ void main() {
     late AddEditComponentViewModel viewModel;
     late InventoryRepository inventoryRepository;
 
+    final codeFieldFinder = getTextFieldOf('Part Number');
+    final materialFieldFinder = find.ancestor(
+      of: find.text('Material'),
+      matching: find.byType(DropdownButtonFormField<String>),
+    );
+    final packageFieldFinder = find.ancestor(
+      of: find.text('Package'),
+      matching: find.byType(DropdownButtonFormField<String>),
+    );
+    final incQuantityBtn = find.descendant(
+      of: find.byType(QuantityStepper),
+      matching: find.byIcon(Icons.add_rounded),
+    );
+
     setUp(() {
       inventoryRepository = InventoryRepository()
-        ..addResistor(Resistor(id: 'a', value: 1000, tolerance: 2, power: 250))
-        ..addDiode(Diode(id: 'b', code: '1N34A', quantity: 3));
-      final diodeId = inventoryRepository.diodes.first.id;
+        ..addComponent(
+          Resistor(id: 'a', value: 1000, tolerance: '2', power: '0.25'),
+        )
+        ..addComponent(
+          Diode(
+            id: 'b',
+            partNumber: '1N34A',
+            material: 'Germanium',
+            package: 'SOD-123',
+            quantity: 3,
+          ),
+        );
+      final diodeId = inventoryRepository.components
+          .whereType<Diode>()
+          .single
+          .id;
       viewModel = AddEditComponentViewModel(
         initialCategory: ComponentCategory.resistor,
         inventoryRepository: inventoryRepository,
@@ -323,30 +387,11 @@ void main() {
       await testApp(tester, AddEditComponentScreen(viewModel: viewModel));
     }
 
-    Finder getTextFieldOf(String hint) {
-      final fieldFinder = find.ancestor(
-        of: find.text(hint),
-        matching: find.byType(TextField),
-      );
-      expect(fieldFinder, findsOneWidget);
-
-      return fieldFinder;
-    }
-
-    String getTextFromField(tester, finder) {
-      final valueText = tester.widget<EditableText>(
-        find.descendant(of: finder, matching: find.byType(EditableText)),
-      );
-      return valueText.controller.text;
-    }
-
     testWidgets('should display diode values', (tester) async {
       await loadWidget(tester);
       await tester.pumpAndSettle();
 
       expect(find.byType(AddEditComponentScreen), findsOneWidget);
-
-      final codeFieldFinder = getTextFieldOf('Code');
 
       final quantityFieldFinder = find.byType(QuantityStepper);
       expect(quantityFieldFinder, findsOneWidget);
@@ -354,6 +399,8 @@ void main() {
       expect(find.text('EDIT_COMPONENT'), findsOneWidget);
 
       expect(getTextFromField(tester, codeFieldFinder), '1N34A');
+      await selectDropdown(tester, materialFieldFinder, 'Germanium');
+      await selectDropdown(tester, packageFieldFinder, 'SOD-123');
       expect(getTextFromField(tester, quantityFieldFinder), '3');
     });
 
@@ -361,13 +408,9 @@ void main() {
       await loadWidget(tester);
       await tester.pumpAndSettle();
 
-      final codeFieldFinder = getTextFieldOf('Code');
-      final incQuantityBtn = find.descendant(
-        of: find.byType(QuantityStepper),
-        matching: find.byIcon(Icons.add_rounded),
-      );
-
       await tester.enterText(codeFieldFinder, 'new code');
+      await selectDropdown(tester, materialFieldFinder, 'Silicon');
+      await selectDropdown(tester, packageFieldFinder, 'DO-35');
       await tester.tap(incQuantityBtn);
 
       await tester.pump();
@@ -376,7 +419,22 @@ void main() {
       expect(quantityFieldFinder, findsOneWidget);
 
       expect(getTextFromField(tester, codeFieldFinder), 'new code');
+      expect(getTextFromDropdown(tester, materialFieldFinder), 'Silicon');
+      expect(getTextFromDropdown(tester, packageFieldFinder), 'DO-35');
       expect(getTextFromField(tester, quantityFieldFinder), '4');
+    });
+
+    testWidgets('should remove diode values', (tester) async {
+      await loadWidget(tester);
+      await tester.pumpAndSettle();
+
+      await selectDropdown(tester, materialFieldFinder, '');
+      await selectDropdown(tester, packageFieldFinder, '');
+
+      await tester.pump();
+
+      expect(getTextFromDropdown(tester, materialFieldFinder), '');
+      expect(getTextFromDropdown(tester, packageFieldFinder), '');
     });
   });
 }
@@ -385,4 +443,27 @@ Future<void> testApp(WidgetTester tester, Widget body) async {
   tester.view.devicePixelRatio = 1.0;
   await tester.binding.setSurfaceSize(const Size(1200, 800));
   await tester.pumpWidget(MaterialApp(home: Scaffold(body: body)));
+}
+
+Finder getTextFieldOf(String hint) {
+  final fieldFinder = find.ancestor(
+    of: find.text(hint),
+    matching: find.byType(TextField),
+  );
+
+  return fieldFinder;
+}
+
+String getTextFromField(WidgetTester tester, Finder finder) {
+  final valueText = tester.widget<EditableText>(
+    find.descendant(of: finder, matching: find.byType(EditableText)),
+  );
+  return valueText.controller.text;
+}
+
+String? getTextFromDropdown(WidgetTester tester, Finder finder) {
+  final valueText = tester.widget<DropdownButton<String>>(
+    find.descendant(of: finder, matching: find.byType(DropdownButton<String>)),
+  );
+  return valueText.value;
 }

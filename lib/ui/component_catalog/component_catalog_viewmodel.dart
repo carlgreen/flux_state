@@ -31,11 +31,9 @@ class ComponentCatalogViewModel extends ChangeNotifier {
       //   case Error<List<Components>>():
       //     _log.warning('Failed to load components', componentsResult.error);
       // }
-      final resistors = _inventoryRepository.resistors;
-      final diodes = _inventoryRepository.diodes;
+      final components = _inventoryRepository.components;
       _components.clear();
-      _components.addAll(resistors);
-      _components.addAll(diodes);
+      _components.addAll(components);
 
       // ...
 

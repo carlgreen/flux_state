@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flux_state/core/component_schemas.dart';
 import 'package:flux_state/domain/models/component.dart';
 import 'package:flux_state/domain/models/component_category.dart';
-import 'package:flux_state/domain/models/diode.dart';
-import 'package:flux_state/domain/models/resistor.dart';
 import 'package:flux_state/theme/app_colors.dart';
 import 'package:flux_state/ui/component_catalog/add_edit_component_viewmodel.dart';
 import 'package:flux_state/ui/component_catalog/quantity_stepper.dart';
@@ -324,7 +323,7 @@ class _ComponentAttrFormState extends State<_ComponentAttrForm> {
   }
 
   void _initControllers() {
-    for (final f in _forCategory(widget.category)) {
+    for (final f in ComponentSchemas.forCategory(widget.category)) {
       _ctrl[f.key] = TextEditingController(
         text: _values[f.key]?.toString() ?? '',
       );
@@ -351,7 +350,7 @@ class _ComponentAttrFormState extends State<_ComponentAttrForm> {
 
   @override
   Widget build(BuildContext context) {
-    final fields = _forCategory(widget.category);
+    final fields = ComponentSchemas.forCategory(widget.category);
     if (fields.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -362,63 +361,83 @@ class _ComponentAttrFormState extends State<_ComponentAttrForm> {
           .map(
             (f) => Padding(
               padding: const EdgeInsets.only(bottom: 16),
-              child: _textField(f),
+              child: _buildField(f),
             ),
           )
           .toList(),
     );
   }
 
-  Widget _textField(_AttributeField field) {
+  Widget _buildField(AttributeField field) {
+    return switch (field.type) {
+      AttributeFieldType.text || AttributeFieldType.number => _textField(field),
+      AttributeFieldType.dropdown => _dropdown(field),
+    };
+  }
+
+  Widget _textField(AttributeField field) {
     return TextFormField(
       controller: _ctrl[field.key],
-      decoration: InputDecoration(hintText: field.label),
-      keyboardType: TextInputType.number,
+      decoration: InputDecoration(
+        labelText: field.unit != null
+            ? '${field.label} (${field.unit})'
+            : field.label,
+        hintText: field.hint,
+      ),
+      keyboardType: switch (field.type) {
+        AttributeFieldType.number => const TextInputType.numberWithOptions(
+          decimal: true,
+        ),
+        _ => TextInputType.text,
+      },
+      textCapitalization: TextCapitalization.words,
       onChanged: (v) => _update(field.key, v),
-      validator: (field.type == _AttributeFieldType.number
+      validator: (field.type == AttributeFieldType.number
           ? requiredIntValidator
           : requiredValidator)(field.label),
     );
   }
-}
 
-enum _AttributeFieldType { text, number }
+  Widget _dropdown(AttributeField field) {
+    final theme = Theme.of(context);
+    final typography = theme.textTheme;
+    final colors = theme.colorScheme;
 
-class _AttributeField {
-  final String key;
-  final String label;
-  final _AttributeFieldType type;
+    final current = _values[field.key]?.toString();
+    final opts = field.options ?? [];
+    if (!field.required) {
+      opts.insert(0, '');
+    }
+    final value = opts.contains(current) ? current : null;
 
-  _AttributeField({required this.key, required this.label, required this.type});
-}
-
-List<_AttributeField> _forCategory(ComponentCategory category) {
-  return switch (category) {
-    ComponentCategory.resistor => [
-      _AttributeField(
-        key: Resistor.valueKey,
-        label: 'Value',
-        type: _AttributeFieldType.number,
+    return DropdownButtonFormField<String>(
+      initialValue: value,
+      dropdownColor: colors.surfaceContainerHighest,
+      style: typography.bodyMedium?.copyWith(color: colors.onSurface),
+      iconEnabledColor: colors.onSurfaceVariant,
+      decoration: InputDecoration(
+        labelText: field.unit != null
+            ? '${field.label} (${field.unit})'
+            : field.label,
       ),
-      _AttributeField(
-        key: Resistor.toleranceKey,
-        label: 'Tolerance',
-        type: _AttributeFieldType.number,
-      ),
-      _AttributeField(
-        key: Resistor.powerKey,
-        label: 'Power',
-        type: _AttributeFieldType.number,
-      ),
-    ],
-    ComponentCategory.diode => [
-      _AttributeField(
-        key: Diode.codeKey,
-        label: 'Code',
-        type: _AttributeFieldType.text,
-      ),
-    ],
-  };
+      isExpanded: true,
+      items: opts
+          .map(
+            (o) => DropdownMenuItem(
+              value: o,
+              child: Text(
+                o,
+                style: typography.bodyMedium?.copyWith(color: colors.onSurface),
+              ),
+            ),
+          )
+          .toList(),
+      onChanged: (v) {
+        if (v != null) _update(field.key, v);
+      },
+      validator: field.required ? requiredValidator(field.label) : null,
+    );
+  }
 }
 
 FormFieldValidator<String>? requiredValidator(String field) {

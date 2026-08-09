@@ -2,26 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:flux_state/theme/app_colors.dart';
 import 'package:flux_state/ui/components_icons.dart';
 
-enum ComponentCategory { resistor, diode }
+enum ComponentCategory { resistor, capacitor, diode }
 
 extension ComponentCategoryPresentation on ComponentCategory {
   String get displayName => switch (this) {
     ComponentCategory.resistor => 'Resistors',
+    ComponentCategory.capacitor => 'Capacitors',
     ComponentCategory.diode => 'Diodes',
   };
 
   String get singularName => switch (this) {
     ComponentCategory.resistor => 'Resistor',
+    ComponentCategory.capacitor => 'Capacitor',
     ComponentCategory.diode => 'Diode',
   };
 
   IconData get icon => switch (this) {
     ComponentCategory.resistor => ComponentIcons.resistor,
+    ComponentCategory.capacitor => ComponentIcons.capacitor,
     ComponentCategory.diode => ComponentIcons.diode,
   };
 
   Color get color => switch (this) {
     ComponentCategory.resistor => AppColors.accentResistor,
+    ComponentCategory.capacitor => AppColors.accentCapacitor,
     ComponentCategory.diode => AppColors.accentDiode,
   };
 

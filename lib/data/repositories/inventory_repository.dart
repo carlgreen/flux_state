@@ -1,3 +1,4 @@
+import 'package:flux_state/domain/models/capacitor.dart';
 import 'package:flux_state/domain/models/component.dart';
 import 'package:flux_state/domain/models/component_category.dart';
 import 'package:flux_state/domain/models/diode.dart';
@@ -31,6 +32,8 @@ class InventoryRepository {
     switch (category) {
       case ComponentCategory.resistor:
         c = Resistor.fromAttrs(id, attrs);
+      case ComponentCategory.capacitor:
+        c = Capacitor.fromAttrs(id, attrs);
       case ComponentCategory.diode:
         c = Diode.fromAttrs(id, attrs);
     }

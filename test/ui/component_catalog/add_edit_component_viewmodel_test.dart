@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flux_state/data/repositories/inventory_repository.dart';
+import 'package:flux_state/domain/models/capacitor.dart';
 import 'package:flux_state/domain/models/component_category.dart';
 import 'package:flux_state/domain/models/diode.dart';
 import 'package:flux_state/domain/models/resistor.dart';
@@ -78,6 +79,91 @@ void main() {
           tolerance: '10',
           power: '0.5',
           package: 'SMD',
+          quantity: 5,
+        ),
+      );
+    });
+    test('Create capacitor with mimimal fields', () {
+      final inventoryRepository = InventoryRepository();
+      final viewModel = AddEditComponentViewModel(
+        inventoryRepository: inventoryRepository,
+      );
+
+      expect(inventoryRepository.components.isEmpty, true);
+
+      viewModel.category = ComponentCategory.capacitor;
+      viewModel.save(<String, dynamic>{
+        'value': '1000',
+        'polarised': false,
+      }, 10);
+
+      final capacitor = inventoryRepository.components.single as Capacitor;
+      expect(capacitor.value, 1000);
+      expect(capacitor.voltage, null);
+      expect(capacitor.tolerance, null);
+      expect(capacitor.material, null);
+      expect(capacitor.polarised, false);
+      expect(capacitor.quantity, 10);
+    });
+
+    test('Create capacitor with all fields', () {
+      final inventoryRepository = InventoryRepository();
+      final viewModel = AddEditComponentViewModel(
+        inventoryRepository: inventoryRepository,
+      );
+
+      expect(inventoryRepository.components.isEmpty, true);
+
+      viewModel.category = ComponentCategory.capacitor;
+      viewModel.save(<String, dynamic>{
+        'value': '1000',
+        'voltage_v': '50',
+        'tolerance_pct': '10',
+        'material': 'Tantalum',
+        'polarised': true,
+      }, 10);
+
+      final capacitor = inventoryRepository.components.single as Capacitor;
+      expect(capacitor.value, 1000);
+      expect(capacitor.voltage, 50);
+      expect(capacitor.tolerance, '10');
+      expect(capacitor.material, 'Tantalum');
+      expect(capacitor.polarised, true);
+      expect(capacitor.quantity, 10);
+    });
+
+    test('Update capacitor', () {
+      final inventoryRepository = InventoryRepository()
+        ..addComponent(
+          Capacitor(
+            id: 'a',
+            value: 1000,
+            voltage: 50,
+            tolerance: '2',
+            polarised: false,
+            quantity: 10,
+          ),
+        );
+      final viewModel = AddEditComponentViewModel(
+        inventoryRepository: inventoryRepository,
+      );
+
+      viewModel.update('a', <String, dynamic>{
+        'value': '100',
+        'tolerance_pct': '10',
+        'polarised': 'true',
+        'material': 'Tantalum',
+      }, 5);
+
+      expect(
+        inventoryRepository.components.single,
+        Capacitor(
+          id: 'a',
+          value: 100,
+          voltage: 50,
+          tolerance: '10',
+          material: 'Tantalum',
+          polarised: true,
           quantity: 5,
         ),
       );

@@ -372,6 +372,7 @@ class _ComponentAttrFormState extends State<_ComponentAttrForm> {
     return switch (field.type) {
       AttributeFieldType.text || AttributeFieldType.number => _textField(field),
       AttributeFieldType.dropdown => _dropdown(field),
+      AttributeFieldType.boolean => _booleanField(field),
     };
   }
 
@@ -436,6 +437,20 @@ class _ComponentAttrFormState extends State<_ComponentAttrForm> {
         if (v != null) _update(field.key, v);
       },
       validator: field.required ? requiredValidator(field.label) : null,
+    );
+  }
+
+  Widget _booleanField(AttributeField field) {
+    final theme = Theme.of(context);
+    final typography = theme.textTheme;
+
+    final current = _values[field.key] as bool? ?? false;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(field.label, style: typography.bodyMedium),
+        Switch(value: current, onChanged: (v) => _update(field.key, v)),
+      ],
     );
   }
 }

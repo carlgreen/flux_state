@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flux_state/data/repositories/inventory_repository.dart';
+import 'package:flux_state/domain/models/capacitor.dart';
 import 'package:flux_state/domain/models/component_category.dart';
 import 'package:flux_state/domain/models/diode.dart';
 import 'package:flux_state/domain/models/resistor.dart';
@@ -174,6 +175,68 @@ void main() {
       ]);
     });
 
+    testWidgets('capacitor should save correct data', (tester) async {
+      await loadWidget(tester);
+      await tester.pumpAndSettle();
+
+      final capacitorButton = find.widgetWithText(
+        AnimatedContainer,
+        "CAPACITOR",
+      );
+      await tester.tap(capacitorButton);
+      await tester.pump();
+
+      final valueField = find.ancestor(
+        of: find.text('Value'),
+        matching: find.byType(TextField),
+      );
+      final voltageField = find.ancestor(
+        of: find.text('Voltage Rating (V)'),
+        matching: find.byType(TextField),
+      );
+      final toleranceField = find.ancestor(
+        of: find.text('Tolerance (%)'),
+        matching: find.byType(DropdownButtonFormField<String>),
+      );
+      final materialField = find.ancestor(
+        of: find.text('Type / Dielectric'),
+        matching: find.byType(DropdownButtonFormField<String>),
+      );
+      final polarisedField = find.descendant(
+        of: find.widgetWithText(Row, 'Polarised'),
+        matching: find.byType(Switch),
+      );
+      final incQuantityBtn = find.descendant(
+        of: find.byType(QuantityStepper),
+        matching: find.byIcon(Icons.add_rounded),
+      );
+
+      final saveBtn = find.text('SAVE');
+
+      await tester.enterText(valueField, '150');
+      await tester.enterText(voltageField, '25');
+      await selectDropdown(tester, toleranceField, '5');
+      await selectDropdown(tester, materialField, 'Ceramic (MLCC)');
+      await tester.tap(polarisedField);
+
+      await tester.tap(incQuantityBtn);
+
+      await tester.tap(saveBtn);
+      await tester.pump();
+
+      expect(inventoryRepository.components, [
+        Capacitor(
+          id: 'b',
+          value: 150,
+          voltage: 25,
+          tolerance: '5',
+          material: 'Ceramic (MLCC)',
+          polarised: true,
+          quantity: 1,
+        ),
+      ]);
+    });
+
     testWidgets('diode should save correct data', (tester) async {
       await loadWidget(tester);
       await tester.pumpAndSettle();
@@ -340,6 +403,120 @@ void main() {
     });
   });
 
+  group('AddEditComponentScreen edit capacitor tests', () {
+    late AddEditComponentViewModel viewModel;
+    late InventoryRepository inventoryRepository;
+
+    final valueFieldFinder = getTextFieldOf('Value');
+    final voltageFieldFinder = getTextFieldOf('Voltage Rating (V)');
+    final toleranceFieldFinder = find.ancestor(
+      of: find.text('Tolerance (%)'),
+      matching: find.byType(DropdownButtonFormField<String>),
+    );
+    final materialFieldFinder = find.ancestor(
+      of: find.text('Type / Dielectric'),
+      matching: find.byType(DropdownButtonFormField<String>),
+    );
+    final polarisedFieldFinder = find.descendant(
+      of: find.widgetWithText(Row, 'Polarised'),
+      matching: find.byType(Switch),
+    );
+    // final incQuantityBtn = find.descendant(
+    //   of: find.byType(QuantityStepper),
+    //   matching: find.byIcon(Icons.add_rounded),
+    // );
+
+    setUp(() {
+      inventoryRepository = InventoryRepository()
+        ..addComponent(
+          Resistor(id: 'a', value: 1000, tolerance: '2', power: '0.25'),
+        )
+        ..addComponent(
+          Capacitor(
+            id: 'c',
+            value: 4500,
+            voltage: 100,
+            tolerance: '10',
+            material: 'Tantalum',
+            polarised: true,
+            quantity: 3,
+          ),
+        );
+      final capacitorId = inventoryRepository.components
+          .whereType<Capacitor>()
+          .single
+          .id;
+      viewModel = AddEditComponentViewModel(
+        initialCategory: ComponentCategory.resistor,
+        inventoryRepository: inventoryRepository,
+        componentId: capacitorId,
+      );
+    });
+
+    Future<void> loadWidget(WidgetTester tester) async {
+      await testApp(tester, AddEditComponentScreen(viewModel: viewModel));
+    }
+
+    testWidgets('should display capacitor values', (tester) async {
+      await loadWidget(tester);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AddEditComponentScreen), findsOneWidget);
+
+      final quantityFieldFinder = find.byType(QuantityStepper);
+      expect(quantityFieldFinder, findsOneWidget);
+
+      expect(find.text('EDIT_COMPONENT'), findsOneWidget);
+
+      expect(getTextFromField(tester, valueFieldFinder), '4500');
+      expect(getTextFromField(tester, voltageFieldFinder), '100');
+      await selectDropdown(tester, toleranceFieldFinder, '10');
+      await selectDropdown(tester, materialFieldFinder, 'Tantalum');
+      expect(getValueFromSwitch(tester, polarisedFieldFinder), true);
+      expect(getTextFromField(tester, quantityFieldFinder), '3');
+    });
+
+    testWidgets('should update capacitor values', (tester) async {
+      await loadWidget(tester);
+      await tester.pumpAndSettle();
+
+      await tester.enterText(valueFieldFinder, '4700');
+      await tester.enterText(voltageFieldFinder, '25');
+      await selectDropdown(tester, toleranceFieldFinder, '20');
+      await selectDropdown(tester, materialFieldFinder, 'Film (Polyester)');
+      await tester.tap(polarisedFieldFinder);
+
+      await tester.pump();
+
+      final quantityFieldFinder = find.byType(QuantityStepper);
+      expect(quantityFieldFinder, findsOneWidget);
+
+      expect(getTextFromField(tester, valueFieldFinder), '4700');
+      expect(getTextFromField(tester, voltageFieldFinder), '25');
+      expect(getTextFromDropdown(tester, toleranceFieldFinder), '20');
+      expect(
+        getTextFromDropdown(tester, materialFieldFinder),
+        'Film (Polyester)',
+      );
+      expect(getValueFromSwitch(tester, polarisedFieldFinder), false);
+    });
+
+    testWidgets('should remove capacitor values', (tester) async {
+      await loadWidget(tester);
+      await tester.pumpAndSettle();
+
+      await tester.enterText(voltageFieldFinder, '');
+      await selectDropdown(tester, toleranceFieldFinder, '');
+      await selectDropdown(tester, materialFieldFinder, '');
+
+      await tester.pump();
+
+      expect(getTextFromField(tester, voltageFieldFinder), '');
+      expect(getTextFromDropdown(tester, toleranceFieldFinder), '');
+      expect(getTextFromDropdown(tester, materialFieldFinder), '');
+    });
+  });
+
   group('AddEditComponentScreen edit diode tests', () {
     late AddEditComponentViewModel viewModel;
     late InventoryRepository inventoryRepository;
@@ -465,5 +642,10 @@ String? getTextFromDropdown(WidgetTester tester, Finder finder) {
   final valueText = tester.widget<DropdownButton<String>>(
     find.descendant(of: finder, matching: find.byType(DropdownButton<String>)),
   );
+  return valueText.value;
+}
+
+bool getValueFromSwitch(WidgetTester tester, Finder finder) {
+  final valueText = tester.widget<Switch>(finder);
   return valueText.value;
 }

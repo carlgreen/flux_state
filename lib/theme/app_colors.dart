@@ -45,5 +45,6 @@ class AppColors {
   );
 
   static const Color accentResistor = Color(0xFFFFB547);
+  static const Color accentCapacitor = Color(0xFF60A5FA);
   static const Color accentDiode = Color(0xFF34D399);
 }

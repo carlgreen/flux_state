@@ -1,8 +1,9 @@
+import 'package:flux_state/domain/models/capacitor.dart';
 import 'package:flux_state/domain/models/component_category.dart';
 import 'package:flux_state/domain/models/diode.dart';
 import 'package:flux_state/domain/models/resistor.dart';
 
-enum AttributeFieldType { text, number, dropdown }
+enum AttributeFieldType { text, number, dropdown, boolean }
 
 class AttributeField {
   final String key;
@@ -56,6 +57,48 @@ class ComponentSchemas {
           label: 'Package',
           type: AttributeFieldType.dropdown,
           options: ['Through-hole', '0402', '0603', '0805', '1206', '1210'],
+        ),
+      ],
+      ComponentCategory.capacitor => [
+        AttributeField(
+          key: Capacitor.valueKey,
+          label: 'Value',
+          type: AttributeFieldType.number,
+          required: true,
+          hint: '100n, 10u, 47p',
+        ),
+        AttributeField(
+          key: Capacitor.voltageKey,
+          label: 'Voltage Rating',
+          type: AttributeFieldType.number,
+          unit: 'V',
+        ),
+        AttributeField(
+          key: Capacitor.toleranceKey,
+          label: 'Tolerance',
+          type: AttributeFieldType.dropdown,
+          unit: '%',
+          options: ['5', '10', '20'],
+        ),
+        AttributeField(
+          // key: 'material',
+          key: Capacitor.materialKey,
+          label: 'Type / Dielectric',
+          type: AttributeFieldType.dropdown,
+          options: [
+            'Ceramic (MLCC)',
+            'Electrolytic',
+            'Film (Polyester)',
+            'Film (Polypropylene)',
+            'Tantalum',
+            'Silver Mica',
+          ],
+        ),
+        AttributeField(
+          key: Capacitor.polarisedKey,
+          label: 'Polarised',
+          type: AttributeFieldType.boolean,
+          required: true,
         ),
       ],
       ComponentCategory.diode => [

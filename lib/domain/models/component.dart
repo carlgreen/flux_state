@@ -1,5 +1,6 @@
 import 'package:flux_state/app_constants.dart';
-import 'package:flux_state/domain/models/component_category.dart';
+
+import 'component_category.dart';
 
 enum StockStatus { inStock, lowStock, outOfStock }
 

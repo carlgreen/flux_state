@@ -68,6 +68,7 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
                   controller: _searchCtrl,
                   onChanged: (v) => setState(() => _searchQ = v),
                   onRefreshRequested: reload,
+                  selectedCat: _selectedCat,
                 ),
                 Expanded(
                   child: ListenableBuilder(
@@ -78,6 +79,7 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
 
                       return _ComponentList(
                         components: filtered,
+                        selectedCat: _selectedCat,
                         onRefreshRequested: reload,
                       );
                     },
@@ -223,6 +225,7 @@ class _CategoryItem extends StatelessWidget {
 Future<void> navigateToAddEditWithRefresh(
   BuildContext context,
   VoidCallback onRefreshRequested, {
+  ComponentCategory? selectedCat,
   String? componentId,
 }) async {
   final bool? isDataUpdated = await Navigator.push(
@@ -231,6 +234,7 @@ Future<void> navigateToAddEditWithRefresh(
       builder: (context) => AddEditComponentScreen(
         viewModel: AddEditComponentViewModel(
           inventoryRepository: RepositoryProvider.of(context),
+          initialCategory: selectedCat,
           componentId: componentId,
         ),
       ),
@@ -245,10 +249,12 @@ class _ComponentList extends StatelessWidget {
   const _ComponentList({
     required this.components,
     required this.onRefreshRequested,
+    this.selectedCat,
   });
 
   final List<Component> components;
   final VoidCallback onRefreshRequested;
+  final ComponentCategory? selectedCat;
 
   @override
   Widget build(BuildContext context) {
@@ -261,7 +267,11 @@ class _ComponentList extends StatelessWidget {
           icon: const Icon(Icons.add),
           label: const Text('Add Component'),
           onPressed: () {
-            navigateToAddEditWithRefresh(context, onRefreshRequested);
+            navigateToAddEditWithRefresh(
+              context,
+              onRefreshRequested,
+              selectedCat: selectedCat,
+            );
           },
         ),
       );
@@ -281,6 +291,7 @@ class _ComponentList extends StatelessWidget {
                   context,
                   onRefreshRequested,
                   componentId: c.id,
+                  selectedCat: selectedCat,
                 );
               },
             ),
@@ -488,11 +499,13 @@ class _SearchBar extends StatelessWidget {
     required this.controller,
     required this.onChanged,
     required this.onRefreshRequested,
+    this.selectedCat,
   });
 
   final TextEditingController controller;
   final ValueChanged<String> onChanged;
   final VoidCallback onRefreshRequested;
+  final ComponentCategory? selectedCat;
 
   @override
   Widget build(BuildContext context) {
@@ -530,7 +543,10 @@ class _SearchBar extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 12),
-          _NewPartBtn(onRefreshRequested: onRefreshRequested),
+          _NewPartBtn(
+            onRefreshRequested: onRefreshRequested,
+            selectedCat: selectedCat,
+          ),
         ],
       ),
     );
@@ -538,9 +554,10 @@ class _SearchBar extends StatelessWidget {
 }
 
 class _NewPartBtn extends StatelessWidget {
-  const _NewPartBtn({required this.onRefreshRequested});
+  const _NewPartBtn({required this.onRefreshRequested, this.selectedCat});
 
   final VoidCallback onRefreshRequested;
+  final ComponentCategory? selectedCat;
 
   @override
   Widget build(BuildContext context) {
@@ -550,7 +567,11 @@ class _NewPartBtn extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        navigateToAddEditWithRefresh(context, onRefreshRequested);
+        navigateToAddEditWithRefresh(
+          context,
+          onRefreshRequested,
+          selectedCat: selectedCat,
+        );
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),

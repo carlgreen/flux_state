@@ -115,16 +115,18 @@ class _AddEditComponentScreenState extends State<AddEditComponentScreen> {
             return ListView(
               padding: const EdgeInsets.fromLTRB(20, 8, 20, 48),
               children: [
-                const _Label('CATEGORY'),
-                const SizedBox(height: 10),
-                _CategorySelector(
-                  selected: widget.viewModel.category,
-                  onChanged: (cat) => setState(() {
-                    widget.viewModel.category = cat;
-                    _attrs = {};
-                  }),
-                ),
-                const SizedBox(height: 28),
+                if (!_isEditing) ...[
+                  const _Label('CATEGORY'),
+                  const SizedBox(height: 10),
+                  _CategorySelector(
+                    selected: widget.viewModel.category,
+                    onChanged: (cat) => setState(() {
+                      widget.viewModel.category = cat;
+                      _attrs = {};
+                    }),
+                  ),
+                  const SizedBox(height: 28),
+                ],
 
                 const _Label('SPECIFICATIONS'),
                 const SizedBox(height: 12),

@@ -34,7 +34,7 @@ class ComponentSchemas {
         AttributeField(
           key: Resistor.valueKey,
           label: 'Value',
-          type: AttributeFieldType.number,
+          type: AttributeFieldType.text,
           required: true,
           hint: '10k, 4.7k, 1M',
         ),
@@ -63,7 +63,7 @@ class ComponentSchemas {
         AttributeField(
           key: Capacitor.valueKey,
           label: 'Value',
-          type: AttributeFieldType.number,
+          type: AttributeFieldType.text,
           required: true,
           hint: '100n, 10u, 47p',
         ),

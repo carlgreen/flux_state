@@ -471,7 +471,7 @@ FormFieldValidator<String>? requiredIntValidator(String field) {
     if (v == null || v.trim().isEmpty) {
       return '$field is required';
     }
-    if (int.tryParse(v) == null) {
+    if (double.tryParse(v) == null) {
       return '$field must be a number';
     }
     return null;

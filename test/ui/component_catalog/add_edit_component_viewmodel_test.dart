@@ -19,7 +19,7 @@ void main() {
       viewModel.save(<String, dynamic>{'value': '1000'}, 10);
 
       final resistor = inventoryRepository.components.single as Resistor;
-      expect(resistor.value, 1000);
+      expect(resistor.value, 1000000);
       expect(resistor.tolerance, null);
       expect(resistor.power, null);
       expect(resistor.package, null);
@@ -42,7 +42,7 @@ void main() {
       }, 10);
 
       final resistor = inventoryRepository.components.single as Resistor;
-      expect(resistor.value, 1000);
+      expect(resistor.value, 1000000);
       expect(resistor.tolerance, '10');
       expect(resistor.power, '0.5');
       expect(resistor.package, 'Through-hole');
@@ -54,7 +54,7 @@ void main() {
         ..addComponent(
           Resistor(
             id: 'a',
-            value: 1000,
+            value: 1000000,
             tolerance: '2',
             power: '0.25',
             quantity: 10,
@@ -75,7 +75,7 @@ void main() {
         inventoryRepository.components.single,
         Resistor(
           id: 'a',
-          value: 100,
+          value: 100000,
           tolerance: '10',
           power: '0.5',
           package: 'SMD',
@@ -92,13 +92,10 @@ void main() {
       expect(inventoryRepository.components.isEmpty, true);
 
       viewModel.category = ComponentCategory.capacitor;
-      viewModel.save(<String, dynamic>{
-        'value': '1000',
-        'polarised': false,
-      }, 10);
+      viewModel.save(<String, dynamic>{'value': '1u', 'polarised': false}, 10);
 
       final capacitor = inventoryRepository.components.single as Capacitor;
-      expect(capacitor.value, 1000);
+      expect(capacitor.value, 1000000);
       expect(capacitor.voltage, null);
       expect(capacitor.tolerance, null);
       expect(capacitor.material, null);
@@ -116,7 +113,7 @@ void main() {
 
       viewModel.category = ComponentCategory.capacitor;
       viewModel.save(<String, dynamic>{
-        'value': '1000',
+        'value': '1n5',
         'voltage_v': '50',
         'tolerance_pct': '10',
         'material': 'Tantalum',
@@ -124,7 +121,7 @@ void main() {
       }, 10);
 
       final capacitor = inventoryRepository.components.single as Capacitor;
-      expect(capacitor.value, 1000);
+      expect(capacitor.value, 1500);
       expect(capacitor.voltage, 50);
       expect(capacitor.tolerance, '10');
       expect(capacitor.material, 'Tantalum');
@@ -149,7 +146,7 @@ void main() {
       );
 
       viewModel.update('a', <String, dynamic>{
-        'value': '100',
+        'value': '100pF',
         'tolerance_pct': '10',
         'polarised': true,
         'material': 'Tantalum',

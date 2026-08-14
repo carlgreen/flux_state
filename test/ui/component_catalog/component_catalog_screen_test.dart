@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flux_state/data/repositories/inventory_repository.dart';
+import 'package:flux_state/domain/models/capacitor.dart';
 import 'package:flux_state/domain/models/component_category.dart';
 import 'package:flux_state/domain/models/diode.dart';
 import 'package:flux_state/domain/models/resistor.dart';
@@ -16,7 +17,17 @@ void main() {
     setUp(() {
       inventoryRepository = InventoryRepository()
         ..addComponent(
-          Resistor(id: 'a', value: 1000, tolerance: '2', power: '1/4'),
+          Resistor(id: 'a', value: 1000000, tolerance: '2', power: '1/4'),
+        )
+        ..addComponent(
+          Capacitor(
+            id: 'c',
+            value: 1500,
+            voltage: 10,
+            tolerance: '20',
+            material: 'Silver Mica',
+            polarised: true,
+          ),
         )
         ..addComponent(Diode(id: 'b', partNumber: '1N34A'));
       viewModel = ComponentCatalogViewModel(
@@ -40,6 +51,12 @@ void main() {
 
       expect(find.text('RESISTOR'), findsOneWidget);
       expect(find.text('1 kΩ 1/4 W ± 2%'), findsOneWidget);
+
+      expect(find.text('CAPACITOR'), findsOneWidget);
+      expect(
+        find.text('1.5 nF polarised 10 V ± 20% (Silver Mica)'),
+        findsOneWidget,
+      );
 
       expect(find.text('DIODE'), findsOneWidget);
       expect(find.text('1N34A'), findsOneWidget);

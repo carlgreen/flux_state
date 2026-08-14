@@ -35,43 +35,6 @@ void main() {
       await testApp(tester, AddEditComponentScreen(viewModel: viewModel));
     }
 
-    testForNumericField(tester, String fieldName) async {
-      await loadWidget(tester);
-      await tester.pumpAndSettle();
-
-      final field = find.ancestor(
-        of: find.text(fieldName),
-        matching: find.byType(TextField),
-      );
-
-      final saveBtn = find.text('SAVE');
-
-      await tester.tap(saveBtn);
-      await tester.pump();
-
-      expect(find.text('$fieldName is required'), findsOneWidget);
-
-      await tester.enterText(field, 'a');
-
-      await tester.tap(saveBtn);
-      await tester.pump();
-
-      expect(find.text('$fieldName must be a number'), findsOneWidget);
-
-      await tester.enterText(field, '1');
-
-      await tester.tap(saveBtn);
-      await tester.pump();
-
-      expect(find.text('$fieldName must be a number'), findsNothing);
-    }
-
-    testWidgets('should fail if resistor value is not a number', (
-      tester,
-    ) async {
-      await testForNumericField(tester, 'Value');
-    });
-
     testWidgets('should fail if resistor quantity is not a number', (
       tester,
     ) async {
@@ -150,7 +113,7 @@ void main() {
 
       final saveBtn = find.text('SAVE');
 
-      await tester.enterText(valueField, '10');
+      await tester.enterText(valueField, '10k');
       await selectDropdown(tester, powerField, '0.25');
       await selectDropdown(tester, toleranceField, '2');
       await selectDropdown(tester, packageField, '0402');
@@ -166,7 +129,7 @@ void main() {
       expect(inventoryRepository.components, [
         Resistor(
           id: 'a',
-          value: 10,
+          value: 10000000,
           tolerance: '2',
           power: '0.25',
           package: '0402',
@@ -213,7 +176,7 @@ void main() {
 
       final saveBtn = find.text('SAVE');
 
-      await tester.enterText(valueField, '150');
+      await tester.enterText(valueField, '150 pF');
       await tester.enterText(voltageField, '25');
       await selectDropdown(tester, toleranceField, '5');
       await selectDropdown(tester, materialField, 'Ceramic (MLCC)');
@@ -305,7 +268,7 @@ void main() {
         ..addComponent(
           Resistor(
             id: 'a',
-            value: 1000,
+            value: 1000000,
             tolerance: '2',
             power: '0.25',
             package: '0402',
@@ -429,7 +392,7 @@ void main() {
     setUp(() {
       inventoryRepository = InventoryRepository()
         ..addComponent(
-          Resistor(id: 'a', value: 1000, tolerance: '2', power: '0.25'),
+          Resistor(id: 'a', value: 1000000, tolerance: '2', power: '0.25'),
         )
         ..addComponent(
           Capacitor(
@@ -468,7 +431,7 @@ void main() {
 
       expect(find.text('EDIT_COMPONENT'), findsOneWidget);
 
-      expect(getTextFromField(tester, valueFieldFinder), '4500');
+      expect(getTextFromField(tester, valueFieldFinder), '4.5 nF');
       expect(getTextFromField(tester, voltageFieldFinder), '100');
       await selectDropdown(tester, toleranceFieldFinder, '10');
       await selectDropdown(tester, materialFieldFinder, 'Tantalum');
@@ -480,7 +443,7 @@ void main() {
       await loadWidget(tester);
       await tester.pumpAndSettle();
 
-      await tester.enterText(valueFieldFinder, '4700');
+      await tester.enterText(valueFieldFinder, '4n7');
       await tester.enterText(voltageFieldFinder, '25');
       await selectDropdown(tester, toleranceFieldFinder, '20');
       await selectDropdown(tester, materialFieldFinder, 'Film (Polyester)');
@@ -491,7 +454,7 @@ void main() {
       final quantityFieldFinder = find.byType(QuantityStepper);
       expect(quantityFieldFinder, findsOneWidget);
 
-      expect(getTextFromField(tester, valueFieldFinder), '4700');
+      expect(getTextFromField(tester, valueFieldFinder), '4n7');
       expect(getTextFromField(tester, voltageFieldFinder), '25');
       expect(getTextFromDropdown(tester, toleranceFieldFinder), '20');
       expect(
@@ -538,7 +501,7 @@ void main() {
     setUp(() {
       inventoryRepository = InventoryRepository()
         ..addComponent(
-          Resistor(id: 'a', value: 1000, tolerance: '2', power: '0.25'),
+          Resistor(id: 'a', value: 1000000, tolerance: '2', power: '0.25'),
         )
         ..addComponent(
           Diode(

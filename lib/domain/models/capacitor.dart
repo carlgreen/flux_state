@@ -49,7 +49,7 @@ class Capacitor extends Component {
       main = '$main polarised';
     }
     if (voltage != null) {
-      main = '$value $voltage';
+      main = '$main $voltage';
     }
     if (tolerance != null) {
       main = '$main $tolerance';

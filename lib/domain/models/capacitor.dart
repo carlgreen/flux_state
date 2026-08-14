@@ -102,7 +102,8 @@ class Capacitor extends Component {
         case Capacitor.materialKey:
           material = v;
         case Capacitor.polarisedKey:
-          polarised = bool.parse(v);
+          // this is already parsed from it being a switch input
+          polarised = v;
         default:
           debugPrint('unknown field $k');
       }

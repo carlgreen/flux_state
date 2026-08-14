@@ -151,7 +151,7 @@ void main() {
       viewModel.update('a', <String, dynamic>{
         'value': '100',
         'tolerance_pct': '10',
-        'polarised': 'true',
+        'polarised': true,
         'material': 'Tantalum',
       }, 5);
 

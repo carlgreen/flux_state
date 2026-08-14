@@ -94,6 +94,10 @@ void main() {
         of: find.text('Tolerance (%)'),
         matching: find.byType(DropdownButtonFormField<String>),
       );
+      final materialField = find.ancestor(
+        of: find.text('Material'),
+        matching: find.byType(DropdownButtonFormField<String>),
+      );
       final packageField = find.ancestor(
         of: find.text('Package'),
         matching: find.byType(DropdownButtonFormField<String>),
@@ -116,6 +120,7 @@ void main() {
       await tester.enterText(valueField, '10k');
       await selectDropdown(tester, powerField, '0.25');
       await selectDropdown(tester, toleranceField, '2');
+      await selectDropdown(tester, materialField, 'Metal Film');
       await selectDropdown(tester, packageField, '0402');
 
       await tester.enterText(quantityField, '5');
@@ -132,6 +137,7 @@ void main() {
           value: 10000000,
           tolerance: '2',
           power: '0.25',
+          material: 'Metal Film',
           package: '0402',
           quantity: 6,
         ),
@@ -271,6 +277,7 @@ void main() {
             value: 1000000,
             tolerance: '2',
             power: '0.25',
+            material: 'Metal Film',
             package: '0402',
             quantity: 10,
           ),
@@ -300,6 +307,10 @@ void main() {
       of: find.text('Power (W)'),
       matching: find.byType(DropdownButtonFormField<String>),
     );
+    final materialFieldFinder = find.ancestor(
+      of: find.text('Material'),
+      matching: find.byType(DropdownButtonFormField<String>),
+    );
     final packageFieldFinder = find.ancestor(
       of: find.text('Package'),
       matching: find.byType(DropdownButtonFormField<String>),
@@ -319,6 +330,7 @@ void main() {
       expect(getTextFromField(tester, valueFieldFinder), '1000');
       expect(getTextFromDropdown(tester, toleranceFieldFinder), '2');
       expect(getTextFromDropdown(tester, powerFieldFinder), '0.25');
+      expect(getTextFromDropdown(tester, materialFieldFinder), 'Metal Film');
       expect(getTextFromDropdown(tester, packageFieldFinder), '0402');
       expect(getTextFromField(tester, quantityFieldFinder), '10');
     });
@@ -335,6 +347,7 @@ void main() {
       await tester.enterText(valueFieldFinder, '10000');
       await selectDropdown(tester, toleranceFieldFinder, '1');
       await selectDropdown(tester, powerFieldFinder, '0.5');
+      await selectDropdown(tester, materialFieldFinder, 'Carbon Film');
       await selectDropdown(tester, packageFieldFinder, 'Through-hole');
       await tester.tap(decQuantityBtn);
 
@@ -346,6 +359,7 @@ void main() {
       expect(getTextFromField(tester, valueFieldFinder), '10000');
       expect(getTextFromDropdown(tester, toleranceFieldFinder), '1');
       expect(getTextFromDropdown(tester, powerFieldFinder), '0.5');
+      expect(getTextFromDropdown(tester, materialFieldFinder), 'Carbon Film');
       expect(getTextFromDropdown(tester, packageFieldFinder), 'Through-hole');
       expect(getTextFromField(tester, quantityFieldFinder), '9');
     });
@@ -356,12 +370,14 @@ void main() {
 
       await selectDropdown(tester, toleranceFieldFinder, '');
       await selectDropdown(tester, powerFieldFinder, '');
+      await selectDropdown(tester, materialFieldFinder, '');
       await selectDropdown(tester, packageFieldFinder, '');
 
       await tester.pump();
 
       expect(getTextFromDropdown(tester, toleranceFieldFinder), '');
       expect(getTextFromDropdown(tester, powerFieldFinder), '');
+      expect(getTextFromDropdown(tester, materialFieldFinder), '');
       expect(getTextFromDropdown(tester, packageFieldFinder), '');
     });
   });

@@ -7,6 +7,7 @@ class Resistor extends Component {
   static const valueKey = 'value';
   static const toleranceKey = 'tolerance_pct';
   static const powerKey = 'power_w';
+  static const materialKey = 'material';
   static const packageKey = 'package';
 
   Resistor({
@@ -14,6 +15,7 @@ class Resistor extends Component {
     required this.value,
     this.tolerance,
     this.power,
+    this.material,
     this.package,
     super.quantity = 0,
   }) : super(
@@ -22,6 +24,7 @@ class Resistor extends Component {
            valueKey: (value / 1000).toStringAsFixed(value % 1000 == 0 ? 0 : 1),
            toleranceKey: tolerance,
            powerKey: power,
+           materialKey: material,
            packageKey: package,
          },
        );
@@ -30,6 +33,7 @@ class Resistor extends Component {
   final int value;
   final String? tolerance;
   final String? power;
+  final String? material;
   final String? package;
 
   String get valueString => formatResistorValue(value);
@@ -37,6 +41,7 @@ class Resistor extends Component {
       power != null ? formatResistorPowerRating(power!) : '';
   String get toleranceString =>
       tolerance != null ? formatResistorTolerance(tolerance!) : '';
+  String get materialString => material != null ? '$material' : '';
   String get packageString => package != null ? ' $package' : '';
 
   @override
@@ -48,6 +53,9 @@ class Resistor extends Component {
     }
     if (tolerance != null) {
       value = '$value $toleranceString';
+    }
+    if (material != null) {
+      value = '$value $materialString';
     }
     if (package != null) {
       details = '$details $package';
@@ -69,17 +77,20 @@ class Resistor extends Component {
       value == other.value &&
       tolerance == other.tolerance &&
       power == other.power &&
+      material == other.material &&
       package == other.package &&
       quantity == other.quantity;
 
   @override
-  int get hashCode => Object.hash(value, tolerance, power, package, quantity);
+  int get hashCode =>
+      Object.hash(value, tolerance, power, material, package, quantity);
 
   @override
   Component updateFromAttrs(Map<String, dynamic> attrs) {
     int value = this.value;
     String? tolerance = this.tolerance;
     String? power = this.power;
+    String? material = this.material;
     String? package = this.package;
     attrs.forEach((k, v) {
       switch (k) {
@@ -89,6 +100,8 @@ class Resistor extends Component {
           tolerance = v;
         case Resistor.powerKey:
           power = v;
+        case Resistor.materialKey:
+          material = v;
         case Resistor.packageKey:
           package = v;
         default:
@@ -100,6 +113,7 @@ class Resistor extends Component {
       value: value,
       tolerance: tolerance,
       power: power,
+      material: material,
       package: package,
     );
     return update;
@@ -111,6 +125,7 @@ class Resistor extends Component {
       value: parseResistorValueMilliohms(attrs[Resistor.valueKey]),
       tolerance: attrs[Resistor.toleranceKey],
       power: attrs[Resistor.powerKey],
+      material: attrs[Resistor.materialKey],
       package: attrs[Resistor.packageKey],
     );
   }

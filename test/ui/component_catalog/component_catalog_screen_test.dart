@@ -17,7 +17,13 @@ void main() {
     setUp(() {
       inventoryRepository = InventoryRepository()
         ..addComponent(
-          Resistor(id: 'a', value: 1000000, tolerance: '2', power: '1/4'),
+          Resistor(
+            id: 'a',
+            value: 1000000,
+            tolerance: '2',
+            power: '1/4',
+            material: 'Metal Film',
+          ),
         )
         ..addComponent(
           Capacitor(
@@ -50,7 +56,7 @@ void main() {
       expect(find.byType(ComponentCatalogScreen), findsOneWidget);
 
       expect(find.text('RESISTOR'), findsOneWidget);
-      expect(find.text('1 kΩ 1/4 W ± 2%'), findsOneWidget);
+      expect(find.text('1 kΩ 1/4 W ± 2% Metal Film'), findsOneWidget);
 
       expect(find.text('CAPACITOR'), findsOneWidget);
       expect(
@@ -72,7 +78,7 @@ void main() {
       expect(find.byType(ComponentCatalogScreen), findsOneWidget);
 
       expect(find.text('RESISTOR'), findsOneWidget);
-      expect(find.text('1 kΩ 1/4 W ± 2%'), findsOneWidget);
+      expect(find.text('1 kΩ 1/4 W ± 2% Metal Film'), findsOneWidget);
 
       expect(find.text('DIODE'), findsNothing);
     });
@@ -111,7 +117,7 @@ void main() {
       await tester.pump();
 
       expect(find.text('RESISTOR'), findsOneWidget);
-      expect(find.text('1 kΩ 1/4 W ± 2%'), findsOneWidget);
+      expect(find.text('1 kΩ 1/4 W ± 2% Metal Film'), findsOneWidget);
 
       expect(find.text('DIODE'), findsNothing);
 

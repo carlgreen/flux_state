@@ -53,6 +53,12 @@ class ComponentSchemas {
           options: ['0.1', '0.125', '0.25', '0.5', '1', '2', '5'],
         ),
         AttributeField(
+          key: Resistor.materialKey,
+          label: 'Material',
+          type: AttributeFieldType.dropdown,
+          options: ['Metal Film', 'Carbon Film'],
+        ),
+        AttributeField(
           key: Resistor.packageKey,
           label: 'Package',
           type: AttributeFieldType.dropdown,

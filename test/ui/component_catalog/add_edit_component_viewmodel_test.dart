@@ -22,6 +22,7 @@ void main() {
       expect(resistor.value, 1000000);
       expect(resistor.tolerance, null);
       expect(resistor.power, null);
+      expect(resistor.material, null);
       expect(resistor.package, null);
       expect(resistor.quantity, 10);
     });
@@ -38,6 +39,7 @@ void main() {
         'value': '1000',
         'tolerance_pct': '10',
         'power_w': '0.5',
+        'material': 'Metal Film',
         'package': 'Through-hole',
       }, 10);
 
@@ -45,6 +47,7 @@ void main() {
       expect(resistor.value, 1000000);
       expect(resistor.tolerance, '10');
       expect(resistor.power, '0.5');
+      expect(resistor.material, 'Metal Film');
       expect(resistor.package, 'Through-hole');
       expect(resistor.quantity, 10);
     });
@@ -57,6 +60,7 @@ void main() {
             value: 1000000,
             tolerance: '2',
             power: '0.25',
+            material: 'Carbon Film',
             quantity: 10,
           ),
         );
@@ -68,6 +72,7 @@ void main() {
         'value': '100',
         'tolerance_pct': '10',
         'power_w': '0.5',
+        'material': 'Carbon Film',
         'package': 'SMD',
       }, 5);
 
@@ -78,6 +83,7 @@ void main() {
           value: 100000,
           tolerance: '10',
           power: '0.5',
+          material: 'Carbon Film',
           package: 'SMD',
           quantity: 5,
         ),

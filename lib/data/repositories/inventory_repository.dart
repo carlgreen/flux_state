@@ -2,6 +2,7 @@ import 'package:flux_state/domain/models/capacitor.dart';
 import 'package:flux_state/domain/models/component.dart';
 import 'package:flux_state/domain/models/component_category.dart';
 import 'package:flux_state/domain/models/diode.dart';
+import 'package:flux_state/domain/models/led.dart';
 import 'package:flux_state/domain/models/resistor.dart';
 
 class InventoryRepository {
@@ -36,6 +37,8 @@ class InventoryRepository {
         c = Capacitor.fromAttrs(id, attrs);
       case ComponentCategory.diode:
         c = Diode.fromAttrs(id, attrs);
+      case ComponentCategory.led:
+        c = Led.fromAttrs(id, attrs);
     }
     c.quantity = quantity;
     addComponent(c);

@@ -130,6 +130,59 @@ class ComponentSchemas {
           ],
         ),
       ],
+      ComponentCategory.led => [
+        AttributeField(
+          key: 'colour',
+          label: 'Colour',
+          type: AttributeFieldType.dropdown,
+          required: true,
+          options: [
+            'Red',
+            'Green',
+            'Yellow',
+            'Orange',
+            'Blue',
+            'White',
+            'UV',
+            'RGB',
+            'IR',
+            'Other',
+          ],
+        ),
+        AttributeField(
+          key: 'size_mm',
+          label: 'Size',
+          type: AttributeFieldType.dropdown,
+          required: true,
+          options: [
+            '2mm',
+            '3mm',
+            '5mm',
+            '10mm',
+            'SMD 0603',
+            'SMD 0805',
+            'Other',
+          ],
+        ),
+        AttributeField(
+          key: 'forward_v',
+          label: 'Forward Voltage',
+          type: AttributeFieldType.number,
+          unit: 'V',
+        ),
+        AttributeField(
+          key: 'current_ma',
+          label: 'Typical Current',
+          type: AttributeFieldType.number,
+          unit: 'mA',
+        ),
+        AttributeField(
+          key: 'lens',
+          label: 'Lens',
+          type: AttributeFieldType.dropdown,
+          options: ['Clear', 'Diffused', 'Water Clear', 'Tinted'],
+        ),
+      ],
     };
   }
 }

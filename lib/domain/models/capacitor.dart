@@ -22,7 +22,7 @@ class Capacitor extends Component {
          category: ComponentCategory.capacitor,
          attrs: {
            valueKey: formatCapacitorValue(value),
-           voltageKey: voltage.toString(),
+           voltageKey: voltage ?? '',
            toleranceKey: tolerance,
            materialKey: material,
            polarisedKey: polarised,
@@ -94,7 +94,7 @@ class Capacitor extends Component {
         case Capacitor.valueKey:
           value = parseCapacitorValuePicofarads(v);
         case Capacitor.voltageKey:
-          voltage = int.parse(v);
+          voltage = v != '' ? int.parse(v) : null;
         case Capacitor.toleranceKey:
           tolerance = v;
         case Capacitor.materialKey:

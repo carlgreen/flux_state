@@ -23,8 +23,8 @@ class Led extends Component {
          attrs: {
            colourKey: colour,
            sizeKey: size,
-           forwardVoltageKey: forwardVoltage,
-           currentKey: current,
+           forwardVoltageKey: forwardVoltage ?? '',
+           currentKey: current ?? '',
            lensKey: lens,
          },
        );
@@ -86,9 +86,9 @@ class Led extends Component {
         case Led.sizeKey:
           size = v;
         case Led.forwardVoltageKey:
-          forwardVoltage = int.parse(v);
+          forwardVoltage = v != '' ? int.parse(v) : null;
         case Led.currentKey:
-          current = int.parse(v);
+          current = v != '' ? int.parse(v) : null;
         case Led.lensKey:
           lens = v;
         default:
@@ -111,8 +111,12 @@ class Led extends Component {
       id: id,
       colour: attrs[Led.colourKey],
       size: attrs[Led.sizeKey],
-      forwardVoltage: int.parse(attrs[Led.forwardVoltageKey]),
-      current: int.parse(attrs[Led.currentKey]),
+      forwardVoltage: attrs[Led.forwardVoltageKey] != null
+          ? int.parse(attrs[Led.forwardVoltageKey])
+          : null,
+      current: attrs[Led.currentKey] != null
+          ? int.parse(attrs[Led.currentKey])
+          : null,
       lens: attrs[Led.lensKey],
     );
   }

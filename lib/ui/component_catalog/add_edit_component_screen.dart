@@ -396,8 +396,8 @@ class _ComponentAttrFormState extends State<_ComponentAttrForm> {
       textCapitalization: TextCapitalization.words,
       onChanged: (v) => _update(field.key, v),
       validator: (field.type == AttributeFieldType.number
-          ? requiredIntValidator
-          : requiredValidator)(field.label),
+          ? (field.required ? requiredNumberValidator : numberValidator)
+          : (field.required ? requiredValidator : (v) => null))(field.label),
     );
   }
 
@@ -466,7 +466,19 @@ FormFieldValidator<String>? requiredValidator(String field) {
   };
 }
 
-FormFieldValidator<String>? requiredIntValidator(String field) {
+FormFieldValidator<String>? numberValidator(String field) {
+  return (v) {
+    if (v == null || v.trim().isEmpty) {
+      return null;
+    }
+    if (double.tryParse(v) == null) {
+      return '$field must be a number';
+    }
+    return null;
+  };
+}
+
+FormFieldValidator<String>? requiredNumberValidator(String field) {
   return (v) {
     if (v == null || v.trim().isEmpty) {
       return '$field is required';

@@ -89,6 +89,7 @@ void main() {
         ),
       );
     });
+
     test('Create capacitor with mimimal fields', () {
       final inventoryRepository = InventoryRepository();
       final viewModel = AddEditComponentViewModel(

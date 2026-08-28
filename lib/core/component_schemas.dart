@@ -2,6 +2,7 @@ import 'package:flux_state/domain/models/capacitor.dart';
 import 'package:flux_state/domain/models/component_category.dart';
 import 'package:flux_state/domain/models/diode.dart';
 import 'package:flux_state/domain/models/resistor.dart';
+import 'package:flux_state/domain/models/transistor.dart';
 
 enum AttributeFieldType { text, number, dropdown, boolean }
 
@@ -187,6 +188,143 @@ class ComponentSchemas {
           label: 'Lens',
           type: AttributeFieldType.dropdown,
           options: ['Clear', 'Diffused', 'Water Clear', 'Tinted'],
+        ),
+      ],
+      ComponentCategory.transistor => [
+        AttributeField(
+          key: Transistor.partNumberKey,
+          label: 'Part Number',
+          type: AttributeFieldType.text,
+          required: true,
+          hint: '2N3904, BC549C, MPSA18, J201',
+        ),
+        AttributeField(
+          key: Transistor.partFamilyKey,
+          label: 'Part Family',
+          type: AttributeFieldType.text,
+          hint: 'BC549 if part number is BC549C',
+        ),
+        AttributeField(
+          key: Transistor.typeKey,
+          label: 'Type',
+          type: AttributeFieldType.dropdown,
+          options: [
+            'NPN',
+            'PNP',
+            'N-MOSFET',
+            'P-MOSFET',
+            'JFET N-Channel',
+            'JFET P-Channel',
+          ],
+        ),
+        AttributeField(
+          key: Transistor.packageKey,
+          label: 'Package',
+          type: AttributeFieldType.dropdown,
+          options: [
+            'TO-92',
+            'TO-18',
+            'TO-220',
+            'TO-126',
+            'SOT-23',
+            'SOT-223',
+            'Other',
+          ],
+        ),
+      ],
+      ComponentCategory.ic => [
+        AttributeField(
+          key: 'part_number',
+          label: 'Part Number',
+          type: AttributeFieldType.text,
+          required: true,
+          hint: 'LM358, NE555, PT2399, TL072',
+        ),
+        AttributeField(
+          key: 'part_family',
+          label: 'Part Family',
+          type: AttributeFieldType.text,
+          hint: '358, 555, 2399, 072',
+        ),
+        AttributeField(
+          key: 'function',
+          label: 'Function / Description',
+          type: AttributeFieldType.text,
+          hint: 'Op-Amp, Timer, LFO, VCA, Comparator...',
+        ),
+        AttributeField(
+          key: 'package',
+          label: 'Package',
+          type: AttributeFieldType.dropdown,
+          options: [
+            'DIP-8',
+            'DIP-14',
+            'DIP-16',
+            'DIP-18',
+            'DIP-28',
+            'SOIC-8',
+            'SOIC-14',
+            'SOIC-16',
+            'TSSOP-16',
+            'Other',
+          ],
+        ),
+      ],
+      ComponentCategory.potentiometer => [
+        AttributeField(
+          key: 'value',
+          label: 'Value',
+          type: AttributeFieldType.text,
+          required: true,
+          hint: '100k, 1M, 500k, 10k',
+        ),
+        AttributeField(
+          key: 'taper',
+          label: 'Taper',
+          type: AttributeFieldType.dropdown,
+          required: true,
+          options: [
+            'Linear (B)',
+            'Audio / Log (A)',
+            'Reverse Audio (C)',
+            'Other',
+          ],
+        ),
+        AttributeField(
+          key: 'size_mm',
+          label: 'Body Size',
+          type: AttributeFieldType.dropdown,
+          options: ['9mm', '16mm', '24mm'],
+        ),
+        AttributeField(
+          key: 'shaft_type',
+          label: 'Shaft Type',
+          type: AttributeFieldType.dropdown,
+          options: ['Knurled', 'Splined', 'Flatted (D-shaft)', 'Solid Round'],
+        ),
+        AttributeField(
+          key: 'shaft_diameter_mm',
+          label: 'Shaft Diameter',
+          type: AttributeFieldType.dropdown,
+          options: ['6mm', '6.35mm'],
+        ),
+        AttributeField(
+          key: 'shaft_length_mm',
+          label: 'Shaft Length',
+          type: AttributeFieldType.dropdown,
+          options: [
+            '8.5mm+6.5mm',
+            '10mm+5mm',
+            '10.5mm+6.5mm',
+            '11mm',
+            '12.7mm',
+          ],
+        ),
+        AttributeField(
+          key: 'mount',
+          label: 'Mount',
+          type: AttributeFieldType.dropdown,
+          options: ['PCB (pins)', 'Lugs'],
         ),
       ],
     };

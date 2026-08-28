@@ -4,7 +4,9 @@ import 'package:flux_state/data/repositories/inventory_repository.dart';
 import 'package:flux_state/domain/models/capacitor.dart';
 import 'package:flux_state/domain/models/component_category.dart';
 import 'package:flux_state/domain/models/diode.dart';
+import 'package:flux_state/domain/models/led.dart';
 import 'package:flux_state/domain/models/resistor.dart';
+import 'package:flux_state/domain/models/transistor.dart';
 import 'package:flux_state/repository_provider.dart';
 import 'package:flux_state/ui/component_catalog/component_catalog_screen.dart';
 import 'package:flux_state/ui/component_catalog/component_catalog_viewmodel.dart';
@@ -35,7 +37,16 @@ void main() {
             polarised: true,
           ),
         )
-        ..addComponent(Diode(id: 'b', partNumber: '1N34A'));
+        ..addComponent(Diode(id: 'b', partNumber: '1N34A'))
+        ..addComponent(Led(id: 'd', colour: 'Red', size: '5mm'))
+        ..addComponent(
+          Transistor(
+            id: 'e',
+            partNumber: 'BC517',
+            type: 'NPN',
+            package: 'TO-92',
+          ),
+        );
       viewModel = ComponentCatalogViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -66,6 +77,12 @@ void main() {
 
       expect(find.text('DIODE'), findsOneWidget);
       expect(find.text('1N34A'), findsOneWidget);
+
+      expect(find.text('LEDS'), findsOneWidget);
+      expect(find.text('Red 5mm'), findsOneWidget);
+
+      expect(find.text('TRANSISTORS'), findsOneWidget);
+      expect(find.text('BC517 NPN TO-92'), findsOneWidget);
     });
 
     testWidgets('should filter to only resistors', (tester) async {

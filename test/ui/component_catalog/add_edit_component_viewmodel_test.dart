@@ -4,6 +4,7 @@ import 'package:flux_state/domain/models/capacitor.dart';
 import 'package:flux_state/domain/models/component_category.dart';
 import 'package:flux_state/domain/models/diode.dart';
 import 'package:flux_state/domain/models/resistor.dart';
+import 'package:flux_state/domain/models/transistor.dart';
 import 'package:flux_state/ui/component_catalog/add_edit_component_viewmodel.dart';
 
 void main() {
@@ -232,6 +233,90 @@ void main() {
       expect(
         inventoryRepository.components.single,
         Diode(id: 'c', partNumber: 'def', material: 'Silicon', quantity: 50),
+      );
+    });
+
+    test('Create transistor with mimimal fields', () {
+      final inventoryRepository = InventoryRepository();
+      final viewModel = AddEditComponentViewModel(
+        inventoryRepository: inventoryRepository,
+      );
+
+      viewModel.category = ComponentCategory.transistor;
+
+      expect(inventoryRepository.components.isEmpty, true);
+
+      viewModel.save(<String, dynamic>{'part_number': '2N2222A'}, 10);
+
+      final transistor = inventoryRepository.components.single as Transistor;
+      expect(transistor.partNumber, '2N2222A');
+      expect(transistor.partFamily, null);
+      expect(transistor.type, null);
+      expect(transistor.package, null);
+      expect(transistor.quantity, 10);
+    });
+
+    test('Create transistor with all fields', () {
+      final inventoryRepository = InventoryRepository();
+      final viewModel = AddEditComponentViewModel(
+        inventoryRepository: inventoryRepository,
+      );
+
+      viewModel.category = ComponentCategory.transistor;
+
+      expect(inventoryRepository.components.isEmpty, true);
+
+      viewModel.save(<String, dynamic>{
+        'part_number': '2N2222A',
+        'part_family': '2N2222',
+        'type': 'NPN',
+        'package': 'TO-18',
+      }, 10);
+
+      final transistor = inventoryRepository.components.single as Transistor;
+      expect(transistor.partNumber, '2N2222A');
+      expect(transistor.partFamily, '2N2222');
+      expect(transistor.type, 'NPN');
+      expect(transistor.package, 'TO-18');
+      expect(transistor.quantity, 10);
+    });
+
+    test('Update transistor', () {
+      final inventoryRepository = InventoryRepository()
+        ..addComponent(
+          Transistor(
+            id: 'a',
+            partNumber: '2N2222A',
+            partFamily: '2N2222',
+            type: 'NPN',
+            package: 'TO-18',
+            quantity: 10,
+          ),
+        );
+      final viewModel = AddEditComponentViewModel(
+        inventoryRepository: inventoryRepository,
+        initialCategory: ComponentCategory.transistor,
+      );
+
+      viewModel.category = ComponentCategory.transistor;
+
+      viewModel.update('a', <String, dynamic>{
+        'part_number': '2N2222',
+        'part_family': null,
+        'type': 'NPN',
+        'package': 'TO-92',
+      }, 5);
+
+      expect(
+        inventoryRepository.components.single,
+        Transistor(
+          id: 'a',
+          partNumber: '2N2222',
+          partFamily: null,
+          type: 'NPN',
+          package: 'TO-92',
+          quantity: 5,
+        ),
       );
     });
   });

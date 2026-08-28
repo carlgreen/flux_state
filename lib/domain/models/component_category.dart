@@ -2,7 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flux_state/theme/app_colors.dart';
 import 'package:flux_state/ui/components_icons.dart';
 
-enum ComponentCategory { resistor, capacitor, diode, led }
+enum ComponentCategory {
+  resistor,
+  capacitor,
+  diode,
+  led,
+  transistor,
+  ic,
+  potentiometer,
+}
 
 extension ComponentCategoryPresentation on ComponentCategory {
   String get displayName => switch (this) {
@@ -10,6 +18,9 @@ extension ComponentCategoryPresentation on ComponentCategory {
     ComponentCategory.capacitor => 'Capacitors',
     ComponentCategory.diode => 'Diodes',
     ComponentCategory.led => 'LEDs',
+    ComponentCategory.transistor => 'Transistors',
+    ComponentCategory.ic => 'ICs',
+    ComponentCategory.potentiometer => 'Pots',
   };
 
   String get singularName => switch (this) {
@@ -17,6 +28,9 @@ extension ComponentCategoryPresentation on ComponentCategory {
     ComponentCategory.capacitor => 'Capacitor',
     ComponentCategory.diode => 'Diode',
     ComponentCategory.led => 'LED',
+    ComponentCategory.transistor => 'Transistor',
+    ComponentCategory.ic => 'IC',
+    ComponentCategory.potentiometer => 'Pot',
   };
 
   IconData get icon => switch (this) {
@@ -24,6 +38,9 @@ extension ComponentCategoryPresentation on ComponentCategory {
     ComponentCategory.capacitor => ComponentIcons.capacitor,
     ComponentCategory.diode => ComponentIcons.diode,
     ComponentCategory.led => ComponentIcons.led,
+    ComponentCategory.transistor => ComponentIcons.transistor,
+    ComponentCategory.ic => ComponentIcons.ic,
+    ComponentCategory.potentiometer => ComponentIcons.potentiometer,
   };
 
   Color get color => switch (this) {
@@ -31,6 +48,9 @@ extension ComponentCategoryPresentation on ComponentCategory {
     ComponentCategory.capacitor => AppColors.accentCapacitor,
     ComponentCategory.diode => AppColors.accentDiode,
     ComponentCategory.led => AppColors.accentLed,
+    ComponentCategory.transistor => AppColors.accentTransistor,
+    ComponentCategory.ic => AppColors.accentIc,
+    ComponentCategory.potentiometer => AppColors.accentPotentiometer,
   };
 
   bool get isHardware => switch (this) {

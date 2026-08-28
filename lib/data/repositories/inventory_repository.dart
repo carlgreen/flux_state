@@ -2,8 +2,11 @@ import 'package:flux_state/domain/models/capacitor.dart';
 import 'package:flux_state/domain/models/component.dart';
 import 'package:flux_state/domain/models/component_category.dart';
 import 'package:flux_state/domain/models/diode.dart';
+import 'package:flux_state/domain/models/ic.dart';
 import 'package:flux_state/domain/models/led.dart';
+import 'package:flux_state/domain/models/potentiometer.dart';
 import 'package:flux_state/domain/models/resistor.dart';
+import 'package:flux_state/domain/models/transistor.dart';
 
 class InventoryRepository {
   final List<Component> _components = List.empty(growable: true);
@@ -39,6 +42,12 @@ class InventoryRepository {
         c = Diode.fromAttrs(id, attrs);
       case ComponentCategory.led:
         c = Led.fromAttrs(id, attrs);
+      case ComponentCategory.transistor:
+        c = Transistor.fromAttrs(id, attrs);
+      case ComponentCategory.ic:
+        c = Ic.fromAttrs(id, attrs);
+      case ComponentCategory.potentiometer:
+        c = Potentiometer.fromAttrs(id, attrs);
     }
     c.quantity = quantity;
     addComponent(c);

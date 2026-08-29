@@ -1,7 +1,11 @@
 import 'package:flux_state/domain/models/capacitor.dart';
 import 'package:flux_state/domain/models/component_category.dart';
 import 'package:flux_state/domain/models/diode.dart';
+import 'package:flux_state/domain/models/ic.dart';
+import 'package:flux_state/domain/models/led.dart';
+import 'package:flux_state/domain/models/potentiometer.dart';
 import 'package:flux_state/domain/models/resistor.dart';
+import 'package:flux_state/domain/models/switch.dart';
 import 'package:flux_state/domain/models/transistor.dart';
 
 enum AttributeFieldType { text, number, dropdown, boolean }
@@ -90,7 +94,6 @@ class ComponentSchemas {
           options: ['5', '10', '20'],
         ),
         AttributeField(
-          // key: 'material',
           key: Capacitor.materialKey,
           label: 'Type / Dielectric',
           type: AttributeFieldType.dropdown,
@@ -141,7 +144,7 @@ class ComponentSchemas {
       ],
       ComponentCategory.led => [
         AttributeField(
-          key: 'colour',
+          key: Led.colourKey,
           label: 'Colour',
           type: AttributeFieldType.dropdown,
           required: true,
@@ -159,7 +162,7 @@ class ComponentSchemas {
           ],
         ),
         AttributeField(
-          key: 'size_mm',
+          key: Led.sizeKey,
           label: 'Size',
           type: AttributeFieldType.dropdown,
           required: true,
@@ -174,19 +177,19 @@ class ComponentSchemas {
           ],
         ),
         AttributeField(
-          key: 'forward_v',
+          key: Led.forwardVoltageKey,
           label: 'Forward Voltage',
           type: AttributeFieldType.number,
           unit: 'V',
         ),
         AttributeField(
-          key: 'current_ma',
+          key: Led.currentKey,
           label: 'Typical Current',
           type: AttributeFieldType.number,
           unit: 'mA',
         ),
         AttributeField(
-          key: 'lens',
+          key: Led.lensKey,
           label: 'Lens',
           type: AttributeFieldType.dropdown,
           options: ['Clear', 'Diffused', 'Water Clear', 'Tinted'],
@@ -236,26 +239,26 @@ class ComponentSchemas {
       ],
       ComponentCategory.ic => [
         AttributeField(
-          key: 'part_number',
+          key: Ic.partNumberKey,
           label: 'Part Number',
           type: AttributeFieldType.text,
           required: true,
           hint: 'LM358, NE555, PT2399, TL072',
         ),
         AttributeField(
-          key: 'part_family',
+          key: Ic.partFamilyKey,
           label: 'Part Family',
           type: AttributeFieldType.text,
           hint: '358, 555, 2399, 072',
         ),
         AttributeField(
-          key: 'function',
+          key: Ic.functionKey,
           label: 'Function / Description',
           type: AttributeFieldType.text,
           hint: 'Op-Amp, Timer, LFO, VCA, Comparator...',
         ),
         AttributeField(
-          key: 'package',
+          key: Ic.packageKey,
           label: 'Package',
           type: AttributeFieldType.dropdown,
           options: [
@@ -274,14 +277,14 @@ class ComponentSchemas {
       ],
       ComponentCategory.potentiometer => [
         AttributeField(
-          key: 'value',
+          key: Potentiometer.valueKey,
           label: 'Value',
           type: AttributeFieldType.text,
           required: true,
           hint: '100k, 1M, 500k, 10k',
         ),
         AttributeField(
-          key: 'taper',
+          key: Potentiometer.taperKey,
           label: 'Taper',
           type: AttributeFieldType.dropdown,
           required: true,
@@ -293,25 +296,25 @@ class ComponentSchemas {
           ],
         ),
         AttributeField(
-          key: 'size_mm',
+          key: Potentiometer.sizeKey,
           label: 'Body Size',
           type: AttributeFieldType.dropdown,
           options: ['9mm', '16mm', '24mm'],
         ),
         AttributeField(
-          key: 'shaft_type',
+          key: Potentiometer.shaftTypeKey,
           label: 'Shaft Type',
           type: AttributeFieldType.dropdown,
           options: ['Knurled', 'Splined', 'Flatted (D-shaft)', 'Solid Round'],
         ),
         AttributeField(
-          key: 'shaft_diameter_mm',
+          key: Potentiometer.shaftDiameterKey,
           label: 'Shaft Diameter',
           type: AttributeFieldType.dropdown,
           options: ['6mm', '6.35mm'],
         ),
         AttributeField(
-          key: 'shaft_length_mm',
+          key: Potentiometer.shaftLengthKey,
           label: 'Shaft Length',
           type: AttributeFieldType.dropdown,
           options: [
@@ -323,7 +326,7 @@ class ComponentSchemas {
           ],
         ),
         AttributeField(
-          key: 'mount',
+          key: Potentiometer.mountKey,
           label: 'Mount',
           type: AttributeFieldType.dropdown,
           options: ['PCB (pins)', 'Lugs'],
@@ -331,20 +334,20 @@ class ComponentSchemas {
       ],
       ComponentCategory.switchComp => [
         AttributeField(
-          key: 'type',
+          key: Switch.typeKey,
           label: 'Type',
           type: AttributeFieldType.dropdown,
           required: true,
           options: ['Toggle', 'Footswitch', 'Rotary', 'DIP'],
         ),
         AttributeField(
-          key: 'poles',
+          key: Switch.polesKey,
           label: 'Poles',
           type: AttributeFieldType.number,
           required: true,
         ),
         AttributeField(
-          key: 'switching',
+          key: Switch.switchingKey,
           label: 'Switching',
           type: AttributeFieldType.dropdown,
           options: ['Off-On', 'On-On', 'On-Off-On', 'On-On-On'],
@@ -354,7 +357,7 @@ class ComponentSchemas {
           },
         ),
         AttributeField(
-          key: 'positions',
+          key: Switch.positionsKey,
           label: 'Positions',
           type: AttributeFieldType.number,
           showWhen: {
@@ -362,7 +365,7 @@ class ComponentSchemas {
           },
         ),
         AttributeField(
-          key: 'momentary',
+          key: Switch.momentaryKey,
           label: 'Momentary',
           type: AttributeFieldType.boolean,
           showWhen: {
@@ -370,7 +373,7 @@ class ComponentSchemas {
           },
         ),
         AttributeField(
-          key: 'toggle_size',
+          key: Switch.sizeKey,
           label: 'Toggle Size',
           type: AttributeFieldType.dropdown,
           options: ['Normal', 'Micro'],
@@ -379,7 +382,7 @@ class ComponentSchemas {
           },
         ),
         AttributeField(
-          key: 'size_mm',
+          key: Switch.bodySizeKey,
           label: 'Body Size',
           type: AttributeFieldType.dropdown,
           options: ['9mm', '16mm', '24mm'],
@@ -388,7 +391,7 @@ class ComponentSchemas {
           },
         ),
         AttributeField(
-          key: 'shaft_type',
+          key: Switch.shaftTypeKey,
           label: 'Shaft Type',
           type: AttributeFieldType.dropdown,
           options: ['Knurled', 'Splined', 'Flatted (D-shaft)', 'Solid Round'],
@@ -397,7 +400,7 @@ class ComponentSchemas {
           },
         ),
         AttributeField(
-          key: 'shaft_diameter_mm',
+          key: Switch.shaftDiameterKey,
           label: 'Shaft Diameter',
           type: AttributeFieldType.dropdown,
           options: ['6mm', '6.35mm'],
@@ -406,7 +409,7 @@ class ComponentSchemas {
           },
         ),
         AttributeField(
-          key: 'mount',
+          key: Switch.mountKey,
           label: 'Mount',
           type: AttributeFieldType.dropdown,
           options: ['PCB (pins)', 'Lugs'],
@@ -415,7 +418,7 @@ class ComponentSchemas {
           },
         ),
         AttributeField(
-          key: 'led',
+          key: Switch.ledKey,
           label: 'Integrated LEDs',
           type: AttributeFieldType.text,
           hint: 'Red/Green, Blue',

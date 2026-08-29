@@ -10,6 +10,7 @@ enum ComponentCategory {
   transistor,
   ic,
   potentiometer,
+  switchComp,
 }
 
 extension ComponentCategoryPresentation on ComponentCategory {
@@ -21,6 +22,7 @@ extension ComponentCategoryPresentation on ComponentCategory {
     ComponentCategory.transistor => 'Transistors',
     ComponentCategory.ic => 'ICs',
     ComponentCategory.potentiometer => 'Pots',
+    ComponentCategory.switchComp => 'Switches',
   };
 
   String get singularName => switch (this) {
@@ -31,6 +33,7 @@ extension ComponentCategoryPresentation on ComponentCategory {
     ComponentCategory.transistor => 'Transistor',
     ComponentCategory.ic => 'IC',
     ComponentCategory.potentiometer => 'Pot',
+    ComponentCategory.switchComp => 'Switch',
   };
 
   IconData get icon => switch (this) {
@@ -41,6 +44,7 @@ extension ComponentCategoryPresentation on ComponentCategory {
     ComponentCategory.transistor => ComponentIcons.transistor,
     ComponentCategory.ic => ComponentIcons.ic,
     ComponentCategory.potentiometer => ComponentIcons.potentiometer,
+    ComponentCategory.switchComp => ComponentIcons.switchIcon,
   };
 
   Color get color => switch (this) {
@@ -51,6 +55,7 @@ extension ComponentCategoryPresentation on ComponentCategory {
     ComponentCategory.transistor => AppColors.accentTransistor,
     ComponentCategory.ic => AppColors.accentIc,
     ComponentCategory.potentiometer => AppColors.accentPotentiometer,
+    ComponentCategory.switchComp => AppColors.accentSwitch,
   };
 
   bool get isHardware => switch (this) {

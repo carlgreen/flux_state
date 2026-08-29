@@ -350,6 +350,18 @@ class _ComponentAttrFormState extends State<_ComponentAttrForm> {
     _ctrl.clear();
   }
 
+  /// Returns true when all showWhen conditions are satisfied.
+  bool _shouldShow(AttributeField field) {
+    final conditions = field.showWhen;
+    for (final entry in conditions.entries) {
+      final current = _values[entry.key]?.toString();
+      if (current == null || !entry.value.contains(current)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     final fields = ComponentSchemas.forCategory(widget.category);
@@ -360,6 +372,7 @@ class _ComponentAttrFormState extends State<_ComponentAttrForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: fields
+          .where(_shouldShow)
           .map(
             (f) => Padding(
               padding: const EdgeInsets.only(bottom: 16),

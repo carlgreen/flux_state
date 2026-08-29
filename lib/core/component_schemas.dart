@@ -14,6 +14,7 @@ class AttributeField {
   final String? unit;
   final bool required;
   final String? hint;
+  final Map<String, List<String>> showWhen;
 
   AttributeField({
     required this.key,
@@ -23,6 +24,7 @@ class AttributeField {
     this.unit,
     this.required = false,
     this.hint,
+    this.showWhen = const {},
   });
 }
 
@@ -325,6 +327,101 @@ class ComponentSchemas {
           label: 'Mount',
           type: AttributeFieldType.dropdown,
           options: ['PCB (pins)', 'Lugs'],
+        ),
+      ],
+      ComponentCategory.switchComp => [
+        AttributeField(
+          key: 'type',
+          label: 'Type',
+          type: AttributeFieldType.dropdown,
+          required: true,
+          options: ['Toggle', 'Footswitch', 'Rotary', 'DIP'],
+        ),
+        AttributeField(
+          key: 'poles',
+          label: 'Poles',
+          type: AttributeFieldType.number,
+          required: true,
+        ),
+        AttributeField(
+          key: 'switching',
+          label: 'Switching',
+          type: AttributeFieldType.dropdown,
+          options: ['Off-On', 'On-On', 'On-Off-On', 'On-On-On'],
+          required: true,
+          showWhen: {
+            'type': ['Toggle', 'Footswitch'],
+          },
+        ),
+        AttributeField(
+          key: 'positions',
+          label: 'Positions',
+          type: AttributeFieldType.number,
+          showWhen: {
+            'type': ['Rotary', 'DIP'],
+          },
+        ),
+        AttributeField(
+          key: 'momentary',
+          label: 'Momentary',
+          type: AttributeFieldType.boolean,
+          showWhen: {
+            'type': ['Toggle', 'Footswitch', 'DIP'],
+          },
+        ),
+        AttributeField(
+          key: 'toggle_size',
+          label: 'Toggle Size',
+          type: AttributeFieldType.dropdown,
+          options: ['Normal', 'Micro'],
+          showWhen: {
+            'type': ['Toggle'],
+          },
+        ),
+        AttributeField(
+          key: 'size_mm',
+          label: 'Body Size',
+          type: AttributeFieldType.dropdown,
+          options: ['9mm', '16mm', '24mm'],
+          showWhen: {
+            'type': ['Rotary'],
+          },
+        ),
+        AttributeField(
+          key: 'shaft_type',
+          label: 'Shaft Type',
+          type: AttributeFieldType.dropdown,
+          options: ['Knurled', 'Splined', 'Flatted (D-shaft)', 'Solid Round'],
+          showWhen: {
+            'type': ['Rotary'],
+          },
+        ),
+        AttributeField(
+          key: 'shaft_diameter_mm',
+          label: 'Shaft Diameter',
+          type: AttributeFieldType.dropdown,
+          options: ['6mm', '6.35mm'],
+          showWhen: {
+            'type': ['Rotary'],
+          },
+        ),
+        AttributeField(
+          key: 'mount',
+          label: 'Mount',
+          type: AttributeFieldType.dropdown,
+          options: ['PCB (pins)', 'Lugs'],
+          showWhen: {
+            'type': ['Rotary'],
+          },
+        ),
+        AttributeField(
+          key: 'led',
+          label: 'Integrated LEDs',
+          type: AttributeFieldType.text,
+          hint: 'Red/Green, Blue',
+          showWhen: {
+            'type': ['Footswitch'],
+          },
         ),
       ],
     };

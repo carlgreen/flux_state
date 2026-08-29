@@ -51,4 +51,5 @@ class AppColors {
   static const Color accentTransistor = Color(0xFFA78BFA);
   static const Color accentIc = Color(0xFF22D3EE);
   static const Color accentPotentiometer = Color(0xFFFBBF24);
+  static const Color accentSwitch = Color(0xFF4ADE80);
 }

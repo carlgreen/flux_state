@@ -4,6 +4,7 @@ import 'package:flux_state/domain/models/capacitor.dart';
 import 'package:flux_state/domain/models/component_category.dart';
 import 'package:flux_state/domain/models/diode.dart';
 import 'package:flux_state/domain/models/resistor.dart';
+import 'package:flux_state/domain/models/switch.dart';
 import 'package:flux_state/domain/models/transistor.dart';
 import 'package:flux_state/ui/component_catalog/add_edit_component_viewmodel.dart';
 
@@ -315,6 +316,259 @@ void main() {
           partFamily: null,
           type: 'NPN',
           package: 'TO-92',
+          quantity: 5,
+        ),
+      );
+    });
+
+    test('Create toggle switch with mimimal fields', () {
+      final inventoryRepository = InventoryRepository();
+      final viewModel = AddEditComponentViewModel(
+        inventoryRepository: inventoryRepository,
+      );
+      viewModel.category = ComponentCategory.switchComp;
+
+      expect(inventoryRepository.components.isEmpty, true);
+
+      viewModel.save(<String, dynamic>{
+        'type': 'Toggle',
+        'poles': 2,
+        'switching': 'On-On',
+      }, 10);
+
+      final toggleSw = inventoryRepository.components.single as Switch;
+      expect(toggleSw.type, 'Toggle');
+      expect(toggleSw.poles, 2);
+      expect(toggleSw.switching, 'On-On');
+      expect(toggleSw.positions, null);
+      expect(toggleSw.momentary, false);
+      expect(toggleSw.toggleSize, null);
+      expect(toggleSw.bodySize, null);
+      expect(toggleSw.shaftDiameter, null);
+      expect(toggleSw.shaftType, null);
+      expect(toggleSw.mount, null);
+      expect(toggleSw.led, null);
+      expect(toggleSw.quantity, 10);
+    });
+
+    test('Create toggle switch with all fields', () {
+      final inventoryRepository = InventoryRepository();
+      final viewModel = AddEditComponentViewModel(
+        inventoryRepository: inventoryRepository,
+      );
+      viewModel.category = ComponentCategory.switchComp;
+
+      expect(inventoryRepository.components.isEmpty, true);
+
+      viewModel.save(<String, dynamic>{
+        'type': 'Toggle',
+        'poles': 1,
+        'switching': 'On-Off-On',
+        'momentary': true,
+        'toggle_size': 'Micro',
+        'mount': 'Lugs',
+      }, 10);
+
+      final toggleSw = inventoryRepository.components.single as Switch;
+      expect(toggleSw.type, 'Toggle');
+      expect(toggleSw.poles, 1);
+      expect(toggleSw.switching, 'On-Off-On');
+      expect(toggleSw.positions, null);
+      expect(toggleSw.momentary, true);
+      expect(toggleSw.toggleSize, 'Micro');
+      expect(toggleSw.bodySize, null);
+      expect(toggleSw.shaftDiameter, null);
+      expect(toggleSw.shaftType, null);
+      expect(toggleSw.mount, 'Lugs');
+      expect(toggleSw.led, null);
+      expect(toggleSw.quantity, 10);
+    });
+
+    test('Update toggle switch', () {
+      final inventoryRepository = InventoryRepository()
+        ..addComponent(
+          Switch(
+            id: 'a',
+            type: 'Toggle',
+            poles: 1,
+            switching: 'On-Off-On',
+            momentary: true,
+            toggleSize: 'Micro',
+            mount: 'Lugs',
+          ),
+        );
+      final viewModel = AddEditComponentViewModel(
+        inventoryRepository: inventoryRepository,
+      );
+
+      viewModel.update('a', <String, dynamic>{
+        'poles': '2',
+        'switching': 'On-On',
+        'momentary': false,
+        'toggle_size': null,
+        'mount': null,
+      }, 5);
+
+      expect(
+        inventoryRepository.components.single,
+        Switch(
+          id: 'a',
+          type: 'Toggle',
+          poles: 2,
+          switching: 'On-On',
+          momentary: false,
+          toggleSize: null,
+          mount: null,
+          quantity: 5,
+        ),
+      );
+    });
+
+    test('Create rotary switch with mimimal fields', () {
+      final inventoryRepository = InventoryRepository();
+      final viewModel = AddEditComponentViewModel(
+        inventoryRepository: inventoryRepository,
+      );
+      viewModel.category = ComponentCategory.switchComp;
+
+      expect(inventoryRepository.components.isEmpty, true);
+
+      viewModel.save(<String, dynamic>{
+        'type': 'Rotary',
+        'poles': 2,
+        'positions': 6,
+      }, 10);
+
+      final toggleSw = inventoryRepository.components.single as Switch;
+      expect(toggleSw.type, 'Rotary');
+      expect(toggleSw.poles, 2);
+      expect(toggleSw.switching, null);
+      expect(toggleSw.positions, 6);
+      expect(toggleSw.momentary, false);
+      expect(toggleSw.toggleSize, null);
+      expect(toggleSw.bodySize, null);
+      expect(toggleSw.shaftDiameter, null);
+      expect(toggleSw.shaftType, null);
+      expect(toggleSw.mount, null);
+      expect(toggleSw.led, null);
+      expect(toggleSw.quantity, 10);
+    });
+
+    test('Create rotary switch with all fields', () {
+      final inventoryRepository = InventoryRepository();
+      final viewModel = AddEditComponentViewModel(
+        inventoryRepository: inventoryRepository,
+      );
+      viewModel.category = ComponentCategory.switchComp;
+
+      expect(inventoryRepository.components.isEmpty, true);
+
+      viewModel.save(<String, dynamic>{
+        'type': 'Rotary',
+        'poles': 1,
+        'positions': 12,
+        'size_mm': '16mm',
+        'shaft_type': 'Knurled',
+        'shaft_diameter_mm': '6mm',
+        'mount': 'Lugs',
+      }, 10);
+
+      final toggleSw = inventoryRepository.components.single as Switch;
+      expect(toggleSw.type, 'Rotary');
+      expect(toggleSw.poles, 1);
+      expect(toggleSw.switching, null);
+      expect(toggleSw.positions, 12);
+      expect(toggleSw.momentary, false);
+      expect(toggleSw.toggleSize, null);
+      expect(toggleSw.bodySize, '16mm');
+      expect(toggleSw.shaftDiameter, '6mm');
+      expect(toggleSw.shaftType, 'Knurled');
+      expect(toggleSw.mount, 'Lugs');
+      expect(toggleSw.led, null);
+      expect(toggleSw.quantity, 10);
+    });
+
+    test('Update rotary switch', () {
+      final inventoryRepository = InventoryRepository()
+        ..addComponent(
+          Switch(
+            id: 'a',
+            type: 'Rotary',
+            poles: 1,
+            positions: 12,
+            bodySize: '16mm',
+            shaftDiameter: '6mm',
+            shaftType: 'Knurled',
+            mount: 'Lugs',
+          ),
+        );
+      final viewModel = AddEditComponentViewModel(
+        inventoryRepository: inventoryRepository,
+      );
+
+      viewModel.update('a', <String, dynamic>{
+        'poles': '3',
+        'positions': '4',
+        'size_mm': '9mm',
+        'shaft_type': null,
+        'shaft_diameter_mm': null,
+        'mount': 'PCB (pins)',
+      }, 5);
+
+      expect(
+        inventoryRepository.components.single,
+        Switch(
+          id: 'a',
+          type: 'Rotary',
+          poles: 3,
+          positions: 4,
+          bodySize: '9mm',
+          shaftDiameter: null,
+          shaftType: null,
+          mount: 'PCB (pins)',
+          quantity: 5,
+        ),
+      );
+    });
+
+    test('Change rotary switch to footswitch', () {
+      final inventoryRepository = InventoryRepository()
+        ..addComponent(
+          Switch(
+            id: 'a',
+            type: 'Rotary',
+            poles: 1,
+            positions: 12,
+            bodySize: '16mm',
+            shaftDiameter: '6mm',
+            shaftType: 'Knurled',
+            mount: 'Lugs',
+          ),
+        );
+      final viewModel = AddEditComponentViewModel(
+        inventoryRepository: inventoryRepository,
+      );
+
+      viewModel.update('a', <String, dynamic>{
+        'type': 'Footswitch',
+        'poles': '2',
+        'switching': 'On-On',
+        'led': 'Blue',
+      }, 5);
+
+      expect(
+        inventoryRepository.components.single,
+        Switch(
+          id: 'a',
+          type: 'Footswitch',
+          poles: 2,
+          switching: 'On-On',
+          positions: null,
+          bodySize: null,
+          shaftDiameter: null,
+          shaftType: null,
+          mount: null,
+          led: 'Blue',
           quantity: 5,
         ),
       );

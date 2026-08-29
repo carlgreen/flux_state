@@ -6,6 +6,7 @@ import 'package:flux_state/domain/models/ic.dart';
 import 'package:flux_state/domain/models/led.dart';
 import 'package:flux_state/domain/models/potentiometer.dart';
 import 'package:flux_state/domain/models/resistor.dart';
+import 'package:flux_state/domain/models/switch.dart';
 import 'package:flux_state/domain/models/transistor.dart';
 
 class InventoryRepository {
@@ -48,6 +49,8 @@ class InventoryRepository {
         c = Ic.fromAttrs(id, attrs);
       case ComponentCategory.potentiometer:
         c = Potentiometer.fromAttrs(id, attrs);
+      case ComponentCategory.switchComp:
+        c = Switch.fromAttrs(id, attrs);
     }
     c.quantity = quantity;
     addComponent(c);

@@ -65,6 +65,15 @@ class Transistor extends Component {
       Object.hash(partNumber, partFamily, type, package, quantity);
 
   @override
+  int compareTo(Component other) {
+    if (other is Transistor) {
+      return partNumber.compareTo(other.partNumber);
+    } else {
+      return super.compareTo(other);
+    }
+  }
+
+  @override
   Component updateFromAttrs(Map<String, dynamic> attrs) {
     String partNumber = this.partNumber;
     String? partFamily = this.partFamily;

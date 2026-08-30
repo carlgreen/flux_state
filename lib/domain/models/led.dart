@@ -73,6 +73,20 @@ class Led extends Component {
       Object.hash(colour, size, forwardVoltage, current, lens, quantity);
 
   @override
+  int compareTo(Component other) {
+    if (other is Led) {
+      var cmp = size.compareTo(other.size);
+      if (cmp != 0) {
+        return cmp;
+      }
+
+      return colour.compareTo(other.colour);
+    } else {
+      return super.compareTo(other);
+    }
+  }
+
+  @override
   Component updateFromAttrs(Map<String, dynamic> attrs) {
     String colour = this.colour;
     String size = this.size;

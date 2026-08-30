@@ -18,8 +18,10 @@ class ComponentCatalogViewModel extends ChangeNotifier {
 
   final List<Component> _components = [];
 
-  UnmodifiableListView<Component> get components =>
-      UnmodifiableListView(_components);
+  UnmodifiableListView<Component> get components {
+    _components.sort();
+    return UnmodifiableListView(_components);
+  }
 
   Future<void> load() async {
     try {

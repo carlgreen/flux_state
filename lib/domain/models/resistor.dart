@@ -86,6 +86,15 @@ class Resistor extends Component {
       Object.hash(value, tolerance, power, material, package, quantity);
 
   @override
+  int compareTo(Component other) {
+    if (other is Resistor) {
+      return value.compareTo(other.value);
+    } else {
+      return super.compareTo(other);
+    }
+  }
+
+  @override
   Component updateFromAttrs(Map<String, dynamic> attrs) {
     int value = this.value;
     String? tolerance = this.tolerance;

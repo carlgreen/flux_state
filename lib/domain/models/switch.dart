@@ -159,6 +159,39 @@ class Switch extends Component {
   );
 
   @override
+  int compareTo(Component other) {
+    if (other is Switch) {
+      var cmp = type.compareTo(other.type);
+      if (cmp != 0) {
+        return cmp;
+      }
+
+      cmp = poles.compareTo(other.poles);
+      if (cmp != 0) {
+        return cmp;
+      }
+
+      cmp = (positions ?? 0).compareTo(other.positions ?? 0);
+      if (cmp != 0) {
+        return cmp;
+      }
+
+      // sort On-On before On-Off-On?
+      cmp = (switching ?? '')
+          .split('-')
+          .length
+          .compareTo((other.switching ?? '').split('-').length);
+      if (cmp != 0) {
+        return cmp;
+      }
+
+      return 0;
+    } else {
+      return super.compareTo(other);
+    }
+  }
+
+  @override
   Component updateFromAttrs(Map<String, dynamic> attrs) {
     String type = this.type;
     int poles = this.poles;

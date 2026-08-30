@@ -117,6 +117,20 @@ class Potentiometer extends Component {
   );
 
   @override
+  int compareTo(Component other) {
+    if (other is Potentiometer) {
+      var cmp = value.compareTo(other.value);
+      if (cmp != 0) {
+        return cmp;
+      }
+
+      return taperCode.compareTo(other.taperCode);
+    } else {
+      return super.compareTo(other);
+    }
+  }
+
+  @override
   Component updateFromAttrs(Map<String, dynamic> attrs) {
     int value = this.value;
     String taper = this.taper;

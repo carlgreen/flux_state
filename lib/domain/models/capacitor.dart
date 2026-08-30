@@ -83,6 +83,15 @@ class Capacitor extends Component {
       Object.hash(value, voltage, tolerance, material, polarised, quantity);
 
   @override
+  int compareTo(Component other) {
+    if (other is Capacitor) {
+      return value.compareTo(other.value);
+    } else {
+      return super.compareTo(other);
+    }
+  }
+
+  @override
   Component updateFromAttrs(Map<String, dynamic> attrs) {
     int value = this.value;
     int? voltage = this.voltage;

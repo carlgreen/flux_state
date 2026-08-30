@@ -59,6 +59,15 @@ class Diode extends Component {
   int get hashCode => Object.hash(partNumber, material, package, quantity);
 
   @override
+  int compareTo(Component other) {
+    if (other is Diode) {
+      return partNumber.compareTo(other.partNumber);
+    } else {
+      return super.compareTo(other);
+    }
+  }
+
+  @override
   Component updateFromAttrs(Map<String, dynamic> attrs) {
     String partNumber = this.partNumber;
     String? material = this.material;

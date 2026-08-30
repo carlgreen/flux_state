@@ -4,7 +4,7 @@ import 'component_category.dart';
 
 enum StockStatus { inStock, lowStock, outOfStock }
 
-abstract class Component {
+abstract class Component implements Comparable<Component> {
   final String id;
   final ComponentCategory category;
   int quantity;
@@ -42,4 +42,9 @@ abstract class Component {
   Map<dynamic, dynamic> get attributes => attrs;
 
   Component updateFromAttrs(Map<String, dynamic> attrs);
+
+  @override
+  int compareTo(Component other) {
+    return category.index.compareTo(other.category.index);
+  }
 }

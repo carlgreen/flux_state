@@ -18,9 +18,27 @@ class ComponentCatalogViewModel extends ChangeNotifier {
 
   final List<Component> _components = [];
 
-  UnmodifiableListView<Component> get components {
+  Iterable<Component> _filter(
+    List<Component> all,
+    ComponentCategory? selectedCat,
+    String searchQ,
+  ) => all.where((c) {
+    if (selectedCat != null && c.category != selectedCat) return false;
+    if (searchQ.isNotEmpty) {
+      final q = searchQ.toLowerCase();
+      if (!c.display().toLowerCase().contains(q)) {
+        return false;
+      }
+    }
+    return true;
+  });
+
+  UnmodifiableListView<Component> components(
+    ComponentCategory? selectedCat,
+    String searchQ,
+  ) {
     _components.sort();
-    return UnmodifiableListView(_components);
+    return UnmodifiableListView(_filter(_components, selectedCat, searchQ));
   }
 
   Future<void> load() async {

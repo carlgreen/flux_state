@@ -23,17 +23,6 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
   final _searchCtrl = TextEditingController();
   String _searchQ = '';
 
-  List<Component> _filter(List<Component> all) => all.where((c) {
-    if (_selectedCat != null && c.category != _selectedCat) return false;
-    if (_searchQ.isNotEmpty) {
-      final q = _searchQ.toLowerCase();
-      if (!c.display().toLowerCase().contains(q)) {
-        return false;
-      }
-    }
-    return true;
-  }).toList();
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -74,11 +63,13 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
                   child: ListenableBuilder(
                     listenable: widget.viewModel,
                     builder: (context, child) {
-                      final all = widget.viewModel.components;
-                      final filtered = _filter(all);
+                      final components = widget.viewModel.components(
+                        _selectedCat,
+                        _searchQ,
+                      );
 
                       return _ComponentList(
-                        components: filtered,
+                        components: components,
                         selectedCat: _selectedCat,
                         onRefreshRequested: reload,
                       );

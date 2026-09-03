@@ -10,7 +10,7 @@ import 'package:flux_state/ui/component_catalog/add_edit_component_viewmodel.dar
 
 void main() {
   group('AddEditComponentViewModel tests', () {
-    test('Create resistor with mimimal fields', () {
+    test('Create resistor with minimal fields', () {
       final inventoryRepository = InventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
@@ -92,7 +92,7 @@ void main() {
       );
     });
 
-    test('Create capacitor with mimimal fields', () {
+    test('Create capacitor with minimal fields', () {
       final inventoryRepository = InventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
@@ -237,7 +237,7 @@ void main() {
       );
     });
 
-    test('Create transistor with mimimal fields', () {
+    test('Create transistor with minimal fields', () {
       final inventoryRepository = InventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
@@ -321,7 +321,7 @@ void main() {
       );
     });
 
-    test('Create toggle switch with mimimal fields', () {
+    test('Create toggle switch with minimal fields', () {
       final inventoryRepository = InventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
@@ -424,7 +424,7 @@ void main() {
       );
     });
 
-    test('Create rotary switch with mimimal fields', () {
+    test('Create rotary switch with minimal fields', () {
       final inventoryRepository = InventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,

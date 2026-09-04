@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import 'component.dart';
@@ -292,5 +294,27 @@ class Switch extends Component {
       mount: attrs[Switch.mountKey],
       led: attrs[Switch.ledKey],
     );
+  }
+
+  @override
+  Map<String, Object?> toMap() {
+    return {
+      'id': id,
+      'category': category.name,
+      'quantity': quantity,
+      'attrs': json.encode({
+        typeKey: type,
+        polesKey: poles,
+        switchingKey: switching,
+        positionsKey: positions,
+        momentaryKey: momentary,
+        sizeKey: toggleSize,
+        bodySizeKey: bodySize,
+        shaftDiameterKey: shaftDiameter,
+        shaftTypeKey: shaftType,
+        mountKey: mount,
+        ledKey: led,
+      }),
+    };
   }
 }

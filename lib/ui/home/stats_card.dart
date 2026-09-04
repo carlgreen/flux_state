@@ -11,7 +11,7 @@ class StatsCard extends StatelessWidget {
   });
 
   final String label;
-  final String value;
+  final String? value;
   final IconData? icon;
   final Color? valueColor;
 
@@ -44,11 +44,22 @@ class StatsCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-            Text(
-              value,
-              style: AppTypography.stockNumber.copyWith(
-                color: valueColor ?? colors.onSurface,
-              ),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                Opacity(
+                  opacity: value == null ? 0.0 : 1.0,
+                  child: Text(
+                    value == null ? '8' : value!,
+                    style: AppTypography.stockNumber,
+                  ),
+                ),
+                if (value == null)
+                  SizedBox.square(
+                    dimension: (AppTypography.stockNumber.fontSize ?? 28) * 0.8,
+                    child: const CircularProgressIndicator(),
+                  ),
+              ],
             ),
           ],
         ),

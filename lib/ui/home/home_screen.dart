@@ -20,13 +20,19 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late Future<DashboardStats> _stats;
+
+  @override
+  void initState() {
+    super.initState();
+    _stats = widget.viewModel.stats;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final typography = theme.textTheme;
     final colors = theme.colorScheme;
-
-    var stats = widget.viewModel.stats;
 
     return CustomScrollView(
       slivers: [
@@ -53,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                     if (isDataUpdated == true) {
                       setState(() {
-                        stats = widget.viewModel.stats;
+                        _stats = widget.viewModel.stats;
                       });
                     }
                   },
@@ -64,49 +70,71 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
 
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
-            child: Row(
-              children: [
-                Expanded(
-                  child: StatsCard(
-                    label: 'Component_Types',
-                    value: Formatters.quantity(stats.totalTypes),
-                    icon: Icons.category_outlined,
-                  ),
+        FutureBuilder(
+          future: _stats,
+          builder: (context, snapshot) {
+            final stats = snapshot.data;
+            final String? totalTypes = stats != null
+                ? Formatters.quantity(stats.totalTypes)
+                : null;
+            final String? totalUnits = stats != null
+                ? Formatters.quantity(stats.totalUnits)
+                : null;
+            final String? lowStockCount = stats != null
+                ? Formatters.quantity(stats.lowStockCount)
+                : null;
+            final Color? lowStockColour = (stats?.lowStockCount ?? 0) > 0
+                ? colors.tertiary
+                : null;
+            final String? outOfStockCount = stats != null
+                ? Formatters.quantity(stats.outOfStockCount)
+                : null;
+            final Color? outOfStockColour = (stats?.outOfStockCount ?? 0) > 0
+                ? colors.error
+                : null;
+            return SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: StatsCard(
+                        label: 'Component_Types',
+                        value: totalTypes,
+                        icon: Icons.category_outlined,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: StatsCard(
+                        label: 'Total_Units',
+                        value: totalUnits,
+                        icon: Icons.inventory_2_outlined,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: StatsCard(
+                        label: 'Low_Stock',
+                        value: lowStockCount,
+                        icon: Icons.warning_amber_rounded,
+                        valueColor: lowStockColour,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: StatsCard(
+                        label: 'Out_of_Stock',
+                        value: outOfStockCount,
+                        icon: Icons.error_outline_rounded,
+                        valueColor: outOfStockColour,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: StatsCard(
-                    label: 'Total_Units',
-                    value: Formatters.quantity(stats.totalUnits),
-                    icon: Icons.inventory_2_outlined,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: StatsCard(
-                    label: 'Low_Stock',
-                    value: stats.lowStockCount.toString(),
-                    icon: Icons.warning_amber_rounded,
-                    valueColor: stats.lowStockCount > 0
-                        ? colors.tertiary
-                        : null,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: StatsCard(
-                    label: 'Out_of_Stock',
-                    value: stats.outOfStockCount.toString(),
-                    icon: Icons.error_outline_rounded,
-                    valueColor: stats.outOfStockCount > 0 ? colors.error : null,
-                  ),
-                ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
 
         SliverPadding(
@@ -150,33 +178,43 @@ class _HomeScreenState extends State<HomeScreen> {
 
         SliverPadding(
           padding: const EdgeInsets.fromLTRB(32, 10, 32, 0),
-          sliver: SliverGrid(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
-              childAspectRatio: 1.4,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-            ),
-            delegate: SliverChildBuilderDelegate((context, i) {
-              final cat = ComponentCategory.values[i];
-              return _CategoryGridCell(
-                category: cat,
-                count: stats.countByCategory[cat] ?? 0,
-                onTap: () => {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute<bool>(
-                      builder: (context) => ComponentCatalogScreen(
-                        viewModel: ComponentCatalogViewModel(
-                          inventoryRepository: RepositoryProvider.of(context),
-                          initialCategory: cat,
+          sliver: FutureBuilder(
+            future: _stats,
+            builder: (context, snapshot) {
+              return SliverGrid(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4,
+                  childAspectRatio: 1.4,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                ),
+                delegate: SliverChildBuilderDelegate((context, i) {
+                  final cat = ComponentCategory.values[i];
+                  return _CategoryGridCell(
+                    category: cat,
+                    // count: stats.countByCategory[cat] ?? 0,
+                    count: snapshot.data == null
+                        ? null
+                        : snapshot.data!.countByCategory[cat] ?? 0,
+                    onTap: () => {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<bool>(
+                          builder: (context) => ComponentCatalogScreen(
+                            viewModel: ComponentCatalogViewModel(
+                              inventoryRepository: RepositoryProvider.of(
+                                context,
+                              ),
+                              initialCategory: cat,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                },
+                    },
+                  );
+                }, childCount: ComponentCategory.values.length),
               );
-            }, childCount: ComponentCategory.values.length),
+            },
           ),
         ),
       ],
@@ -229,7 +267,7 @@ class _CategoryGridCell extends StatelessWidget {
   });
 
   final ComponentCategory category;
-  final int count;
+  final int? count;
   final VoidCallback? onTap;
 
   @override
@@ -253,12 +291,18 @@ class _CategoryGridCell extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Icon(category.icon, color: category.color, size: 22),
-                Text(
-                  Formatters.quantity(count),
-                  style: typography.labelLarge?.copyWith(
-                    color: colors.onSurfaceVariant,
+                if (count == null)
+                  SizedBox.square(
+                    dimension: typography.labelLarge?.fontSize,
+                    child: const CircularProgressIndicator(strokeWidth: 4.0),
                   ),
-                ),
+                if (count != null)
+                  Text(
+                    Formatters.quantity(count!),
+                    style: typography.labelLarge?.copyWith(
+                      color: colors.onSurfaceVariant,
+                    ),
+                  ),
               ],
             ),
             const Spacer(),

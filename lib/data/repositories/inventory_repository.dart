@@ -2,18 +2,18 @@ import 'package:flux_state/domain/models/component.dart';
 import 'package:flux_state/domain/models/component_category.dart';
 
 abstract class InventoryRepository {
-  Iterable<Component> get components;
+  Future<Iterable<Component>> get components;
 
-  Component? load(String id);
+  Future<Component?> load(String id);
 
-  void add(
+  Future<int> add(
     ComponentCategory category,
     String id,
     Map<String, dynamic> attrs,
     int quantity,
   );
 
-  void save(
+  Future<int> save(
     ComponentCategory category,
     String id,
     Map<String, dynamic> attrs,

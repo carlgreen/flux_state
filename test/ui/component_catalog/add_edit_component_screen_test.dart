@@ -131,9 +131,9 @@ void main() {
       await tester.tap(decQuantityBtn);
 
       await tester.tap(saveBtn);
-      await tester.pump();
+      await tester.pumpAndSettle();
 
-      expect(inventoryRepository.components, [
+      expect(await inventoryRepository.components, [
         Resistor(
           id: 'a',
           value: 10000000,
@@ -193,9 +193,9 @@ void main() {
       await tester.tap(incQuantityBtn);
 
       await tester.tap(saveBtn);
-      await tester.pump();
+      await tester.pumpAndSettle();
 
-      expect(inventoryRepository.components, [
+      expect(await inventoryRepository.components, [
         Capacitor(
           id: 'b',
           value: 150,
@@ -253,9 +253,9 @@ void main() {
       await tester.tap(incQuantityBtn);
 
       await tester.tap(saveBtn);
-      await tester.pump();
+      await tester.pumpAndSettle();
 
-      expect(inventoryRepository.components, [
+      expect(await inventoryRepository.components, [
         Diode(
           id: 'b',
           partNumber: '1N34A',
@@ -271,7 +271,7 @@ void main() {
     late AddEditComponentViewModel viewModel;
     late InventoryRepository inventoryRepository;
 
-    setUp(() {
+    setUp(() async {
       inventoryRepository = InMemoryInventoryRepository()
         ..addComponent(
           Resistor(
@@ -285,7 +285,7 @@ void main() {
           ),
         )
         ..addComponent(Diode(id: 'b', partNumber: '1N34A'));
-      final resistorId = inventoryRepository.components
+      final resistorId = (await inventoryRepository.components)
           .whereType<Resistor>()
           .first
           .id;
@@ -407,7 +407,7 @@ void main() {
     //   matching: find.byIcon(Icons.add_rounded),
     // );
 
-    setUp(() {
+    setUp(() async {
       inventoryRepository = InMemoryInventoryRepository()
         ..addComponent(
           Resistor(id: 'a', value: 1000000, tolerance: '2', power: '0.25'),
@@ -423,7 +423,7 @@ void main() {
             quantity: 3,
           ),
         );
-      final capacitorId = inventoryRepository.components
+      final capacitorId = (await inventoryRepository.components)
           .whereType<Capacitor>()
           .single
           .id;
@@ -516,7 +516,7 @@ void main() {
       matching: find.byIcon(Icons.add_rounded),
     );
 
-    setUp(() {
+    setUp(() async {
       inventoryRepository = InMemoryInventoryRepository()
         ..addComponent(
           Resistor(id: 'a', value: 1000000, tolerance: '2', power: '0.25'),
@@ -530,7 +530,7 @@ void main() {
             quantity: 3,
           ),
         );
-      final diodeId = inventoryRepository.components
+      final diodeId = (await inventoryRepository.components)
           .whereType<Diode>()
           .single
           .id;

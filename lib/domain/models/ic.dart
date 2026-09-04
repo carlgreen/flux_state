@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import 'component.dart';
@@ -111,5 +113,20 @@ class Ic extends Component {
       function: attrs[Ic.functionKey],
       package: attrs[Ic.packageKey],
     );
+  }
+
+  @override
+  Map<String, Object?> toMap() {
+    return {
+      'id': id,
+      'category': category.name,
+      'quantity': quantity,
+      'attrs': json.encode({
+        partNumberKey: partNumber,
+        partFamilyKey: partFamily,
+        functionKey: function,
+        packageKey: package,
+      }),
+    };
   }
 }

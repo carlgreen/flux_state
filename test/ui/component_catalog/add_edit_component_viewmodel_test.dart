@@ -11,17 +11,18 @@ import '../../data/repositories/in_memory_inventory_repository.dart';
 
 void main() {
   group('AddEditComponentViewModel tests', () {
-    test('Create resistor with minimal fields', () {
+    test('Create resistor with minimal fields', () async {
       final inventoryRepository = InMemoryInventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
 
-      expect(inventoryRepository.components.isEmpty, true);
+      expect((await inventoryRepository.components).isEmpty, true);
 
-      viewModel.save(<String, dynamic>{'value': '1000'}, 10);
+      await viewModel.save(<String, dynamic>{'value': '1000'}, 10);
 
-      final resistor = inventoryRepository.components.single as Resistor;
+      final resistor =
+          (await inventoryRepository.components).single as Resistor;
       expect(resistor.value, 1000000);
       expect(resistor.tolerance, null);
       expect(resistor.power, null);
@@ -30,15 +31,15 @@ void main() {
       expect(resistor.quantity, 10);
     });
 
-    test('Create resistor with all fields', () {
+    test('Create resistor with all fields', () async {
       final inventoryRepository = InMemoryInventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
 
-      expect(inventoryRepository.components.isEmpty, true);
+      expect((await inventoryRepository.components).isEmpty, true);
 
-      viewModel.save(<String, dynamic>{
+      await viewModel.save(<String, dynamic>{
         'value': '1000',
         'tolerance_pct': '10',
         'power_w': '0.5',
@@ -46,7 +47,8 @@ void main() {
         'package': 'Through-hole',
       }, 10);
 
-      final resistor = inventoryRepository.components.single as Resistor;
+      final resistor =
+          (await inventoryRepository.components).single as Resistor;
       expect(resistor.value, 1000000);
       expect(resistor.tolerance, '10');
       expect(resistor.power, '0.5');
@@ -55,7 +57,7 @@ void main() {
       expect(resistor.quantity, 10);
     });
 
-    test('Update resistor', () {
+    test('Update resistor', () async {
       final inventoryRepository = InMemoryInventoryRepository()
         ..addComponent(
           Resistor(
@@ -71,7 +73,7 @@ void main() {
         inventoryRepository: inventoryRepository,
       );
 
-      viewModel.update('a', <String, dynamic>{
+      await viewModel.update('a', <String, dynamic>{
         'value': '100',
         'tolerance_pct': '10',
         'power_w': '0.5',
@@ -80,7 +82,7 @@ void main() {
       }, 5);
 
       expect(
-        inventoryRepository.components.single,
+        (await inventoryRepository.components).single,
         Resistor(
           id: 'a',
           value: 100000,
@@ -93,18 +95,22 @@ void main() {
       );
     });
 
-    test('Create capacitor with minimal fields', () {
+    test('Create capacitor with minimal fields', () async {
       final inventoryRepository = InMemoryInventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
 
-      expect(inventoryRepository.components.isEmpty, true);
+      expect((await inventoryRepository.components).isEmpty, true);
 
       viewModel.category = ComponentCategory.capacitor;
-      viewModel.save(<String, dynamic>{'value': '1u', 'polarised': false}, 10);
+      await viewModel.save(<String, dynamic>{
+        'value': '1u',
+        'polarised': false,
+      }, 10);
 
-      final capacitor = inventoryRepository.components.single as Capacitor;
+      final capacitor =
+          (await inventoryRepository.components).single as Capacitor;
       expect(capacitor.value, 1000000);
       expect(capacitor.voltage, null);
       expect(capacitor.tolerance, null);
@@ -113,16 +119,16 @@ void main() {
       expect(capacitor.quantity, 10);
     });
 
-    test('Create capacitor with all fields', () {
+    test('Create capacitor with all fields', () async {
       final inventoryRepository = InMemoryInventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
 
-      expect(inventoryRepository.components.isEmpty, true);
+      expect((await inventoryRepository.components).isEmpty, true);
 
       viewModel.category = ComponentCategory.capacitor;
-      viewModel.save(<String, dynamic>{
+      await viewModel.save(<String, dynamic>{
         'value': '1n5',
         'voltage_v': '50',
         'tolerance_pct': '10',
@@ -130,7 +136,8 @@ void main() {
         'polarised': true,
       }, 10);
 
-      final capacitor = inventoryRepository.components.single as Capacitor;
+      final capacitor =
+          (await inventoryRepository.components).single as Capacitor;
       expect(capacitor.value, 1500);
       expect(capacitor.voltage, 50);
       expect(capacitor.tolerance, '10');
@@ -139,7 +146,7 @@ void main() {
       expect(capacitor.quantity, 10);
     });
 
-    test('Update capacitor', () {
+    test('Update capacitor', () async {
       final inventoryRepository = InMemoryInventoryRepository()
         ..addComponent(
           Capacitor(
@@ -155,7 +162,7 @@ void main() {
         inventoryRepository: inventoryRepository,
       );
 
-      viewModel.update('a', <String, dynamic>{
+      await viewModel.update('a', <String, dynamic>{
         'value': '100pF',
         'tolerance_pct': '10',
         'polarised': true,
@@ -163,7 +170,7 @@ void main() {
       }, 5);
 
       expect(
-        inventoryRepository.components.single,
+        (await inventoryRepository.components).single,
         Capacitor(
           id: 'a',
           value: 100,
@@ -176,7 +183,7 @@ void main() {
       );
     });
 
-    test('Create diode with minimal fields', () {
+    test('Create diode with minimal fields', () async {
       final inventoryRepository = InMemoryInventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
@@ -184,18 +191,18 @@ void main() {
 
       viewModel.category = ComponentCategory.diode;
 
-      expect(inventoryRepository.components.isEmpty, true);
+      expect((await inventoryRepository.components).isEmpty, true);
 
-      viewModel.save(<String, dynamic>{'part_number': '1n34A'}, 5);
+      await viewModel.save(<String, dynamic>{'part_number': '1n34A'}, 5);
 
-      final diode = inventoryRepository.components.single as Diode;
+      final diode = (await inventoryRepository.components).single as Diode;
       expect(diode.partNumber, '1n34A');
       expect(diode.material, null);
       expect(diode.package, null);
       expect(diode.quantity, 5);
     });
 
-    test('Create diode with all fields', () {
+    test('Create diode with all fields', () async {
       final inventoryRepository = InMemoryInventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
@@ -203,22 +210,22 @@ void main() {
 
       viewModel.category = ComponentCategory.diode;
 
-      expect(inventoryRepository.components.isEmpty, true);
+      expect((await inventoryRepository.components).isEmpty, true);
 
-      viewModel.save(<String, dynamic>{
+      await viewModel.save(<String, dynamic>{
         'part_number': '1n34A',
         'material': 'Germanium',
         'package': 'DO-41',
       }, 5);
 
-      final diode = inventoryRepository.components.single as Diode;
+      final diode = (await inventoryRepository.components).single as Diode;
       expect(diode.partNumber, '1n34A');
       expect(diode.material, 'Germanium');
       expect(diode.package, 'DO-41');
       expect(diode.quantity, 5);
     });
 
-    test('Update didoe', () {
+    test('Update didoe', () async {
       final inventoryRepository = InMemoryInventoryRepository()
         ..addComponent(Diode(id: 'c', partNumber: 'abc', quantity: 5));
       final viewModel = AddEditComponentViewModel(
@@ -227,18 +234,18 @@ void main() {
 
       viewModel.category = ComponentCategory.diode;
 
-      viewModel.update('c', <String, dynamic>{
+      await viewModel.update('c', <String, dynamic>{
         'part_number': 'def',
         'material': 'Silicon',
       }, 50);
 
       expect(
-        inventoryRepository.components.single,
+        (await inventoryRepository.components).single,
         Diode(id: 'c', partNumber: 'def', material: 'Silicon', quantity: 50),
       );
     });
 
-    test('Create transistor with minimal fields', () {
+    test('Create transistor with minimal fields', () async {
       final inventoryRepository = InMemoryInventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
@@ -246,11 +253,12 @@ void main() {
 
       viewModel.category = ComponentCategory.transistor;
 
-      expect(inventoryRepository.components.isEmpty, true);
+      expect((await inventoryRepository.components).isEmpty, true);
 
-      viewModel.save(<String, dynamic>{'part_number': '2N2222A'}, 10);
+      await viewModel.save(<String, dynamic>{'part_number': '2N2222A'}, 10);
 
-      final transistor = inventoryRepository.components.single as Transistor;
+      final transistor =
+          (await inventoryRepository.components).single as Transistor;
       expect(transistor.partNumber, '2N2222A');
       expect(transistor.partFamily, null);
       expect(transistor.type, null);
@@ -258,7 +266,7 @@ void main() {
       expect(transistor.quantity, 10);
     });
 
-    test('Create transistor with all fields', () {
+    test('Create transistor with all fields', () async {
       final inventoryRepository = InMemoryInventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
@@ -266,16 +274,17 @@ void main() {
 
       viewModel.category = ComponentCategory.transistor;
 
-      expect(inventoryRepository.components.isEmpty, true);
+      expect((await inventoryRepository.components).isEmpty, true);
 
-      viewModel.save(<String, dynamic>{
+      await viewModel.save(<String, dynamic>{
         'part_number': '2N2222A',
         'part_family': '2N2222',
         'type': 'NPN',
         'package': 'TO-18',
       }, 10);
 
-      final transistor = inventoryRepository.components.single as Transistor;
+      final transistor =
+          (await inventoryRepository.components).single as Transistor;
       expect(transistor.partNumber, '2N2222A');
       expect(transistor.partFamily, '2N2222');
       expect(transistor.type, 'NPN');
@@ -283,7 +292,7 @@ void main() {
       expect(transistor.quantity, 10);
     });
 
-    test('Update transistor', () {
+    test('Update transistor', () async {
       final inventoryRepository = InMemoryInventoryRepository()
         ..addComponent(
           Transistor(
@@ -302,7 +311,7 @@ void main() {
 
       viewModel.category = ComponentCategory.transistor;
 
-      viewModel.update('a', <String, dynamic>{
+      await viewModel.update('a', <String, dynamic>{
         'part_number': '2N2222',
         'part_family': null,
         'type': 'NPN',
@@ -310,7 +319,7 @@ void main() {
       }, 5);
 
       expect(
-        inventoryRepository.components.single,
+        (await inventoryRepository.components).single,
         Transistor(
           id: 'a',
           partNumber: '2N2222',
@@ -322,22 +331,22 @@ void main() {
       );
     });
 
-    test('Create toggle switch with minimal fields', () {
+    test('Create toggle switch with minimal fields', () async {
       final inventoryRepository = InMemoryInventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
       viewModel.category = ComponentCategory.switchComp;
 
-      expect(inventoryRepository.components.isEmpty, true);
+      expect((await inventoryRepository.components).isEmpty, true);
 
-      viewModel.save(<String, dynamic>{
+      await viewModel.save(<String, dynamic>{
         'type': 'Toggle',
         'poles': 2,
         'switching': 'On-On',
       }, 10);
 
-      final toggleSw = inventoryRepository.components.single as Switch;
+      final toggleSw = (await inventoryRepository.components).single as Switch;
       expect(toggleSw.type, 'Toggle');
       expect(toggleSw.poles, 2);
       expect(toggleSw.switching, 'On-On');
@@ -352,16 +361,16 @@ void main() {
       expect(toggleSw.quantity, 10);
     });
 
-    test('Create toggle switch with all fields', () {
+    test('Create toggle switch with all fields', () async {
       final inventoryRepository = InMemoryInventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
       viewModel.category = ComponentCategory.switchComp;
 
-      expect(inventoryRepository.components.isEmpty, true);
+      expect((await inventoryRepository.components).isEmpty, true);
 
-      viewModel.save(<String, dynamic>{
+      await viewModel.save(<String, dynamic>{
         'type': 'Toggle',
         'poles': 1,
         'switching': 'On-Off-On',
@@ -370,7 +379,7 @@ void main() {
         'mount': 'Lugs',
       }, 10);
 
-      final toggleSw = inventoryRepository.components.single as Switch;
+      final toggleSw = (await inventoryRepository.components).single as Switch;
       expect(toggleSw.type, 'Toggle');
       expect(toggleSw.poles, 1);
       expect(toggleSw.switching, 'On-Off-On');
@@ -385,7 +394,7 @@ void main() {
       expect(toggleSw.quantity, 10);
     });
 
-    test('Update toggle switch', () {
+    test('Update toggle switch', () async {
       final inventoryRepository = InMemoryInventoryRepository()
         ..addComponent(
           Switch(
@@ -402,7 +411,7 @@ void main() {
         inventoryRepository: inventoryRepository,
       );
 
-      viewModel.update('a', <String, dynamic>{
+      await viewModel.update('a', <String, dynamic>{
         'poles': '2',
         'switching': 'On-On',
         'momentary': false,
@@ -411,7 +420,7 @@ void main() {
       }, 5);
 
       expect(
-        inventoryRepository.components.single,
+        (await inventoryRepository.components).single,
         Switch(
           id: 'a',
           type: 'Toggle',
@@ -425,22 +434,22 @@ void main() {
       );
     });
 
-    test('Create rotary switch with minimal fields', () {
+    test('Create rotary switch with minimal fields', () async {
       final inventoryRepository = InMemoryInventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
       viewModel.category = ComponentCategory.switchComp;
 
-      expect(inventoryRepository.components.isEmpty, true);
+      expect((await inventoryRepository.components).isEmpty, true);
 
-      viewModel.save(<String, dynamic>{
+      await viewModel.save(<String, dynamic>{
         'type': 'Rotary',
         'poles': 2,
         'positions': 6,
       }, 10);
 
-      final toggleSw = inventoryRepository.components.single as Switch;
+      final toggleSw = (await inventoryRepository.components).single as Switch;
       expect(toggleSw.type, 'Rotary');
       expect(toggleSw.poles, 2);
       expect(toggleSw.switching, null);
@@ -455,16 +464,16 @@ void main() {
       expect(toggleSw.quantity, 10);
     });
 
-    test('Create rotary switch with all fields', () {
+    test('Create rotary switch with all fields', () async {
       final inventoryRepository = InMemoryInventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
       viewModel.category = ComponentCategory.switchComp;
 
-      expect(inventoryRepository.components.isEmpty, true);
+      expect((await inventoryRepository.components).isEmpty, true);
 
-      viewModel.save(<String, dynamic>{
+      await viewModel.save(<String, dynamic>{
         'type': 'Rotary',
         'poles': 1,
         'positions': 12,
@@ -474,7 +483,7 @@ void main() {
         'mount': 'Lugs',
       }, 10);
 
-      final toggleSw = inventoryRepository.components.single as Switch;
+      final toggleSw = (await inventoryRepository.components).single as Switch;
       expect(toggleSw.type, 'Rotary');
       expect(toggleSw.poles, 1);
       expect(toggleSw.switching, null);
@@ -489,11 +498,11 @@ void main() {
       expect(toggleSw.quantity, 10);
     });
 
-    test('Update rotary switch', () {
+    test('Update rotary switch', () async {
       final inventoryRepository = InMemoryInventoryRepository()
         ..addComponent(
           Switch(
-            id: 'a',
+            id: 'b',
             type: 'Rotary',
             poles: 1,
             positions: 12,
@@ -507,7 +516,7 @@ void main() {
         inventoryRepository: inventoryRepository,
       );
 
-      viewModel.update('a', <String, dynamic>{
+      await viewModel.update('b', <String, dynamic>{
         'poles': '3',
         'positions': '4',
         'size_mm': '9mm',
@@ -517,9 +526,9 @@ void main() {
       }, 5);
 
       expect(
-        inventoryRepository.components.single,
+        (await inventoryRepository.components).single,
         Switch(
-          id: 'a',
+          id: 'b',
           type: 'Rotary',
           poles: 3,
           positions: 4,
@@ -532,7 +541,7 @@ void main() {
       );
     });
 
-    test('Change rotary switch to footswitch', () {
+    test('Change rotary switch to footswitch', () async {
       final inventoryRepository = InMemoryInventoryRepository()
         ..addComponent(
           Switch(
@@ -550,7 +559,7 @@ void main() {
         inventoryRepository: inventoryRepository,
       );
 
-      viewModel.update('a', <String, dynamic>{
+      await viewModel.update('a', <String, dynamic>{
         'type': 'Footswitch',
         'poles': '2',
         'switching': 'On-On',
@@ -558,7 +567,7 @@ void main() {
       }, 5);
 
       expect(
-        inventoryRepository.components.single,
+        (await inventoryRepository.components).single,
         Switch(
           id: 'a',
           type: 'Footswitch',

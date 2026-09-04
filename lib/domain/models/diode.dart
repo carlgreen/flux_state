@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import 'component.dart';
@@ -100,5 +102,19 @@ class Diode extends Component {
       material: attrs[Diode.materialKey],
       package: attrs[Diode.packageKey],
     );
+  }
+
+  @override
+  Map<String, Object?> toMap() {
+    return {
+      'id': id,
+      'category': category.name,
+      'quantity': quantity,
+      'attrs': json.encode({
+        partNumberKey: partNumber,
+        materialKey: material,
+        packageKey: package,
+      }),
+    };
   }
 }

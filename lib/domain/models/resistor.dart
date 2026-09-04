@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import 'component.dart';
@@ -137,6 +139,22 @@ class Resistor extends Component {
       material: attrs[Resistor.materialKey],
       package: attrs[Resistor.packageKey],
     );
+  }
+
+  @override
+  Map<String, Object?> toMap() {
+    return {
+      'id': id,
+      'category': category.name,
+      'quantity': quantity,
+      'attrs': json.encode({
+        valueKey: (value / 1000).toStringAsFixed(value % 1000 == 0 ? 0 : 1),
+        toleranceKey: tolerance,
+        powerKey: power,
+        materialKey: material,
+        packageKey: package,
+      }),
+    };
   }
 }
 

@@ -63,6 +63,13 @@ class _AddEditComponentScreenState extends State<AddEditComponentScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    widget.viewModel.load();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final typography = theme.textTheme;
@@ -109,6 +116,8 @@ class _AddEditComponentScreenState extends State<AddEditComponentScreen> {
               final comp = widget.viewModel.component;
               if (comp != null && !_initialized) {
                 _populate(comp);
+              } else {
+                return const Center(child: CircularProgressIndicator());
               }
             }
 

@@ -24,6 +24,13 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
   String _searchQ = '';
 
   @override
+  void initState() {
+    super.initState();
+
+    widget.viewModel.load();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
@@ -67,12 +74,15 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
                         _selectedCat,
                         _searchQ,
                       );
-
-                      return _ComponentList(
-                        components: components,
-                        selectedCat: _selectedCat,
-                        onRefreshRequested: reload,
-                      );
+                      if (components.isEmpty) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else {
+                        return _ComponentList(
+                          components: components,
+                          selectedCat: _selectedCat,
+                          onRefreshRequested: reload,
+                        );
+                      }
                     },
                   ),
                 ),

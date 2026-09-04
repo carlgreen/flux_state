@@ -14,7 +14,8 @@ class InMemoryInventoryRepository implements InventoryRepository {
   final List<Component> _components = List.empty(growable: true);
 
   @override
-  Iterable<Component> get components => List.unmodifiable(_components);
+  Future<Iterable<Component>> get components =>
+      Future.value(List.unmodifiable(_components));
 
   void addComponent(Component c) {
     _components.add(c);
@@ -28,7 +29,7 @@ class InMemoryInventoryRepository implements InventoryRepository {
   }
 
   @override
-  void add(
+  Future<int> add(
     ComponentCategory category,
     String id,
     Map<String, dynamic> attrs,
@@ -55,25 +56,31 @@ class InMemoryInventoryRepository implements InventoryRepository {
     }
     c.quantity = quantity;
     addComponent(c);
+
+    return Future.value(1);
   }
 
   @override
-  void save(
+  Future<int> save(
     ComponentCategory category,
     String id,
     Map<String, dynamic> attrs,
     int qty,
-  ) {
-    final component = load(id);
+  ) async {
+    final component = await load(id);
     if (component != null) {
       final update = component.updateFromAttrs(attrs);
       update.quantity = qty;
       saveComponent(update);
+
+      return Future.value(1);
     }
+
+    return Future.error('no component for $id');
   }
 
   @override
-  Component? load(String id) {
-    return components.where((c) => c.id == id).singleOrNull;
+  Future<Component?> load(String id) {
+    return components.then((c) => c.where((c) => c.id == id).singleOrNull);
   }
 }

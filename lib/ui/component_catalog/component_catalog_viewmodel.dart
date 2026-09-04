@@ -9,9 +9,7 @@ class ComponentCatalogViewModel extends ChangeNotifier {
   ComponentCatalogViewModel({
     required this._inventoryRepository,
     this.initialCategory,
-  }) {
-    load();
-  }
+  });
 
   final InventoryRepository _inventoryRepository;
   final ComponentCategory? initialCategory;
@@ -42,23 +40,22 @@ class ComponentCatalogViewModel extends ChangeNotifier {
   }
 
   Future<void> load() async {
+    // final componentsResult = await _inventoryRepository.components;
+    // switch (componentsResult) {
+    //   case Ok<List<Components>>():
+    //     _components = componentsResult.value;
+    //     _log.fine('Loaded components');
+    //   case Error<List<Components>>():
+    //     _log.warning('Failed to load components', componentsResult.error);
+    // }
+
+    // ...
+
+    // return userResult;
     try {
-      // final componentsResult = await _inventoryRepository.components;
-      // switch (componentsResult) {
-      //   case Ok<List<Components>>():
-      //     _components = componentsResult.value;
-      //     _log.fine('Loaded components');
-      //   case Error<List<Components>>():
-      //     _log.warning('Failed to load components', componentsResult.error);
-      // }
-      final components = _inventoryRepository.components;
+      final components = await _inventoryRepository.components;
       _components.clear();
       _components.addAll(components);
-
-      // ...
-
-      // return userResult;
-      return;
     } finally {
       notifyListeners();
     }

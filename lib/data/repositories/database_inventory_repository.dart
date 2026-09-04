@@ -1,3 +1,4 @@
+import 'package:flux_state/data/repositories/database_helper.dart';
 import 'package:flux_state/data/repositories/inventory_repository.dart';
 import 'package:flux_state/domain/models/capacitor.dart';
 import 'package:flux_state/domain/models/component.dart';
@@ -10,27 +11,39 @@ import 'package:flux_state/domain/models/resistor.dart';
 import 'package:flux_state/domain/models/switch.dart';
 import 'package:flux_state/domain/models/transistor.dart';
 
-class InMemoryInventoryRepository implements InventoryRepository {
-  final List<Component> _components = List.empty(growable: true);
+const String _tableComponents = 'components';
 
-  InMemoryInventoryRepository();
-
-  @override
-  Iterable<Component> get components => List.unmodifiable(_components);
-
-  void addComponent(Component c) {
-    _components.add(c);
-  }
-
-  void saveComponent(Component update) {
-    final idx = _components.indexWhere((c) => (c.id == update.id));
-    if (idx >= 0) {
-      _components[idx] = update;
-    }
-  }
+class DatabaseInventoryRepository implements InventoryRepository {
+  DatabaseInventoryRepository();
 
   @override
-  void add(
+  Future<Iterable<Component>> get components async {
+    final db = await DatabaseHelper.instance.database;
+    final rows = await db.query(
+      _tableComponents,
+      // orderBy: 'category ASC, name ASC',
+      orderBy: 'category ASC',
+    );
+    return rows.map(Component.fromMap);
+  }
+
+  Future<int> addComponent(Component c) async {
+    final db = await DatabaseHelper.instance.database;
+    return await db.insert(_tableComponents, c.toMap());
+  }
+
+  Future<int> saveComponent(Component update) async {
+    final db = await DatabaseHelper.instance.database;
+    return await db.update(
+      _tableComponents,
+      update.toMap(),
+      where: 'id = ?',
+      whereArgs: [update.id],
+    );
+  }
+
+  @override
+  Future<int> add(
     ComponentCategory category,
     String id,
     Map<String, dynamic> attrs,
@@ -56,26 +69,28 @@ class InMemoryInventoryRepository implements InventoryRepository {
         c = Switch.fromAttrs(id, attrs);
     }
     c.quantity = quantity;
-    addComponent(c);
+    return addComponent(c);
   }
 
   @override
-  void save(
+  Future<int> save(
     ComponentCategory category,
     String id,
     Map<String, dynamic> attrs,
     int qty,
-  ) {
-    final component = load(id);
+  ) async {
+    final component = await load(id);
     if (component != null) {
       final update = component.updateFromAttrs(attrs);
       update.quantity = qty;
-      saveComponent(update);
+      return saveComponent(update);
     }
+
+    return Future.error('no component for $id');
   }
 
   @override
-  Component? load(String id) {
-    return components.where((c) => c.id == id).singleOrNull;
+  Future<Component?> load(String id) async {
+    return (await components).where((c) => c.id == id).singleOrNull;
   }
 }

@@ -9,11 +9,7 @@ class AddEditComponentViewModel extends ChangeNotifier {
     required this._inventoryRepository,
     this.componentId,
     this.initialCategory,
-  }) {
-    if (componentId != null) {
-      _load(componentId!);
-    }
-  }
+  });
 
   final InventoryRepository _inventoryRepository;
   final String? componentId;
@@ -25,7 +21,12 @@ class AddEditComponentViewModel extends ChangeNotifier {
 
   Component? get component => _component;
 
-  Future<void> _load(String id) async {
+  Future<void> load() async {
+    final id = componentId;
+    if (id == null) {
+      return;
+    }
+
     final result = _inventoryRepository.load(id);
     // switch (result) {
     //   case Ok<Booking>():
@@ -37,10 +38,8 @@ class AddEditComponentViewModel extends ChangeNotifier {
     // }
     // _log.fine('Loaded component $id');
     // _component = result.value;
-    _component = result;
+    _component = await result;
     notifyListeners();
-
-    return;
   }
 
   Future<void> save(Map<String, dynamic> attrs, int quantity) async {

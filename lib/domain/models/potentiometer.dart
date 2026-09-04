@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import 'component.dart';
@@ -183,5 +185,23 @@ class Potentiometer extends Component {
       shaftType: attrs[Potentiometer.shaftTypeKey],
       mount: attrs[Potentiometer.mountKey],
     );
+  }
+
+  @override
+  Map<String, Object?> toMap() {
+    return {
+      'id': id,
+      'category': category.name,
+      'quantity': quantity,
+      'attrs': json.encode({
+        valueKey: value.toString(),
+        taperKey: taper,
+        sizeKey: baseDiameter,
+        shaftDiameterKey: shaftDiameter,
+        shaftLengthKey: shaftLength,
+        shaftTypeKey: shaftType,
+        mountKey: mount,
+      }),
+    };
   }
 }

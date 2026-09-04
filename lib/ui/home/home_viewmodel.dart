@@ -7,11 +7,11 @@ class HomeViewModel {
 
   final InventoryRepository _inventoryRepository;
 
-  DashboardStats get stats {
+  Future<DashboardStats> get stats async {
     final List<Component> components = List.empty(growable: true);
-    components.addAll(_inventoryRepository.components);
+    components.addAll(await _inventoryRepository.components);
 
-    return DashboardStats.fromComponents(components);
+    return Future.value(DashboardStats.fromComponents(components));
   }
 }
 

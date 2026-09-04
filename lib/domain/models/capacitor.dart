@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import 'component.dart';
@@ -137,6 +139,22 @@ class Capacitor extends Component {
       material: attrs[Capacitor.materialKey],
       polarised: attrs[Capacitor.polarisedKey] ?? false,
     );
+  }
+
+  @override
+  Map<String, Object?> toMap() {
+    return {
+      'id': id,
+      'category': category.name,
+      'quantity': quantity,
+      'attrs': json.encode({
+        valueKey: formatCapacitorValue(value),
+        voltageKey: voltage?.toString(),
+        toleranceKey: tolerance,
+        materialKey: material,
+        polarisedKey: polarised,
+      }),
+    };
   }
 }
 

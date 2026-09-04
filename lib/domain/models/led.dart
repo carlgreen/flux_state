@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import 'component.dart';
@@ -133,5 +135,21 @@ class Led extends Component {
           : null,
       lens: attrs[Led.lensKey],
     );
+  }
+
+  @override
+  Map<String, Object?> toMap() {
+    return {
+      'id': id,
+      'category': category.name,
+      'quantity': quantity,
+      'attrs': json.encode({
+        colourKey: colour,
+        sizeKey: size,
+        forwardVoltageKey: forwardVoltage,
+        currentKey: current,
+        lensKey: lens,
+      }),
+    };
   }
 }

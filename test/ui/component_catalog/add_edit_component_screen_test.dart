@@ -9,6 +9,8 @@ import 'package:flux_state/ui/component_catalog/add_edit_component_screen.dart';
 import 'package:flux_state/ui/component_catalog/add_edit_component_viewmodel.dart';
 import 'package:flux_state/ui/component_catalog/quantity_stepper.dart';
 
+import '../../data/repositories/in_memory_inventory_repository.dart';
+
 void main() {
   selectDropdown(tester, finder, value) async {
     await tester.tap(finder);
@@ -24,7 +26,7 @@ void main() {
     late InventoryRepository inventoryRepository;
 
     setUp(() {
-      inventoryRepository = InventoryRepository();
+      inventoryRepository = InMemoryInventoryRepository();
       viewModel = AddEditComponentViewModel(
         initialCategory: ComponentCategory.resistor,
         inventoryRepository: inventoryRepository,
@@ -270,7 +272,7 @@ void main() {
     late InventoryRepository inventoryRepository;
 
     setUp(() {
-      inventoryRepository = InventoryRepository()
+      inventoryRepository = InMemoryInventoryRepository()
         ..addComponent(
           Resistor(
             id: 'a',
@@ -406,7 +408,7 @@ void main() {
     // );
 
     setUp(() {
-      inventoryRepository = InventoryRepository()
+      inventoryRepository = InMemoryInventoryRepository()
         ..addComponent(
           Resistor(id: 'a', value: 1000000, tolerance: '2', power: '0.25'),
         )
@@ -515,7 +517,7 @@ void main() {
     );
 
     setUp(() {
-      inventoryRepository = InventoryRepository()
+      inventoryRepository = InMemoryInventoryRepository()
         ..addComponent(
           Resistor(id: 'a', value: 1000000, tolerance: '2', power: '0.25'),
         )

@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flux_state/data/repositories/inventory_repository.dart';
 import 'package:flux_state/domain/models/capacitor.dart';
 import 'package:flux_state/domain/models/component_category.dart';
 import 'package:flux_state/domain/models/diode.dart';
@@ -8,10 +7,12 @@ import 'package:flux_state/domain/models/switch.dart';
 import 'package:flux_state/domain/models/transistor.dart';
 import 'package:flux_state/ui/component_catalog/add_edit_component_viewmodel.dart';
 
+import '../../data/repositories/in_memory_inventory_repository.dart';
+
 void main() {
   group('AddEditComponentViewModel tests', () {
     test('Create resistor with minimal fields', () {
-      final inventoryRepository = InventoryRepository();
+      final inventoryRepository = InMemoryInventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -30,7 +31,7 @@ void main() {
     });
 
     test('Create resistor with all fields', () {
-      final inventoryRepository = InventoryRepository();
+      final inventoryRepository = InMemoryInventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -55,7 +56,7 @@ void main() {
     });
 
     test('Update resistor', () {
-      final inventoryRepository = InventoryRepository()
+      final inventoryRepository = InMemoryInventoryRepository()
         ..addComponent(
           Resistor(
             id: 'a',
@@ -93,7 +94,7 @@ void main() {
     });
 
     test('Create capacitor with minimal fields', () {
-      final inventoryRepository = InventoryRepository();
+      final inventoryRepository = InMemoryInventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -113,7 +114,7 @@ void main() {
     });
 
     test('Create capacitor with all fields', () {
-      final inventoryRepository = InventoryRepository();
+      final inventoryRepository = InMemoryInventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -139,7 +140,7 @@ void main() {
     });
 
     test('Update capacitor', () {
-      final inventoryRepository = InventoryRepository()
+      final inventoryRepository = InMemoryInventoryRepository()
         ..addComponent(
           Capacitor(
             id: 'a',
@@ -176,7 +177,7 @@ void main() {
     });
 
     test('Create diode with minimal fields', () {
-      final inventoryRepository = InventoryRepository();
+      final inventoryRepository = InMemoryInventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -195,7 +196,7 @@ void main() {
     });
 
     test('Create diode with all fields', () {
-      final inventoryRepository = InventoryRepository();
+      final inventoryRepository = InMemoryInventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -218,7 +219,7 @@ void main() {
     });
 
     test('Update didoe', () {
-      final inventoryRepository = InventoryRepository()
+      final inventoryRepository = InMemoryInventoryRepository()
         ..addComponent(Diode(id: 'c', partNumber: 'abc', quantity: 5));
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
@@ -238,7 +239,7 @@ void main() {
     });
 
     test('Create transistor with minimal fields', () {
-      final inventoryRepository = InventoryRepository();
+      final inventoryRepository = InMemoryInventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -258,7 +259,7 @@ void main() {
     });
 
     test('Create transistor with all fields', () {
-      final inventoryRepository = InventoryRepository();
+      final inventoryRepository = InMemoryInventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -283,7 +284,7 @@ void main() {
     });
 
     test('Update transistor', () {
-      final inventoryRepository = InventoryRepository()
+      final inventoryRepository = InMemoryInventoryRepository()
         ..addComponent(
           Transistor(
             id: 'a',
@@ -322,7 +323,7 @@ void main() {
     });
 
     test('Create toggle switch with minimal fields', () {
-      final inventoryRepository = InventoryRepository();
+      final inventoryRepository = InMemoryInventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -352,7 +353,7 @@ void main() {
     });
 
     test('Create toggle switch with all fields', () {
-      final inventoryRepository = InventoryRepository();
+      final inventoryRepository = InMemoryInventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -385,7 +386,7 @@ void main() {
     });
 
     test('Update toggle switch', () {
-      final inventoryRepository = InventoryRepository()
+      final inventoryRepository = InMemoryInventoryRepository()
         ..addComponent(
           Switch(
             id: 'a',
@@ -425,7 +426,7 @@ void main() {
     });
 
     test('Create rotary switch with minimal fields', () {
-      final inventoryRepository = InventoryRepository();
+      final inventoryRepository = InMemoryInventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -455,7 +456,7 @@ void main() {
     });
 
     test('Create rotary switch with all fields', () {
-      final inventoryRepository = InventoryRepository();
+      final inventoryRepository = InMemoryInventoryRepository();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -489,7 +490,7 @@ void main() {
     });
 
     test('Update rotary switch', () {
-      final inventoryRepository = InventoryRepository()
+      final inventoryRepository = InMemoryInventoryRepository()
         ..addComponent(
           Switch(
             id: 'a',
@@ -532,7 +533,7 @@ void main() {
     });
 
     test('Change rotary switch to footswitch', () {
-      final inventoryRepository = InventoryRepository()
+      final inventoryRepository = InMemoryInventoryRepository()
         ..addComponent(
           Switch(
             id: 'a',

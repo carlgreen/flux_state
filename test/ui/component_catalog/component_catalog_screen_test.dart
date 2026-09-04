@@ -11,13 +11,15 @@ import 'package:flux_state/repository_provider.dart';
 import 'package:flux_state/ui/component_catalog/component_catalog_screen.dart';
 import 'package:flux_state/ui/component_catalog/component_catalog_viewmodel.dart';
 
+import '../../data/repositories/in_memory_inventory_repository.dart';
+
 void main() {
   group('ComponentCatalogScreen tests', () {
     late ComponentCatalogViewModel viewModel;
     late InventoryRepository inventoryRepository;
 
     setUp(() {
-      inventoryRepository = InventoryRepository()
+      inventoryRepository = InMemoryInventoryRepository()
         ..addComponent(
           Resistor(
             id: 'a',
@@ -173,7 +175,7 @@ void main() {
     late InventoryRepository inventoryRepository;
 
     setUp(() {
-      inventoryRepository = InventoryRepository()
+      inventoryRepository = InMemoryInventoryRepository()
         ..addComponent(
           Resistor(id: 'a', value: 1000, tolerance: '2', power: '0.25'),
         )

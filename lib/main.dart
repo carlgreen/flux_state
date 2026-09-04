@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flux_state/data/repositories/inventory_repository.dart';
+import 'package:flux_state/data/repositories/in_memory_inventory_repository.dart';
 import 'package:flux_state/repository_provider.dart';
 import 'package:flux_state/theme/app_theme.dart';
 import 'package:flux_state/ui/home/home_screen.dart';
 import 'package:flux_state/ui/home/home_viewmodel.dart';
 
 void main() {
-  final inventoryRepository = InventoryRepository();
+  final inventoryRepository = InMemoryInventoryRepository();
   runApp(
     RepositoryProvider(
       inventoryRepository: inventoryRepository,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flux_state/data/repositories/inventory_repository.dart';
 import 'package:flux_state/domain/models/capacitor.dart';
+import 'package:flux_state/domain/models/component.dart';
 import 'package:flux_state/domain/models/component_category.dart';
 import 'package:flux_state/domain/models/diode.dart';
 import 'package:flux_state/domain/models/resistor.dart';
@@ -22,25 +22,14 @@ void main() {
   }
 
   group('AddEditComponentScreen add tests', () {
-    late AddEditComponentViewModel viewModel;
-    late InventoryRepository inventoryRepository;
-
-    setUp(() {
-      inventoryRepository = InMemoryInventoryRepository();
-      viewModel = AddEditComponentViewModel(
-        initialCategory: ComponentCategory.resistor,
-        inventoryRepository: inventoryRepository,
-      );
-    });
-
-    Future<void> loadWidget(WidgetTester tester) async {
-      await testApp(tester, AddEditComponentScreen(viewModel: viewModel));
-    }
-
     testWidgets('should fail if resistor quantity is not a number', (
       tester,
     ) async {
-      await loadWidget(tester);
+      final setup = await setItUp(
+        null,
+        initialCategory: ComponentCategory.resistor,
+      );
+      await setup.loadWidget(tester);
       await tester.pumpAndSettle();
 
       final quantityField = find.descendant(
@@ -81,7 +70,11 @@ void main() {
     });
 
     testWidgets('resistor should save correct data', (tester) async {
-      await loadWidget(tester);
+      final setup = await setItUp(
+        null,
+        initialCategory: ComponentCategory.resistor,
+      );
+      await setup.loadWidget(tester);
       await tester.pumpAndSettle();
 
       final valueField = find.ancestor(
@@ -133,7 +126,7 @@ void main() {
       await tester.tap(saveBtn);
       await tester.pumpAndSettle();
 
-      expect(await inventoryRepository.components, [
+      expect(await setup.inventoryRepository.components, [
         Resistor(
           id: 'a',
           value: 10000000,
@@ -147,7 +140,11 @@ void main() {
     });
 
     testWidgets('capacitor should save correct data', (tester) async {
-      await loadWidget(tester);
+      final setup = await setItUp(
+        null,
+        initialCategory: ComponentCategory.resistor,
+      );
+      await setup.loadWidget(tester);
       await tester.pumpAndSettle();
 
       final capacitorButton = find.widgetWithText(
@@ -195,7 +192,7 @@ void main() {
       await tester.tap(saveBtn);
       await tester.pumpAndSettle();
 
-      expect(await inventoryRepository.components, [
+      expect(await setup.inventoryRepository.components, [
         Capacitor(
           id: 'b',
           value: 150,
@@ -209,7 +206,11 @@ void main() {
     });
 
     testWidgets('diode should save correct data', (tester) async {
-      await loadWidget(tester);
+      final setup = await setItUp(
+        null,
+        initialCategory: ComponentCategory.resistor,
+      );
+      await setup.loadWidget(tester);
       await tester.pumpAndSettle();
 
       final diodeButton = find.widgetWithText(AnimatedContainer, "DIODE");
@@ -255,7 +256,7 @@ void main() {
       await tester.tap(saveBtn);
       await tester.pumpAndSettle();
 
-      expect(await inventoryRepository.components, [
+      expect(await setup.inventoryRepository.components, [
         Diode(
           id: 'b',
           partNumber: '1N34A',
@@ -268,37 +269,18 @@ void main() {
   });
 
   group('AddEditComponentScreen edit resistor tests', () {
-    late AddEditComponentViewModel viewModel;
-    late InventoryRepository inventoryRepository;
-
-    setUp(() async {
-      inventoryRepository = InMemoryInventoryRepository()
-        ..addComponent(
-          Resistor(
-            id: 'a',
-            value: 1000000,
-            tolerance: '2',
-            power: '0.25',
-            material: 'Metal Film',
-            package: '0402',
-            quantity: 10,
-          ),
-        )
-        ..addComponent(Diode(id: 'b', partNumber: '1N34A'));
-      final resistorId = (await inventoryRepository.components)
-          .whereType<Resistor>()
-          .first
-          .id;
-      viewModel = AddEditComponentViewModel(
-        initialCategory: ComponentCategory.resistor,
-        inventoryRepository: inventoryRepository,
-        componentId: resistorId,
-      );
-    });
-
-    Future<void> loadWidget(WidgetTester tester) async {
-      await testApp(tester, AddEditComponentScreen(viewModel: viewModel));
-    }
+    final List<Component> testData = [
+      Resistor(
+        id: 'a',
+        value: 1000000,
+        tolerance: '2',
+        power: '0.25',
+        material: 'Metal Film',
+        package: '0402',
+        quantity: 10,
+      ),
+      Diode(id: 'b', partNumber: '1N34A'),
+    ];
 
     final valueFieldFinder = getTextFieldOf('Value');
     final toleranceFieldFinder = find.ancestor(
@@ -319,7 +301,11 @@ void main() {
     );
 
     testWidgets('should display resistor values', (tester) async {
-      await loadWidget(tester);
+      final setup = await setItUp<Resistor>(
+        testData,
+        initialCategory: ComponentCategory.resistor,
+      );
+      await setup.loadWidget(tester);
       await tester.pumpAndSettle();
 
       expect(find.byType(AddEditComponentScreen), findsOneWidget);
@@ -338,7 +324,11 @@ void main() {
     });
 
     testWidgets('should update resistor values', (tester) async {
-      await loadWidget(tester);
+      final setup = await setItUp<Resistor>(
+        testData,
+        initialCategory: ComponentCategory.resistor,
+      );
+      await setup.loadWidget(tester);
       await tester.pumpAndSettle();
 
       final decQuantityBtn = find.descendant(
@@ -367,7 +357,11 @@ void main() {
     });
 
     testWidgets('should remove resistor values', (tester) async {
-      await loadWidget(tester);
+      final setup = await setItUp<Resistor>(
+        testData,
+        initialCategory: ComponentCategory.resistor,
+      );
+      await setup.loadWidget(tester);
       await tester.pumpAndSettle();
 
       await selectDropdown(tester, toleranceFieldFinder, '');
@@ -385,8 +379,18 @@ void main() {
   });
 
   group('AddEditComponentScreen edit capacitor tests', () {
-    late AddEditComponentViewModel viewModel;
-    late InventoryRepository inventoryRepository;
+    final List<Component> testData = [
+      Resistor(id: 'a', value: 1000000, tolerance: '2', power: '0.25'),
+      Capacitor(
+        id: 'c',
+        value: 4500,
+        voltage: 100,
+        tolerance: '10',
+        material: 'Tantalum',
+        polarised: true,
+        quantity: 3,
+      ),
+    ];
 
     final valueFieldFinder = getTextFieldOf('Value');
     final voltageFieldFinder = getTextFieldOf('Voltage Rating (V)');
@@ -407,39 +411,12 @@ void main() {
     //   matching: find.byIcon(Icons.add_rounded),
     // );
 
-    setUp(() async {
-      inventoryRepository = InMemoryInventoryRepository()
-        ..addComponent(
-          Resistor(id: 'a', value: 1000000, tolerance: '2', power: '0.25'),
-        )
-        ..addComponent(
-          Capacitor(
-            id: 'c',
-            value: 4500,
-            voltage: 100,
-            tolerance: '10',
-            material: 'Tantalum',
-            polarised: true,
-            quantity: 3,
-          ),
-        );
-      final capacitorId = (await inventoryRepository.components)
-          .whereType<Capacitor>()
-          .single
-          .id;
-      viewModel = AddEditComponentViewModel(
-        initialCategory: ComponentCategory.resistor,
-        inventoryRepository: inventoryRepository,
-        componentId: capacitorId,
-      );
-    });
-
-    Future<void> loadWidget(WidgetTester tester) async {
-      await testApp(tester, AddEditComponentScreen(viewModel: viewModel));
-    }
-
     testWidgets('should display capacitor values', (tester) async {
-      await loadWidget(tester);
+      final setup = await setItUp<Capacitor>(
+        testData,
+        initialCategory: ComponentCategory.resistor,
+      );
+      await setup.loadWidget(tester);
       await tester.pumpAndSettle();
 
       expect(find.byType(AddEditComponentScreen), findsOneWidget);
@@ -458,7 +435,11 @@ void main() {
     });
 
     testWidgets('should update capacitor values', (tester) async {
-      await loadWidget(tester);
+      final setup = await setItUp<Capacitor>(
+        testData,
+        initialCategory: ComponentCategory.resistor,
+      );
+      await setup.loadWidget(tester);
       await tester.pumpAndSettle();
 
       await tester.enterText(valueFieldFinder, '4n7');
@@ -483,7 +464,11 @@ void main() {
     });
 
     testWidgets('should remove capacitor values', (tester) async {
-      await loadWidget(tester);
+      final setup = await setItUp<Capacitor>(
+        testData,
+        initialCategory: ComponentCategory.resistor,
+      );
+      await setup.loadWidget(tester);
       await tester.pumpAndSettle();
 
       await tester.enterText(voltageFieldFinder, '');
@@ -499,8 +484,16 @@ void main() {
   });
 
   group('AddEditComponentScreen edit diode tests', () {
-    late AddEditComponentViewModel viewModel;
-    late InventoryRepository inventoryRepository;
+    final List<Component> testData = [
+      Resistor(id: 'a', value: 1000000, tolerance: '2', power: '0.25'),
+      Diode(
+        id: 'b',
+        partNumber: '1N34A',
+        material: 'Germanium',
+        package: 'SOD-123',
+        quantity: 3,
+      ),
+    ];
 
     final codeFieldFinder = getTextFieldOf('Part Number');
     final materialFieldFinder = find.ancestor(
@@ -516,37 +509,12 @@ void main() {
       matching: find.byIcon(Icons.add_rounded),
     );
 
-    setUp(() async {
-      inventoryRepository = InMemoryInventoryRepository()
-        ..addComponent(
-          Resistor(id: 'a', value: 1000000, tolerance: '2', power: '0.25'),
-        )
-        ..addComponent(
-          Diode(
-            id: 'b',
-            partNumber: '1N34A',
-            material: 'Germanium',
-            package: 'SOD-123',
-            quantity: 3,
-          ),
-        );
-      final diodeId = (await inventoryRepository.components)
-          .whereType<Diode>()
-          .single
-          .id;
-      viewModel = AddEditComponentViewModel(
-        initialCategory: ComponentCategory.resistor,
-        inventoryRepository: inventoryRepository,
-        componentId: diodeId,
-      );
-    });
-
-    Future<void> loadWidget(WidgetTester tester) async {
-      await testApp(tester, AddEditComponentScreen(viewModel: viewModel));
-    }
-
     testWidgets('should display diode values', (tester) async {
-      await loadWidget(tester);
+      final setup = await setItUp<Diode>(
+        testData,
+        initialCategory: ComponentCategory.resistor,
+      );
+      await setup.loadWidget(tester);
       await tester.pumpAndSettle();
 
       expect(find.byType(AddEditComponentScreen), findsOneWidget);
@@ -563,7 +531,11 @@ void main() {
     });
 
     testWidgets('should update diode values', (tester) async {
-      await loadWidget(tester);
+      final setup = await setItUp<Diode>(
+        testData,
+        initialCategory: ComponentCategory.resistor,
+      );
+      await setup.loadWidget(tester);
       await tester.pumpAndSettle();
 
       await tester.enterText(codeFieldFinder, 'new code');
@@ -583,7 +555,11 @@ void main() {
     });
 
     testWidgets('should remove diode values', (tester) async {
-      await loadWidget(tester);
+      final setup = await setItUp<Diode>(
+        testData,
+        initialCategory: ComponentCategory.resistor,
+      );
+      await setup.loadWidget(tester);
       await tester.pumpAndSettle();
 
       await selectDropdown(tester, materialFieldFinder, '');
@@ -595,6 +571,47 @@ void main() {
       expect(getTextFromDropdown(tester, packageFieldFinder), '');
     });
   });
+}
+
+class TestSetup {
+  final InMemoryInventoryRepository inventoryRepository;
+  final AddEditComponentViewModel viewModel;
+
+  TestSetup(this.inventoryRepository, this.viewModel);
+
+  Future<void> loadWidget(WidgetTester tester) async {
+    await testApp(tester, AddEditComponentScreen(viewModel: viewModel));
+  }
+}
+
+/// to create AddEditComponentViewModel view a componentId, call this
+/// with a specific type, e.g. `setItUp<Diode>`. To not provide this
+/// just call `setItUp`. Note that calling `setItUp<Component>`
+/// will not find the first of any type rather it will be set to null.
+Future<TestSetup> setItUp<C extends Component>(
+  List<Component>? testData, {
+  required ComponentCategory initialCategory,
+}) async {
+  final inventoryRepository = InMemoryInventoryRepository(testData)..loaded();
+
+  final String? componentId;
+  if (C == Component) {
+    componentId = null;
+  } else {
+    final matches = (await inventoryRepository.components).whereType<C>();
+    if (matches.isEmpty) {
+      throw StateError(
+        'setItUpFor: expected testData to contain a $C, but none was found.',
+      );
+    }
+    componentId = matches.first.id;
+  }
+  final viewModel = AddEditComponentViewModel(
+    initialCategory: initialCategory,
+    inventoryRepository: inventoryRepository,
+    componentId: componentId,
+  );
+  return TestSetup(inventoryRepository, viewModel);
 }
 
 Future<void> testApp(WidgetTester tester, Widget body) async {

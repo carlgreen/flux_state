@@ -74,7 +74,7 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
                         _selectedCat,
                         _searchQ,
                       );
-                      if (components.isEmpty) {
+                      if (widget.viewModel.isLoading) {
                         return const Center(child: CircularProgressIndicator());
                       } else {
                         return _ComponentList(

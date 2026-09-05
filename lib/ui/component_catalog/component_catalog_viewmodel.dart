@@ -14,6 +14,7 @@ class ComponentCatalogViewModel extends ChangeNotifier {
   final InventoryRepository _inventoryRepository;
   final ComponentCategory? initialCategory;
 
+  bool isLoading = true;
   final List<Component> _components = [];
 
   Iterable<Component> _filter(
@@ -52,10 +53,16 @@ class ComponentCatalogViewModel extends ChangeNotifier {
     // ...
 
     // return userResult;
+
+    isLoading = true;
+    notifyListeners();
+
     try {
       final components = await _inventoryRepository.components;
       _components.clear();
       _components.addAll(components);
+
+      isLoading = false;
     } finally {
       notifyListeners();
     }

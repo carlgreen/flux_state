@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flux_state/data/repositories/inventory_repository.dart';
 import 'package:flux_state/domain/models/capacitor.dart';
 import 'package:flux_state/domain/models/component.dart';
@@ -11,11 +13,22 @@ import 'package:flux_state/domain/models/switch.dart';
 import 'package:flux_state/domain/models/transistor.dart';
 
 class InMemoryInventoryRepository implements InventoryRepository {
+  InMemoryInventoryRepository([List<Component>? testData]) {
+    if (testData != null) {
+      _components.addAll(testData);
+    }
+  }
+
   final List<Component> _components = List.empty(growable: true);
 
+  final componentsCompleter = Completer<List<Component>>();
+
+  void loaded() {
+    componentsCompleter.complete(_components);
+  }
+
   @override
-  Future<Iterable<Component>> get components =>
-      Future.value(List.unmodifiable(_components));
+  Future<Iterable<Component>> get components => componentsCompleter.future;
 
   void addComponent(Component c) {
     _components.add(c);

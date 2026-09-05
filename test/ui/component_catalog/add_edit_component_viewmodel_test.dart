@@ -12,7 +12,7 @@ import '../../data/repositories/in_memory_inventory_repository.dart';
 void main() {
   group('AddEditComponentViewModel tests', () {
     test('Create resistor with minimal fields', () async {
-      final inventoryRepository = InMemoryInventoryRepository();
+      final inventoryRepository = InMemoryInventoryRepository()..loaded();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -32,7 +32,7 @@ void main() {
     });
 
     test('Create resistor with all fields', () async {
-      final inventoryRepository = InMemoryInventoryRepository();
+      final inventoryRepository = InMemoryInventoryRepository()..loaded();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -68,7 +68,8 @@ void main() {
             material: 'Carbon Film',
             quantity: 10,
           ),
-        );
+        )
+        ..loaded();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -96,7 +97,7 @@ void main() {
     });
 
     test('Create capacitor with minimal fields', () async {
-      final inventoryRepository = InMemoryInventoryRepository();
+      final inventoryRepository = InMemoryInventoryRepository()..loaded();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -120,7 +121,7 @@ void main() {
     });
 
     test('Create capacitor with all fields', () async {
-      final inventoryRepository = InMemoryInventoryRepository();
+      final inventoryRepository = InMemoryInventoryRepository()..loaded();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -157,7 +158,8 @@ void main() {
             polarised: false,
             quantity: 10,
           ),
-        );
+        )
+        ..loaded();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -184,7 +186,7 @@ void main() {
     });
 
     test('Create diode with minimal fields', () async {
-      final inventoryRepository = InMemoryInventoryRepository();
+      final inventoryRepository = InMemoryInventoryRepository()..loaded();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -203,7 +205,7 @@ void main() {
     });
 
     test('Create diode with all fields', () async {
-      final inventoryRepository = InMemoryInventoryRepository();
+      final inventoryRepository = InMemoryInventoryRepository()..loaded();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -227,7 +229,8 @@ void main() {
 
     test('Update didoe', () async {
       final inventoryRepository = InMemoryInventoryRepository()
-        ..addComponent(Diode(id: 'c', partNumber: 'abc', quantity: 5));
+        ..addComponent(Diode(id: 'c', partNumber: 'abc', quantity: 5))
+        ..loaded();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -246,7 +249,7 @@ void main() {
     });
 
     test('Create transistor with minimal fields', () async {
-      final inventoryRepository = InMemoryInventoryRepository();
+      final inventoryRepository = InMemoryInventoryRepository()..loaded();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -267,7 +270,7 @@ void main() {
     });
 
     test('Create transistor with all fields', () async {
-      final inventoryRepository = InMemoryInventoryRepository();
+      final inventoryRepository = InMemoryInventoryRepository()..loaded();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -303,7 +306,8 @@ void main() {
             package: 'TO-18',
             quantity: 10,
           ),
-        );
+        )
+        ..loaded();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
         initialCategory: ComponentCategory.transistor,
@@ -332,7 +336,7 @@ void main() {
     });
 
     test('Create toggle switch with minimal fields', () async {
-      final inventoryRepository = InMemoryInventoryRepository();
+      final inventoryRepository = InMemoryInventoryRepository()..loaded();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -362,7 +366,7 @@ void main() {
     });
 
     test('Create toggle switch with all fields', () async {
-      final inventoryRepository = InMemoryInventoryRepository();
+      final inventoryRepository = InMemoryInventoryRepository()..loaded();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -406,7 +410,8 @@ void main() {
             toggleSize: 'Micro',
             mount: 'Lugs',
           ),
-        );
+        )
+        ..loaded();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -435,7 +440,7 @@ void main() {
     });
 
     test('Create rotary switch with minimal fields', () async {
-      final inventoryRepository = InMemoryInventoryRepository();
+      final inventoryRepository = InMemoryInventoryRepository()..loaded();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -465,7 +470,7 @@ void main() {
     });
 
     test('Create rotary switch with all fields', () async {
-      final inventoryRepository = InMemoryInventoryRepository();
+      final inventoryRepository = InMemoryInventoryRepository()..loaded();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -511,7 +516,8 @@ void main() {
             shaftType: 'Knurled',
             mount: 'Lugs',
           ),
-        );
+        )
+        ..loaded();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
@@ -554,7 +560,8 @@ void main() {
             shaftType: 'Knurled',
             mount: 'Lugs',
           ),
-        );
+        )
+        ..loaded();
       final viewModel = AddEditComponentViewModel(
         inventoryRepository: inventoryRepository,
       );
